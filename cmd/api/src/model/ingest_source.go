@@ -1,4 +1,4 @@
-// Copyright 2023 Specter Ops, Inc.
+// Copyright 2024 Specter Ops, Inc.
 //
 // Licensed under the Apache License, Version 2.0
 // you may not use this file except in compliance with the License.
@@ -14,25 +14,23 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-export type FileForIngest = {
-    file: File;
-    status: FileStatus;
-    errors?: string[];
-};
+package model
 
-export enum FileStatus {
-    READY,
-    UPLOADING,
-    FAILURE,
-    DONE,
-}
+// IngestSource describes the high-level category of data being ingested.
+// It is carried via the X-Ingest-Source HTTP header on file-upload requests.
+type IngestSource string
 
-export enum FileUploadStep {
-    ADD_FILES,
-    UPLOAD,
-}
+const (
+	IngestSourceADOrAzure IngestSource = "default"
+	IngestSourceAPI       IngestSource = "api"
+)
 
-export enum IngestSource {
-    AD_AZURE = 'default',
-    API = 'api',
+// IsValid returns true when the value is one of the accepted ingest sources.
+func (s IngestSource) IsValid() bool {
+	switch s {
+	case IngestSourceADOrAzure, IngestSourceAPI:
+		return true
+	default:
+		return false
+	}
 }

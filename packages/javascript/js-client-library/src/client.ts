@@ -939,7 +939,8 @@ class BHEAPIClient {
         ingestId: string,
         json: any,
         contentType: string,
-        options: AxiosRequestConfig<any> = {}
+        options: AxiosRequestConfig<any> = {},
+        ingestSource?: string
     ) => {
         const mergedOptions: AxiosRequestConfig<any> = {
             ...options,
@@ -947,6 +948,7 @@ class BHEAPIClient {
                 ...(options?.headers ?? {}),
                 'Content-Type': contentType,
                 'X-File-Upload-Name': json.name,
+                ...(ingestSource ? { 'X-Ingest-Source': ingestSource } : {}),
             },
         };
 

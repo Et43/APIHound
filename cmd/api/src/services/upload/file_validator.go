@@ -36,6 +36,16 @@ func WriteAndValidateZip(src io.Reader, dst io.Writer) (ingest.OriginalMetadata,
 	return ingest.OriginalMetadata{}, ValidateZipFile(tr)
 }
 
+// WriteWithoutValidation implements FileValidator for files that should be
+// persisted without schema validation (e.g. API environment data).
+// The file is copied to disk as-is.
+func WriteWithoutValidation(src io.Reader, dst io.Writer) (ingest.OriginalMetadata, error) {
+	if _, err := io.Copy(dst, src); err != nil {
+		return ingest.OriginalMetadata{}, err
+	}
+	return ingest.OriginalMetadata{Type: ingest.DataTypeAPI}, nil
+}
+
 // IngestValidator encapsulates precompiled JSON schemas used to validate
 // graph ingest payloads, including node and edge definitions.
 //

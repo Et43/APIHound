@@ -22,7 +22,7 @@ import {
     useUploadFileToIngestJob,
 } from '../../hooks';
 import { useNotifications } from '../../providers';
-import { FileForIngest, FileStatus, FileUploadStep } from './types';
+import { FileForIngest, FileStatus, FileUploadStep, IngestSource } from './types';
 
 export const makeProgressCacheKey = (jobId: string, fileName: string) => `job-${jobId}-file-${fileName}`;
 
@@ -40,9 +40,11 @@ export const calculateUploadProgress = (progressEvent: UploadProgress) => {
 export const useFileUploadDialogHandlers = ({
     onCloseProp,
     hasPermissionToUpload,
+    ingestSource = IngestSource.AD_AZURE,
 }: {
     onCloseProp: () => void;
     hasPermissionToUpload: boolean;
+    ingestSource?: IngestSource;
 }) => {
     const [filesForIngest, setFilesForIngest] = useState<FileForIngest[]>([]);
     const [fileUploadStep, setFileUploadStep] = useState<FileUploadStep>(FileUploadStep.ADD_FILES);
@@ -191,6 +193,7 @@ export const useFileUploadDialogHandlers = ({
                     jobId,
                     fileContents: ingestFile.file,
                     contentType: ingestFile.file.type,
+                    ingestSource: ingestSource,
                     options: {
                         onUploadProgress: (progressEvent) => {
                             setProgressCache((prevProgressCache) => ({
@@ -251,6 +254,15 @@ export const useFileUploadDialogHandlers = ({
     const handleFileDrop = (files: FileList | null) => {
         if (files && files.length > 0) {
             const validatedFiles: FileForIngest[] = [...files].map((file) => {
+                if (ingestSource === IngestSource.API) {
+                    // For API source, accept any .json file
+                    const isJson = file.name.toLowerCase().endsWith('.json') || file.type === 'application/json';
+                    if (isJson) {
+                        return { file, status: FileStatus.READY };
+                    } else {
+                        return { file, errors: ['API data must be a JSON file'], status: FileStatus.READY };
+                    }
+                }
                 if (getFileUploadAcceptedTypes.data?.data.includes(file.type)) {
                     return { file, status: FileStatus.READY };
                 } else {

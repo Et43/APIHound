@@ -39,7 +39,22 @@ func SaveIngestFile(location string, request *http.Request, validator IngestVali
 	var (
 		fileType     model.FileType
 		validationFn FileValidator
+		ingestSource = model.IngestSource(request.Header.Get("X-Ingest-Source"))
 	)
+
+	// When the ingest source is API, skip schema validation entirely and
+	// persist the file as-is using the dedicated API file type.
+	if ingestSource == model.IngestSourceAPI {
+		if tempFileName, err := WriteAndValidateFile(fileData, location, WriteWithoutValidation); err != nil {
+			return IngestTaskParams{}, err
+		} else {
+			return IngestTaskParams{
+				Filename:     tempFileName,
+				FileType:     model.FileTypeAPIJson,
+				IngestSource: model.IngestSourceAPI,
+			}, nil
+		}
+	}
 
 	switch {
 	case utils.HeaderMatches(request.Header, headers.ContentType.String(), mediatypes.ApplicationJson.String()):

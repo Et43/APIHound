@@ -21,6 +21,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"time"
 
 	"github.com/specterops/bloodhound/cmd/api/src/config"
 	"github.com/specterops/bloodhound/cmd/api/src/daemons/changelog"
@@ -166,8 +167,20 @@ func (s *BHCEPipeline) PruneData(ctx context.Context) error {
 // This is currently public to support as a first class testing seam, but with some refactoring may be split away from the
 // Daemon object enough to be self standing and pulled to an internal package namespace
 func (s *BHCEPipeline) IngestTasks(ctx context.Context) error {
-	// Ingest all available ingest tasks
-	s.graphifyService.ProcessTasks(updateJobFunc(ctx, s.db))
+	// Ingest all available ingest tasks. API-only job IDs are returned so
+	// they can be completed directly without entering the analysis phase.
+	apiOnlyJobIDs := s.graphifyService.ProcessTasks(updateJobFunc(ctx, s.db))
+
+	// Complete API-only ingest jobs immediately — they have no graph data
+	// and must not trigger AD/Azure post-processing analysis.
+	for _, jobID := range apiOnlyJobIDs {
+		if err := completeAPIJob(ctx, s.db, jobID); err != nil {
+			slog.ErrorContext(ctx, "Failed to complete API ingest job",
+				slog.Int64("job_id", jobID),
+				attr.Error(err),
+			)
+		}
+	}
 
 	// Manage time-out state progression for ingest jobs
 	s.jobService.ProcessStaleIngestJobs()
@@ -213,6 +226,34 @@ func updateJobFunc(ctx context.Context, db database.Database) graphify.UpdateJob
 			}
 		}
 	}
+}
+
+// completeAPIJob marks an API-only ingest job as complete, bypassing the
+// Analyzing state so that AD/Azure post-processing is never triggered.
+func completeAPIJob(ctx context.Context, db database.Database, jobID int64) error {
+	ingestJob, err := db.GetIngestJob(ctx, jobID)
+	if err != nil {
+		return fmt.Errorf("fetching API ingest job %d: %w", jobID, err)
+	}
+
+	// Only transition if the job is still in the ingesting state. If it has
+	// already been moved (e.g. timed out or cancelled), leave it alone.
+	if ingestJob.Status != model.JobStatusIngesting {
+		return nil
+	}
+
+	ingestJob.Status = model.JobStatusComplete
+	ingestJob.StatusMessage = "Complete"
+	ingestJob.EndTime = time.Now().UTC()
+
+	if err := db.UpdateIngestJob(ctx, ingestJob); err != nil {
+		return fmt.Errorf("completing API ingest job %d: %w", jobID, err)
+	}
+
+	slog.InfoContext(ctx, "API ingest job completed (analysis skipped)",
+		slog.Int64("job_id", jobID),
+	)
+	return nil
 }
 
 // If the pipeline needs to do anything to the context, this is called before each other pipeline stage

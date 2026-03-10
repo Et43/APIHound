@@ -38,12 +38,13 @@ interface UploadFileIngestJobParams {
     fileContents: any;
     contentType?: string;
     options?: Parameters<typeof apiClient.uploadFileToIngestJob>[3];
+    ingestSource?: string;
 }
 
 export const useUploadFileToIngestJob = () => {
     return useMutation({
-        mutationFn: ({ jobId, fileContents, contentType = 'application/json', options }: UploadFileIngestJobParams) =>
-            apiClient.uploadFileToIngestJob(jobId, fileContents, contentType, options).then((res) => res.data),
+        mutationFn: ({ jobId, fileContents, contentType = 'application/json', options, ingestSource }: UploadFileIngestJobParams) =>
+            apiClient.uploadFileToIngestJob(jobId, fileContents, contentType, options, ingestSource).then((res) => res.data),
     });
 };
 

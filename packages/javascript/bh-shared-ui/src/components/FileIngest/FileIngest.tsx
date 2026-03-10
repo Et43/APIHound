@@ -53,7 +53,7 @@ const FileIngest: FC = () => {
             data-testid='manual-file-ingest'
             pageDescription={
                 <Typography variant='body2'>
-                    Upload data from SharpHound or AzureHound offline collectors. Check out our{' '}
+                    Upload data from SharpHound, AzureHound offline collectors, or API environment files. Check out our{' '}
                     {DocumentationLinks.fileIngestLink} documentation for more information.
                 </Typography>
             }>

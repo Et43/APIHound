@@ -29,6 +29,7 @@ type IngestTaskParams struct {
 	FileType         model.FileType
 	RequestID        string
 	JobID            int64
+	IngestSource     model.IngestSource
 }
 
 func CreateIngestTask(ctx context.Context, db UploadData, params IngestTaskParams) (model.IngestTask, error) {

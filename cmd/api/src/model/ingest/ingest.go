@@ -62,6 +62,7 @@ const (
 	DataTypeAzure          DataType = "azure"
 	DataTypeIssuancePolicy DataType = "issuancepolicies"
 	DataTypeOpenGraph      DataType = "opengraph"
+	DataTypeAPI            DataType = "api"
 )
 
 func AllOriginalIngestDataTypes() []DataType {

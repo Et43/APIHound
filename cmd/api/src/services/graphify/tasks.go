@@ -266,13 +266,103 @@ func (s *GraphifyService) getAllTasks() model.IngestTasks {
 	return tasks
 }
 
-func (s *GraphifyService) ProcessTasks(updateJob UpdateJobFunc) {
+// ProcessTasks processes all pending ingest tasks. It returns a set of job IDs
+// that contained only API tasks. The caller is responsible for completing those
+// jobs directly so they skip the AD/Azure analysis phase.
+func (s *GraphifyService) ProcessTasks(updateJob UpdateJobFunc) []int64 {
 	tasks := s.getAllTasks()
 	if len(tasks) == 0 {
 		// nothing to do
-		return
+		return nil
 	}
 
+	// Separate API tasks from graph (AD/Azure) tasks. API tasks are stored
+	// but not processed through the graph pipeline.
+	var (
+		graphTasks    []model.IngestTask
+		apiTasks      []model.IngestTask
+		graphJobIDSet = make(map[int64]struct{})
+	)
+
+	for _, task := range tasks {
+		if task.FileType.IsAPISource() {
+			apiTasks = append(apiTasks, task)
+		} else {
+			graphTasks = append(graphTasks, task)
+			graphJobIDSet[task.JobId.ValueOrZero()] = struct{}{}
+		}
+	}
+
+	// Handle API tasks: acknowledge, record, and clear without graph processing.
+	var apiOnlyJobIDs []int64
+	if len(apiTasks) > 0 {
+		apiOnlyJobIDs = s.processAPITasks(apiTasks, updateJob, graphJobIDSet)
+	}
+
+	// Handle graph (AD/Azure) tasks through the existing pipeline.
+	if len(graphTasks) > 0 {
+		s.processGraphTasks(graphTasks, updateJob)
+	}
+
+	return apiOnlyJobIDs
+}
+
+// processAPITasks handles API environment ingest tasks. For now these files are
+// acknowledged, their job status is updated, and the task is cleared. Actual
+// processing of API data will be added in a future iteration.
+// processAPITasks handles API environment ingest tasks. It returns the set of
+// job IDs that are API-only (i.e. no graph tasks share the same job). The
+// graphJobIDSet argument contains job IDs that also have graph tasks in the
+// current batch so that mixed jobs are excluded.
+func (s *GraphifyService) processAPITasks(tasks []model.IngestTask, updateJob UpdateJobFunc, graphJobIDSet map[int64]struct{}) []int64 {
+	slog.InfoContext(s.ctx,
+		"Processing API ingest tasks",
+		slog.Int("task_count", len(tasks)),
+	)
+
+	apiJobIDSet := make(map[int64]struct{})
+
+	for _, task := range tasks {
+		slog.InfoContext(s.ctx,
+			"API ingest task stored (processing not yet implemented)",
+			slog.Int64("task_id", task.ID),
+			slog.String("file", task.OriginalFileName),
+		)
+
+		// Report the file as successfully ingested to the job tracker
+		fileData := []IngestFileData{
+			{
+				Name:   task.OriginalFileName,
+				Path:   task.StoredFileName,
+				Errors: []string{},
+			},
+		}
+
+		jobID := task.JobId.ValueOrZero()
+		updateJob(jobID, fileData)
+		s.clearFileTask(task)
+
+		// Track API-only job IDs (exclude jobs that also have graph tasks)
+		if _, hasGraphTasks := graphJobIDSet[jobID]; !hasGraphTasks {
+			apiJobIDSet[jobID] = struct{}{}
+		}
+	}
+
+	slog.InfoContext(s.ctx,
+		"API ingest tasks completed",
+		slog.Int("task_count", len(tasks)),
+	)
+
+	apiOnlyJobIDs := make([]int64, 0, len(apiJobIDSet))
+	for jobID := range apiJobIDSet {
+		apiOnlyJobIDs = append(apiOnlyJobIDs, jobID)
+	}
+	return apiOnlyJobIDs
+}
+
+// processGraphTasks runs the existing AD/Azure graph ingestion pipeline for
+// the given tasks.
+func (s *GraphifyService) processGraphTasks(tasks []model.IngestTask, updateJob UpdateJobFunc) {
 	start := time.Now()
 	slog.InfoContext(s.ctx,
 		"Ingest run starting",
