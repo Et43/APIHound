@@ -23,7 +23,7 @@ export const useSelf = () =>
         queryFn: ({ signal }) => apiClient.getSelf({ signal }).then((res) => res.data?.data),
     });
 
-export const useBloodHoundUsers = () => {
+export const useAPIHoundUsers = () => {
     const { checkPermission } = usePermissions();
     const hasPermission = checkPermission(Permission.AUTH_MANAGE_USERS);
 

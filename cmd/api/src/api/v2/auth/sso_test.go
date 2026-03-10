@@ -30,19 +30,19 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/pkg/errors"
-	"github.com/specterops/bloodhound/cmd/api/src/api"
-	"github.com/specterops/bloodhound/cmd/api/src/api/v2/apitest"
-	"github.com/specterops/bloodhound/cmd/api/src/api/v2/auth"
-	bhceauth "github.com/specterops/bloodhound/cmd/api/src/auth"
-	"github.com/specterops/bloodhound/cmd/api/src/config"
-	"github.com/specterops/bloodhound/cmd/api/src/database/mocks"
-	samlmocks "github.com/specterops/bloodhound/cmd/api/src/services/saml/mocks"
+	"github.com/specterops/apihound/cmd/api/src/api"
+	"github.com/specterops/apihound/cmd/api/src/api/v2/apitest"
+	"github.com/specterops/apihound/cmd/api/src/api/v2/auth"
+	apihoundauth "github.com/specterops/apihound/cmd/api/src/auth"
+	"github.com/specterops/apihound/cmd/api/src/config"
+	"github.com/specterops/apihound/cmd/api/src/database/mocks"
+	samlmocks "github.com/specterops/apihound/cmd/api/src/services/saml/mocks"
 
-	"github.com/specterops/bloodhound/cmd/api/src/ctx"
-	"github.com/specterops/bloodhound/cmd/api/src/database"
-	"github.com/specterops/bloodhound/cmd/api/src/database/types/null"
-	"github.com/specterops/bloodhound/cmd/api/src/model"
-	"github.com/specterops/bloodhound/cmd/api/src/utils/test"
+	"github.com/specterops/apihound/cmd/api/src/ctx"
+	"github.com/specterops/apihound/cmd/api/src/database"
+	"github.com/specterops/apihound/cmd/api/src/database/types/null"
+	"github.com/specterops/apihound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/utils/test"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 )
@@ -257,7 +257,7 @@ func TestManagementResource_DeleteOIDCProvider(t *testing.T) {
 		test.Request(t).
 			WithMethod(http.MethodDelete).
 			WithURL(ssoDeleteURL, api.URIPathVariableSSOProviderID).
-			WithURLPathVars(map[string]string{api.URIPathVariableSSOProviderID: "bloodhound"}).
+			WithURLPathVars(map[string]string{api.URIPathVariableSSOProviderID: "apihound"}).
 			OnHandlerFunc(resources.DeleteSSOProvider).
 			Require().
 			ResponseStatusCode(http.StatusBadRequest)
@@ -266,7 +266,7 @@ func TestManagementResource_DeleteOIDCProvider(t *testing.T) {
 	t.Run("error user cannot delete their own SSO provider", func(t *testing.T) {
 		test.Request(t).
 			WithMethod(http.MethodDelete).
-			WithContext(&ctx.Context{AuthCtx: bhceauth.Context{
+			WithContext(&ctx.Context{AuthCtx: apihoundauth.Context{
 				Owner: model.User{SSOProviderID: null.Int32From(1)},
 			}}).
 			WithURL(ssoDeleteURL, api.URIPathVariableSSOProviderID).
@@ -505,7 +505,7 @@ func TestManagementResource_SSOLoginHandler(t *testing.T) {
 					ServiceProviderKey:                ValidKey,
 					ServiceProviderCertificateCAChain: "",
 				},
-			}, mocks.mockDatabase, bhceauth.NewAuthorizer(mocks.mockDatabase), api.NewAuthenticator(config.Configuration{}, mocks.mockDatabase, nil), nil, nil)
+			}, mocks.mockDatabase, apihoundauth.NewAuthorizer(mocks.mockDatabase), api.NewAuthenticator(config.Configuration{}, mocks.mockDatabase, nil), nil, nil)
 			resources.SAML = mocks.mockSAML
 			response := httptest.NewRecorder()
 
@@ -641,7 +641,7 @@ func TestManagementResource_SSOCallbackHandler(t *testing.T) {
 			request := testCase.buildRequest()
 			testCase.setupMocks(t, mocks)
 
-			resource := auth.NewManagementResource(config.Configuration{}, mocks.mockDatabase, bhceauth.NewAuthorizer(mocks.mockDatabase), api.NewAuthenticator(config.Configuration{}, mocks.mockDatabase, nil), nil, nil)
+			resource := auth.NewManagementResource(config.Configuration{}, mocks.mockDatabase, apihoundauth.NewAuthorizer(mocks.mockDatabase), api.NewAuthenticator(config.Configuration{}, mocks.mockDatabase, nil), nil, nil)
 			response := httptest.NewRecorder()
 
 			router := mux.NewRouter()

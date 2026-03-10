@@ -17,146 +17,52 @@
 package graphschema
 
 import (
-	"github.com/specterops/bloodhound/packages/go/graphschema/ad"
-	"github.com/specterops/bloodhound/packages/go/graphschema/azure"
-	"github.com/specterops/bloodhound/packages/go/graphschema/common"
-	"github.com/specterops/bloodhound/packages/go/slicesext"
-	"github.com/specterops/dawgs/graph"
+"github.com/specterops/apihound/packages/go/graphschema/common"
+"github.com/specterops/dawgs/graph"
 )
 
 const (
-	ActiveDirectoryGraphPrefix = "ad"
-	AzureGraphPrefix           = "az"
-	DefaultMissingName         = "NO NAME"
-	DefaultMissingObjectId     = "NO OBJECT ID"
+DefaultMissingName     = "NO NAME"
+DefaultMissingObjectId = "NO OBJECT ID"
 )
 
-func ActiveDirectoryGraphName(suffix string) string {
-	return ActiveDirectoryGraphPrefix + "_" + suffix
-}
-
-func AzureGraphName(suffix string) string {
-	return AzureGraphPrefix + "_" + suffix
-}
-
 func CombinedGraphSchema(name string) graph.Graph {
-	return graph.Graph{
-		Name:  name,
-		Nodes: slicesext.Concat(common.NodeKinds(), azure.NodeKinds(), ad.NodeKinds()),
-		Edges: slicesext.Concat(common.Relationships(), azure.Relationships(), ad.Relationships()),
-		NodeConstraints: []graph.Constraint{{
-			Field: common.ObjectID.String(),
-			Type:  graph.BTreeIndex,
-		}},
-		NodeIndexes: []graph.Index{
-			{
-				Field: common.Name.String(),
-				Type:  graph.TextSearchIndex,
-			},
-			{
-				Field: common.SystemTags.String(),
-				Type:  graph.TextSearchIndex,
-			},
-			{
-				Field: common.UserTags.String(),
-				Type:  graph.TextSearchIndex,
-			},
-			{
-				Field: ad.DomainSID.String(),
-				Type:  graph.BTreeIndex,
-			},
-			{
-				Field: azure.TenantID.String(),
-				Type:  graph.BTreeIndex,
-			},
-		},
-	}
+return graph.Graph{
+Name:  name,
+Nodes: common.NodeKinds(),
+Edges: common.Relationships(),
+NodeConstraints: []graph.Constraint{{
+Field: common.ObjectID.String(),
+Type:  graph.BTreeIndex,
+}},
+NodeIndexes: []graph.Index{
+{
+Field: common.Name.String(),
+Type:  graph.TextSearchIndex,
+},
+{
+Field: common.SystemTags.String(),
+Type:  graph.TextSearchIndex,
+},
+{
+Field: common.UserTags.String(),
+Type:  graph.TextSearchIndex,
+},
+},
 }
-
-func AzureGraphSchema(name string) graph.Graph {
-	return graph.Graph{
-		Name:  name,
-		Nodes: azure.NodeKinds(),
-		Edges: azure.Relationships(),
-		NodeConstraints: []graph.Constraint{{
-			Field: common.ObjectID.String(),
-			Type:  graph.TextSearchIndex,
-		}},
-		NodeIndexes: []graph.Index{
-			{
-				Field: common.Name.String(),
-				Type:  graph.TextSearchIndex,
-			},
-			{
-				Field: common.SystemTags.String(),
-				Type:  graph.TextSearchIndex,
-			},
-			{
-				Field: common.UserTags.String(),
-				Type:  graph.TextSearchIndex,
-			},
-			{
-				Field: azure.TenantID.String(),
-				Type:  graph.BTreeIndex,
-			},
-		},
-	}
-}
-
-func ActiveDirectoryGraphSchema(name string) graph.Graph {
-	return graph.Graph{
-		Name:  name,
-		Nodes: ad.NodeKinds(),
-		Edges: ad.Relationships(),
-		NodeConstraints: []graph.Constraint{{
-			Field: common.ObjectID.String(),
-			Type:  graph.TextSearchIndex,
-		}},
-		NodeIndexes: []graph.Index{
-			{
-				Field: common.Name.String(),
-				Type:  graph.TextSearchIndex,
-			},
-			{
-				Field: ad.CertThumbprint.String(),
-				Type:  graph.BTreeIndex,
-			},
-			{
-				Field: common.SystemTags.String(),
-				Type:  graph.TextSearchIndex,
-			},
-			{
-				Field: common.UserTags.String(),
-				Type:  graph.TextSearchIndex,
-			},
-			{
-				Field: ad.DistinguishedName.String(),
-				Type:  graph.BTreeIndex,
-			},
-			{
-				Field: ad.DomainFQDN.String(),
-				Type:  graph.BTreeIndex,
-			},
-			{
-				Field: ad.DomainSID.String(),
-				Type:  graph.BTreeIndex,
-			},
-		},
-	}
 }
 
 func DefaultGraph() graph.Graph {
-	return CombinedGraphSchema("default")
+return CombinedGraphSchema("default")
 }
 
 func DefaultGraphSchema() graph.Schema {
-	defaultGraph := DefaultGraph()
+defaultGraph := DefaultGraph()
 
-	return graph.Schema{
-		Graphs: []graph.Graph{
-			defaultGraph,
-		},
-
-		DefaultGraph: defaultGraph,
-	}
+return graph.Schema{
+Graphs: []graph.Graph{
+defaultGraph,
+},
+DefaultGraph: defaultGraph,
+}
 }

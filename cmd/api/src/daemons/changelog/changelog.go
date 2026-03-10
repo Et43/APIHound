@@ -20,8 +20,8 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/specterops/bloodhound/cmd/api/src/daemons/ha"
-	"github.com/specterops/bloodhound/cmd/api/src/model/appcfg"
+	"github.com/specterops/apihound/cmd/api/src/daemons/ha"
+	"github.com/specterops/apihound/cmd/api/src/model/appcfg"
 	"github.com/specterops/dawgs/graph"
 )
 
@@ -49,7 +49,7 @@ func DefaultOptions() Options {
 }
 
 func NewChangelog(dawgsDB graph.Database, flagProvider appcfg.GetFlagByKeyer, opts Options) *Changelog {
-	// Use dummy HA implementation for BHCE (always primary)
+	// Use dummy HA implementation for APIHound (always primary)
 	flagManager := newFeatureFlagManager(flagGetter(dawgsDB, flagProvider), opts.PollInterval, ha.NewDummyHA())
 	coordinator := newIngestionCoordinator(dawgsDB)
 

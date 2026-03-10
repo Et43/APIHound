@@ -261,8 +261,8 @@ const SSOConfiguration: FC = () => {
                 data-testid='sso-configuration'
                 pageDescription={
                     <Typography variant='body2' paragraph>
-                        BloodHound supports SAML {flag?.enabled ? 'and OIDC ' : ''}for single sign-on (SSO). Learn how
-                        to deploy {flag?.enabled ? 'SSO' : 'SAML'} with BloodHound{' '}
+                        APIHound supports SAML {flag?.enabled ? 'and OIDC ' : ''}for single sign-on (SSO). Learn how
+                        to deploy {flag?.enabled ? 'SSO' : 'SAML'} with APIHound{' '}
                         {DocumentationLinks.samlConfigDocLink}.
                     </Typography>
                 }>

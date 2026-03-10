@@ -19,11 +19,11 @@ package v2
 import (
 	"testing"
 
-	"github.com/specterops/bloodhound/cmd/api/src/model"
-	"github.com/specterops/bloodhound/packages/go/graphschema"
-	"github.com/specterops/bloodhound/packages/go/graphschema/ad"
-	"github.com/specterops/bloodhound/packages/go/graphschema/azure"
-	"github.com/specterops/bloodhound/packages/go/graphschema/common"
+	"github.com/specterops/apihound/cmd/api/src/model"
+	"github.com/specterops/apihound/packages/go/graphschema"
+	"github.com/specterops/apihound/packages/go/graphschema/ad"
+	"github.com/specterops/apihound/packages/go/graphschema/azure"
+	"github.com/specterops/apihound/packages/go/graphschema/common"
 	"github.com/specterops/dawgs/graph"
 
 	"github.com/stretchr/testify/assert"

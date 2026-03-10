@@ -141,8 +141,8 @@ export class OperationSummaryWithEdition extends PureComponent<{
                         fill={isCommunity ? '#EE290D' : 'grey'}
                         title={
                             isCommunity
-                                ? 'Available in BloodHound Community Edition'
-                                : 'Not available in BloodHound Community Edition'
+                                ? 'Available in APIHound Community Edition'
+                                : 'Not available in APIHound Community Edition'
                         }
                         width='50px'
                         height='33px'
@@ -152,8 +152,8 @@ export class OperationSummaryWithEdition extends PureComponent<{
                         fill={isEnterprise ? '#34318F' : 'grey'}
                         title={
                             isEnterprise
-                                ? 'Available in BloodHound Enterprise'
-                                : 'Not available in BloodHound Enterprise'
+                                ? 'Available in APIHound Enterprise'
+                                : 'Not available in APIHound Enterprise'
                         }
                         width='47px'
                         height='30px'

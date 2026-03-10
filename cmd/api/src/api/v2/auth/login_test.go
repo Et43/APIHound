@@ -27,26 +27,26 @@ import (
 	"testing"
 	"time"
 
-	"github.com/specterops/bloodhound/cmd/api/src/utils/test"
+	"github.com/specterops/apihound/cmd/api/src/utils/test"
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/specterops/bloodhound/cmd/api/src/database/mocks"
+	"github.com/specterops/apihound/cmd/api/src/database/mocks"
 
-	"github.com/specterops/bloodhound/packages/go/headers"
-	"github.com/specterops/bloodhound/packages/go/mediatypes"
+	"github.com/specterops/apihound/packages/go/headers"
+	"github.com/specterops/apihound/packages/go/mediatypes"
 
 	"github.com/gorilla/mux"
 	"go.uber.org/mock/gomock"
 
-	"github.com/specterops/bloodhound/cmd/api/src/api"
-	apimocks "github.com/specterops/bloodhound/cmd/api/src/api/mocks"
-	v2auth "github.com/specterops/bloodhound/cmd/api/src/api/v2/auth"
+	"github.com/specterops/apihound/cmd/api/src/api"
+	apimocks "github.com/specterops/apihound/cmd/api/src/api/mocks"
+	v2auth "github.com/specterops/apihound/cmd/api/src/api/v2/auth"
 
-	"github.com/specterops/bloodhound/cmd/api/src/auth"
-	"github.com/specterops/bloodhound/cmd/api/src/config"
-	"github.com/specterops/bloodhound/cmd/api/src/ctx"
-	"github.com/specterops/bloodhound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/auth"
+	"github.com/specterops/apihound/cmd/api/src/config"
+	"github.com/specterops/apihound/cmd/api/src/ctx"
+	"github.com/specterops/apihound/cmd/api/src/model"
 )
 
 func TestLoginExpiry(t *testing.T) {

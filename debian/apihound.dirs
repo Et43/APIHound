@@ -1,0 +1,5 @@
+usr/lib/apihound/bin
+etc/apihound
+etc/apihound/collectors
+var/log/apihound
+var/lib/apihound

@@ -257,7 +257,7 @@ const handlers = [
                         key: 'butterfly_analysis',
                         name: 'Enhanced Asset Inbound-Outbound Exposure Analysis',
                         description:
-                            'Enables more extensive analysis of attack path findings that allows BloodHound to help the user prioritize remediation of the most exposed assets.',
+                            'Enables more extensive analysis of attack path findings that allows APIHound to help the user prioritize remediation of the most exposed assets.',
                         enabled: true,
                         user_updatable: false,
                     },
@@ -287,7 +287,7 @@ const handlers = [
                         key: 'back_button_support',
                         name: 'Back Button Support',
                         description:
-                            'Enable users to quickly navigate between views in a wider range of scenarios by utilizing the browser navigation buttons. Currently for BloodHound Community Edition users only.',
+                            'Enable users to quickly navigate between views in a wider range of scenarios by utilizing the browser navigation buttons. Currently for APIHound Community Edition users only.',
                         enabled: true,
                         user_updatable: false,
                     },

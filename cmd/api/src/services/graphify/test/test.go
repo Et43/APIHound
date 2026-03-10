@@ -26,8 +26,8 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 
 	"github.com/peterldowns/pgtestdb"
-	"github.com/specterops/bloodhound/cmd/api/src/test/integration/utils"
-	"github.com/specterops/bloodhound/packages/go/graphschema"
+	"github.com/specterops/apihound/cmd/api/src/test/integration/utils"
+	"github.com/specterops/apihound/packages/go/graphschema"
 	"github.com/specterops/dawgs"
 	"github.com/specterops/dawgs/drivers/pg"
 	"github.com/specterops/dawgs/graph"

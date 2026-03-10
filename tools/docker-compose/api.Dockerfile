@@ -30,7 +30,7 @@ ARG AZUREHOUND_VERSION
 WORKDIR /tmp/sharphound
 
 # Make some additional directories for minimal container to copy
-RUN mkdir -p /opt/bloodhound /etc/bloodhound /var/log
+RUN mkdir -p /opt/apihound /etc/apihound /var/log
 RUN apk --no-cache add p7zip
 
 # Package Sharphound
@@ -65,7 +65,7 @@ FROM docker.io/library/golang:1.24.13-alpine3.22
 ARG SHARPHOUND_VERSION
 ARG AZUREHOUND_VERSION
 ENV GOFLAGS="-buildvcs=false"
-WORKDIR /bloodhound
+WORKDIR /apihound
 VOLUME [ "/go/pkg/mod" ]
 
 RUN mkdir -p /bhapi/collectors/azurehound /bhapi/collectors/sharphound /bhapi/work

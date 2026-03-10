@@ -24,7 +24,7 @@ import (
 // UpsertRemediation validates and upserts a remediation.
 // If the remediation exists for the finding ID, it is updated. If it doesn't already exist, it is created.
 // Findings information must be inserted first before inserting remediation information.
-func (s *BloodhoundDB) UpsertRemediation(ctx context.Context, findingId int32, shortDescription, longDescription, shortRemediation, longRemediation string) error {
+func (s *ApihoundDB) UpsertRemediation(ctx context.Context, findingId int32, shortDescription, longDescription, shortRemediation, longRemediation string) error {
 	if _, err := s.GetRemediationByFindingId(ctx, findingId); err != nil && !errors.Is(err, ErrNotFound) {
 		return fmt.Errorf("error retrieving remediation by finding id '%d': %w", findingId, err)
 	} else if err == nil {

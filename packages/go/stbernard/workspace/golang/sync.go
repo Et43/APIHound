@@ -23,8 +23,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/specterops/bloodhound/packages/go/stbernard/cmdrunner"
-	"github.com/specterops/bloodhound/packages/go/stbernard/environment"
+	"github.com/specterops/apihound/packages/go/stbernard/cmdrunner"
+	"github.com/specterops/apihound/packages/go/stbernard/environment"
 )
 
 // TidyModules runs go mod tidy for all module paths passed

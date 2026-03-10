@@ -20,7 +20,7 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/specterops/bloodhound/packages/go/bhlog/attr"
+	"github.com/specterops/apihound/packages/go/bhlog/attr"
 	"github.com/specterops/dawgs/graph"
 	"github.com/specterops/dawgs/util/channels"
 )

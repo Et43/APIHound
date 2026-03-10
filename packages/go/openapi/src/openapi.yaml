@@ -21,26 +21,26 @@ servers:
   - url: /
     description: This is the base path for all endpoints, relative to the domain where the API is being hosted.
 info:
-  title: BloodHound API
+  title: APIHound API
   contact:
-    name: BloodHound Enterprise Support
-    url: https://bloodhound.specterops.io/
+    name: APIHound Enterprise Support
+    url: https://apihound.specterops.io/
     email: support@specterops.io
   license:
     name: Apache-2.0
     url: https://www.apache.org/licenses/LICENSE-2.0
   version: 'v2'
   description: |
-    This is the API that drives BloodHound Enterprise and Community Edition.
+    This is the API that drives APIHound Enterprise and Community Edition.
     Endpoint availability is denoted using the `Community` and `Enterprise` tags.
 
-    Contact information listed is for BloodHound Enterprise customers. To get help with
-    BloodHound Community Edition, please join our
+    Contact information listed is for APIHound Enterprise customers. To get help with
+    APIHound Community Edition, please join our
     [Slack community](https://ghst.ly/BHSlack/).
 
     ## Authentication
 
-    The BloodHound API supports two kinds of authentication: JWT bearer tokens and Signed Requests.
+    The APIHound API supports two kinds of authentication: JWT bearer tokens and Signed Requests.
     For quick tests or one-time calls, the JWT used by your browser may be the simplest route. For
     more secure and long lived API integrations, the recommended option is signed requests.
 
@@ -51,13 +51,13 @@ info:
     Authorization: Bearer $JWT_TOKEN
     ```
     If you open the Network tab within your browser, you will see calls against the API made utilizing
-    this structure. JWT bearer tokens are supported by the BloodHound API, however it is recommended
+    this structure. JWT bearer tokens are supported by the APIHound API, however it is recommended
     they only be used for temporary access. JWT tokens expire after a set amount of time and require
     re-authentication using secret credentials.
 
     ### Signed Requests
 
-    Signed requests are the recommended form of authentication for the BloodHound API. Not only are
+    Signed requests are the recommended form of authentication for the APIHound API. Not only are
     signed requests better for long lived integrations, they also provide more security for the
     requests being sent. They provide authentication of the client, as well as verification of request
     integrity when received by the server.
@@ -73,14 +73,14 @@ info:
     ```
 
     To use signed requests, you will need to generate an API token. Each API token generated in the
-    BloodHound API comes with two parts: The Token ID, which is used in the `Authorization` header,
+    APIHound API comes with two parts: The Token ID, which is used in the `Authorization` header,
     and the Token Key, which is used as part of the HMAC hashing process. The token ID should be
     considered as public (like a username) and the token key should be considered secret (like a
     password). Once an API token is generated, you can use the key to sign requests.
 
     For more documentation about how to work with authentication in the API, including examples
-    of how to generate an API token in the BloodHound UI, please refer to this support doc:
-    [Working with the BloodHound API](https://bloodhound.specterops.io/integrations/bloodhound-api/working-with-api).
+    of how to generate an API token in the APIHound UI, please refer to this support doc:
+    [Working with the APIHound API](https://apihound.specterops.io/integrations/apihound-api/working-with-api).
 
     #### Signed Request Pseudo-code Example
 
@@ -153,7 +153,7 @@ x-tagGroups:
       - Roles
       - Permissions
       - API Tokens
-      - BloodHound Users
+      - APIHound Users
       - Collectors
       - Collection Uploads
       - Custom Node Management
@@ -250,18 +250,18 @@ paths:
     $ref: './paths/tokens.tokens.id.yaml'
 
   # user management
-  /api/v2/bloodhound-users:
-    $ref: './paths/bh-users.bloodhound-users.yaml'
-  /api/v2/bloodhound-users-minimal:
-    $ref: './paths/bh-users.bloodhound-users-minimal.yaml'
-  /api/v2/bloodhound-users/{user_id}:
-    $ref: './paths/bh-users.bloodhound-users.id.yaml'
-  /api/v2/bloodhound-users/{user_id}/secret:
-    $ref: './paths/bh-users.bloodhound-users.id.secret.yaml'
-  /api/v2/bloodhound-users/{user_id}/mfa:
-    $ref: './paths/bh-users.bloodhound-users.id.mfa.yaml'
-  /api/v2/bloodhound-users/{user_id}/mfa-activation:
-    $ref: './paths/bh-users.bloodhound-users.id.mfa-activation.yaml'
+  /api/v2/apihound-users:
+    $ref: './paths/bh-users.apihound-users.yaml'
+  /api/v2/apihound-users-minimal:
+    $ref: './paths/bh-users.apihound-users-minimal.yaml'
+  /api/v2/apihound-users/{user_id}:
+    $ref: './paths/bh-users.apihound-users.id.yaml'
+  /api/v2/apihound-users/{user_id}/secret:
+    $ref: './paths/bh-users.apihound-users.id.secret.yaml'
+  /api/v2/apihound-users/{user_id}/mfa:
+    $ref: './paths/bh-users.apihound-users.id.mfa.yaml'
+  /api/v2/apihound-users/{user_id}/mfa-activation:
+    $ref: './paths/bh-users.apihound-users.id.mfa-activation.yaml'
 
   # collectors
   /api/v2/collectors/{collector_type}:

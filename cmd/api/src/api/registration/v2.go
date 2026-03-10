@@ -22,15 +22,15 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"github.com/specterops/bloodhound/cmd/api/src/api"
-	"github.com/specterops/bloodhound/cmd/api/src/api/middleware"
-	"github.com/specterops/bloodhound/cmd/api/src/api/router"
-	v2 "github.com/specterops/bloodhound/cmd/api/src/api/v2"
-	authapi "github.com/specterops/bloodhound/cmd/api/src/api/v2/auth"
-	"github.com/specterops/bloodhound/cmd/api/src/auth"
-	"github.com/specterops/bloodhound/cmd/api/src/model/appcfg"
-	"github.com/specterops/bloodhound/packages/go/openapi"
-	"github.com/specterops/bloodhound/packages/go/params"
+	"github.com/specterops/apihound/cmd/api/src/api"
+	"github.com/specterops/apihound/cmd/api/src/api/middleware"
+	"github.com/specterops/apihound/cmd/api/src/api/router"
+	v2 "github.com/specterops/apihound/cmd/api/src/api/v2"
+	authapi "github.com/specterops/apihound/cmd/api/src/api/v2/auth"
+	"github.com/specterops/apihound/cmd/api/src/auth"
+	"github.com/specterops/apihound/cmd/api/src/model/appcfg"
+	"github.com/specterops/apihound/packages/go/openapi"
+	"github.com/specterops/apihound/packages/go/params"
 )
 
 func registerV2Auth(resources v2.Resources, routerInst *router.Router, permissions auth.PermissionSet) {
@@ -88,22 +88,22 @@ func registerV2Auth(resources v2.Resources, routerInst *router.Router, permissio
 		routerInst.GET("/api/v2/roles", managementResource.ListRoles).RequirePermissions(permissions.AuthManageSelf),
 		routerInst.GET(fmt.Sprintf("/api/v2/roles/{%s}", api.URIPathVariableRoleID), managementResource.GetRole).RequirePermissions(permissions.AuthManageSelf),
 
-		// User management for all BloodHound users
-		routerInst.GET("/api/v2/bloodhound-users", managementResource.ListUsers).RequirePermissions(permissions.AuthManageUsers),
-		routerInst.POST("/api/v2/bloodhound-users", managementResource.CreateUser).RequirePermissions(permissions.AuthManageUsers),
-		routerInst.GET("/api/v2/bloodhound-users-minimal", managementResource.ListActiveUsersMinimal).RequirePermissions(permissions.AuthReadUsers), // returns user data without any sensitive information.
+		// User management for all APIHound users
+		routerInst.GET("/api/v2/apihound-users", managementResource.ListUsers).RequirePermissions(permissions.AuthManageUsers),
+		routerInst.POST("/api/v2/apihound-users", managementResource.CreateUser).RequirePermissions(permissions.AuthManageUsers),
+		routerInst.GET("/api/v2/apihound-users-minimal", managementResource.ListActiveUsersMinimal).RequirePermissions(permissions.AuthReadUsers), // returns user data without any sensitive information.
 
-		routerInst.GET(fmt.Sprintf("/api/v2/bloodhound-users/{%s}", api.URIPathVariableUserID), managementResource.GetUser).RequirePermissions(permissions.AuthManageUsers),
-		routerInst.PATCH(fmt.Sprintf("/api/v2/bloodhound-users/{%s}", api.URIPathVariableUserID), managementResource.UpdateUser).RequirePermissions(permissions.AuthManageUsers),
-		routerInst.DELETE(fmt.Sprintf("/api/v2/bloodhound-users/{%s}", api.URIPathVariableUserID), managementResource.DeleteUser).RequirePermissions(permissions.AuthManageUsers),
+		routerInst.GET(fmt.Sprintf("/api/v2/apihound-users/{%s}", api.URIPathVariableUserID), managementResource.GetUser).RequirePermissions(permissions.AuthManageUsers),
+		routerInst.PATCH(fmt.Sprintf("/api/v2/apihound-users/{%s}", api.URIPathVariableUserID), managementResource.UpdateUser).RequirePermissions(permissions.AuthManageUsers),
+		routerInst.DELETE(fmt.Sprintf("/api/v2/apihound-users/{%s}", api.URIPathVariableUserID), managementResource.DeleteUser).RequirePermissions(permissions.AuthManageUsers),
 
-		routerInst.PUT(fmt.Sprintf("/api/v2/bloodhound-users/{%s}/secret", api.URIPathVariableUserID), managementResource.PutUserAuthSecret).AuthorizeUserManagementAccess().RequireUserId(),
-		routerInst.DELETE(fmt.Sprintf("/api/v2/bloodhound-users/{%s}/secret", api.URIPathVariableUserID), managementResource.ExpireUserAuthSecret).AuthorizeUserManagementAccess().RequireUserId(),
+		routerInst.PUT(fmt.Sprintf("/api/v2/apihound-users/{%s}/secret", api.URIPathVariableUserID), managementResource.PutUserAuthSecret).AuthorizeUserManagementAccess().RequireUserId(),
+		routerInst.DELETE(fmt.Sprintf("/api/v2/apihound-users/{%s}/secret", api.URIPathVariableUserID), managementResource.ExpireUserAuthSecret).AuthorizeUserManagementAccess().RequireUserId(),
 
-		routerInst.POST(fmt.Sprintf("/api/v2/bloodhound-users/{%s}/mfa", api.URIPathVariableUserID), managementResource.EnrollMFA).AuthorizeUserManagementAccess().RequireUserId(),
-		routerInst.DELETE(fmt.Sprintf("/api/v2/bloodhound-users/{%s}/mfa", api.URIPathVariableUserID), managementResource.DisenrollMFA).AuthorizeUserManagementAccess().RequireUserId(),
-		routerInst.GET(fmt.Sprintf("/api/v2/bloodhound-users/{%s}/mfa-activation", api.URIPathVariableUserID), managementResource.GetMFAActivationStatus).AuthorizeUserManagementAccess().RequireUserId(),
-		routerInst.POST(fmt.Sprintf("/api/v2/bloodhound-users/{%s}/mfa-activation", api.URIPathVariableUserID), managementResource.ActivateMFA).AuthorizeUserManagementAccess().RequireUserId(),
+		routerInst.POST(fmt.Sprintf("/api/v2/apihound-users/{%s}/mfa", api.URIPathVariableUserID), managementResource.EnrollMFA).AuthorizeUserManagementAccess().RequireUserId(),
+		routerInst.DELETE(fmt.Sprintf("/api/v2/apihound-users/{%s}/mfa", api.URIPathVariableUserID), managementResource.DisenrollMFA).AuthorizeUserManagementAccess().RequireUserId(),
+		routerInst.GET(fmt.Sprintf("/api/v2/apihound-users/{%s}/mfa-activation", api.URIPathVariableUserID), managementResource.GetMFAActivationStatus).AuthorizeUserManagementAccess().RequireUserId(),
+		routerInst.POST(fmt.Sprintf("/api/v2/apihound-users/{%s}/mfa-activation", api.URIPathVariableUserID), managementResource.ActivateMFA).AuthorizeUserManagementAccess().RequireUserId(),
 
 		routerInst.POST("/api/v2/tokens", managementResource.CreateAuthToken).RequirePermissions(permissions.AuthCreateToken).AuthorizeUserManagementAccess(),
 		routerInst.GET("/api/v2/tokens", managementResource.ListAuthTokens).RequirePermissions(permissions.AuthCreateToken).AuthorizeUserManagementAccess(),
@@ -111,7 +111,7 @@ func registerV2Auth(resources v2.Resources, routerInst *router.Router, permissio
 	)
 }
 
-// NewV2API sets up dependencies, authorization and a router, and then defines the BloodHound V2 API endpoints on said router
+// NewV2API sets up dependencies, authorization and a router, and then defines the APIHound V2 API endpoints on said router
 func NewV2API(resources v2.Resources, routerInst *router.Router) {
 	var permissions = auth.Permissions()
 

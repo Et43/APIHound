@@ -17,17 +17,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.bloodhound.name }}
+  name: {{ .Values.apihound.name }}
   namespace: {{ .Values.namespace }}
 spec:
-  replicas: {{ .Values.bloodhound.replicas }}
+  replicas: {{ .Values.apihound.replicas }}
   selector:
     matchLabels:
-      app: {{ .Values.bloodhound.appName }}
+      app: {{ .Values.apihound.appName }}
   template:
     metadata:
       labels:
-        app: {{ .Values.bloodhound.appName }}
+        app: {{ .Values.apihound.appName }}
     spec:
       initContainers:
       - name: check-db-availability
@@ -40,26 +40,26 @@ spec:
             sleep 5;
           done;
       containers:
-      - name: {{ .Values.bloodhound.container.name }}
-        image: {{ .Values.bloodhound.container.image }}:{{ .Values.bloodhound.container.version }}
+      - name: {{ .Values.apihound.container.name }}
+        image: {{ .Values.apihound.container.image }}:{{ .Values.apihound.container.version }}
         env:
         - name: bhe_disable_cypher_complexity_limit
-          value: "{{ .Values.bloodhound.container.env.bhe_disable_cypher_complexity_limit }}"
+          value: "{{ .Values.apihound.container.env.bhe_disable_cypher_complexity_limit }}"
         - name: bhe_enable_cypher_mutations
-          value: "{{ .Values.bloodhound.container.env.bhe_enable_cypher_mutations }}"
+          value: "{{ .Values.apihound.container.env.bhe_enable_cypher_mutations }}"
         - name: bhe_graph_query_memory_limit
-          value: "{{ .Values.bloodhound.container.env.bhe_graph_query_memory_limit}}"
+          value: "{{ .Values.apihound.container.env.bhe_graph_query_memory_limit}}"
         ports:
-        - containerPort: {{ (index .Values.bloodhound.container.ports 0).containerPort }}
-        {{- if .Values.bloodhound.configMap.enabled }}
+        - containerPort: {{ (index .Values.apihound.container.ports 0).containerPort }}
+        {{- if .Values.apihound.configMap.enabled }}
         volumeMounts:
-        - name: bloodhound-config
-          mountPath: /bloodhound.config.json
-          subPath: bloodhound.config.json
+        - name: apihound-config
+          mountPath: /apihound.config.json
+          subPath: apihound.config.json
         {{- end }}
-      {{- if .Values.bloodhound.configMap.enabled }}
+      {{- if .Values.apihound.configMap.enabled }}
       volumes:
-      - name: bloodhound-config
+      - name: apihound-config
         configMap:
-          name: {{ .Values.bloodhound.configMap.name }}
+          name: {{ .Values.apihound.configMap.name }}
       {{- end }}

@@ -26,11 +26,11 @@ import (
 	"time"
 
 	iso8601 "github.com/channelmeter/iso8601duration"
-	"github.com/specterops/bloodhound/cmd/api/src/database/types"
-	"github.com/specterops/bloodhound/cmd/api/src/model"
-	"github.com/specterops/bloodhound/cmd/api/src/utils"
-	"github.com/specterops/bloodhound/cmd/api/src/utils/validation"
-	"github.com/specterops/bloodhound/packages/go/bhlog/attr"
+	"github.com/specterops/apihound/cmd/api/src/database/types"
+	"github.com/specterops/apihound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/utils"
+	"github.com/specterops/apihound/cmd/api/src/utils/validation"
+	"github.com/specterops/apihound/packages/go/bhlog/attr"
 	"github.com/specterops/dawgs/drivers/neo4j"
 )
 

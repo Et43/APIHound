@@ -34,13 +34,13 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/unrolled/secure"
 
-	"github.com/specterops/bloodhound/cmd/api/src/api"
-	"github.com/specterops/bloodhound/cmd/api/src/config"
-	"github.com/specterops/bloodhound/cmd/api/src/ctx"
-	"github.com/specterops/bloodhound/cmd/api/src/database"
-	"github.com/specterops/bloodhound/cmd/api/src/model"
-	"github.com/specterops/bloodhound/cmd/api/src/utils"
-	"github.com/specterops/bloodhound/packages/go/headers"
+	"github.com/specterops/apihound/cmd/api/src/api"
+	"github.com/specterops/apihound/cmd/api/src/config"
+	"github.com/specterops/apihound/cmd/api/src/ctx"
+	"github.com/specterops/apihound/cmd/api/src/database"
+	"github.com/specterops/apihound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/utils"
+	"github.com/specterops/apihound/packages/go/headers"
 )
 
 // Wrapper is an iterator for middleware function application that wraps around a http.Handler.
@@ -106,7 +106,7 @@ func RequestWaitDuration(request *http.Request, bypassLimitsParam bool) (time.Du
 	return requestedWaitDuration, nil
 }
 
-// ContextMiddleware is a middleware function that sets the BloodHound context per-request. It also sets the request ID.
+// ContextMiddleware is a middleware function that sets the APIHound context per-request. It also sets the request ID.
 // bypassLimitsParam determines whether endpoints can bypass timeout limits entirely via the prefer:wait=-1 header.
 func ContextMiddleware(bypassLimitsParam bool) mux.MiddlewareFunc {
 	return func(next http.Handler) http.Handler {

@@ -21,7 +21,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/specterops/bloodhound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/model"
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm/utils"
 )

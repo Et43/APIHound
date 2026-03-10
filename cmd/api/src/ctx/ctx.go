@@ -23,8 +23,8 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/specterops/bloodhound/cmd/api/src/auth"
-	"github.com/specterops/bloodhound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/auth"
+	"github.com/specterops/apihound/cmd/api/src/model"
 )
 
 // Use our own type rather than a primitive to avoid collisions
@@ -49,13 +49,13 @@ func (s *Context) ConstructGoContext() context.Context {
 	return context.WithValue(context.Background(), ValueKey, s)
 }
 
-// WithUserSession adds the supplied AuthCtx value to the BloodHound Context structure
+// WithUserSession adds the supplied AuthCtx value to the APIHound Context structure
 func (s *Context) WithUserSession(userSession auth.Context) *Context {
 	s.AuthCtx = userSession
 	return s
 }
 
-// WithRequestID adds the supplied RequestID value to the BloodHound Context structure
+// WithRequestID adds the supplied RequestID value to the APIHound Context structure
 func (s *Context) WithRequestID(requestID string) *Context {
 	s.RequestID = requestID
 	return s
@@ -66,12 +66,12 @@ func (s *Context) WithHost(host *url.URL) *Context {
 	return s
 }
 
-// FromRequest extracts the Golang-builtin-Context from a request and converts it to a BloodHound Context struct
+// FromRequest extracts the Golang-builtin-Context from a request and converts it to a APIHound Context struct
 func FromRequest(request *http.Request) *Context {
 	return Get(request.Context())
 }
 
-// Get converts a Golang-builtin-Context into a BloodHound-defined Context struct
+// Get converts a Golang-builtin-Context into a APIHound-defined Context struct
 func Get(ctx context.Context) *Context {
 	if ctx == nil {
 		return &Context{}
@@ -94,7 +94,7 @@ func RequestID(request *http.Request) string {
 	return FromRequest(request).RequestID
 }
 
-// SetRequestContext sets the given BloodHound Context pointer into the request's context. The resulting, new request pointer
+// SetRequestContext sets the given APIHound Context pointer into the request's context. The resulting, new request pointer
 // is then returned.
 func SetRequestContext(request *http.Request, bhCtx *Context) *http.Request {
 	newRequestContext := context.WithValue(request.Context(), ValueKey, bhCtx)

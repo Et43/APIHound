@@ -24,10 +24,10 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
-	"github.com/specterops/bloodhound/cmd/api/src/auth"
-	"github.com/specterops/bloodhound/cmd/api/src/ctx"
-	"github.com/specterops/bloodhound/cmd/api/src/database/types"
-	"github.com/specterops/bloodhound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/auth"
+	"github.com/specterops/apihound/cmd/api/src/ctx"
+	"github.com/specterops/apihound/cmd/api/src/database/types"
+	"github.com/specterops/apihound/cmd/api/src/model"
 	"gorm.io/gorm"
 )
 
@@ -70,7 +70,7 @@ func newAuditLog(context context.Context, entry model.AuditEntry, idResolver aut
 	return auditLog, nil
 }
 
-func (s *BloodhoundDB) AppendAuditLog(ctx context.Context, entry model.AuditEntry) error {
+func (s *ApihoundDB) AppendAuditLog(ctx context.Context, entry model.AuditEntry) error {
 	if auditLog, err := newAuditLog(ctx, entry, s.idResolver); err != nil && !errors.Is(err, ErrAuthContextInvalid) {
 		return fmt.Errorf("audit log append: %w", err)
 	} else {
@@ -78,11 +78,11 @@ func (s *BloodhoundDB) AppendAuditLog(ctx context.Context, entry model.AuditEntr
 	}
 }
 
-func (s *BloodhoundDB) CreateAuditLog(ctx context.Context, auditLog model.AuditLog) error {
+func (s *ApihoundDB) CreateAuditLog(ctx context.Context, auditLog model.AuditLog) error {
 	return CheckError(s.db.WithContext(ctx).Create(&auditLog))
 }
 
-func (s *BloodhoundDB) ListAuditLogs(ctx context.Context, before, after time.Time, offset, limit int, order string, filter model.SQLFilter) (model.AuditLogs, int, error) {
+func (s *ApihoundDB) ListAuditLogs(ctx context.Context, before, after time.Time, offset, limit int, order string, filter model.SQLFilter) (model.AuditLogs, int, error) {
 	var (
 		auditLogs model.AuditLogs
 		result    *gorm.DB
@@ -91,7 +91,7 @@ func (s *BloodhoundDB) ListAuditLogs(ctx context.Context, before, after time.Tim
 	)
 
 	// This code went through a partial refactor when adding support for new fields.
-	// See the comments here for more information: https://github.com/SpecterOps/BloodHound/pull/297#issuecomment-1887640827
+	// See the comments here for more information: https://github.com/SpecterOps/APIHound/pull/297#issuecomment-1887640827
 
 	if filter.SQLString != "" {
 		result = s.db.Model(&auditLogs).WithContext(ctx).Where(filter.SQLString, filter.Params...).Count(&count)
@@ -116,7 +116,7 @@ func (s *BloodhoundDB) ListAuditLogs(ctx context.Context, before, after time.Tim
 	return auditLogs, int(count), CheckError(result)
 }
 
-func (s *BloodhoundDB) MaybeAuditableTransaction(ctx context.Context, auditDisabled bool, auditEntry model.AuditEntry, f func(tx *gorm.DB) error, opts ...*sql.TxOptions) error {
+func (s *ApihoundDB) MaybeAuditableTransaction(ctx context.Context, auditDisabled bool, auditEntry model.AuditEntry, f func(tx *gorm.DB) error, opts ...*sql.TxOptions) error {
 	if auditDisabled {
 		return s.db.WithContext(ctx).Transaction(f, opts...)
 	} else {
@@ -124,7 +124,7 @@ func (s *BloodhoundDB) MaybeAuditableTransaction(ctx context.Context, auditDisab
 	}
 }
 
-func (s *BloodhoundDB) AuditableTransaction(ctx context.Context, auditEntry model.AuditEntry, f func(tx *gorm.DB) error, opts ...*sql.TxOptions) error {
+func (s *ApihoundDB) AuditableTransaction(ctx context.Context, auditEntry model.AuditEntry, f func(tx *gorm.DB) error, opts ...*sql.TxOptions) error {
 	var (
 		commitID, err = uuid.NewV4()
 	)

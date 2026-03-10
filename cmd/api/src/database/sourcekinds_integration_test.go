@@ -21,7 +21,7 @@ package database_test
 import (
 	"testing"
 
-	"github.com/specterops/bloodhound/cmd/api/src/database"
+	"github.com/specterops/apihound/cmd/api/src/database"
 	"github.com/specterops/dawgs/graph"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -256,7 +256,7 @@ func TestGetSourceKindByName(t *testing.T) {
 	}
 }
 
-func TestBloodhoundDB_GetSourceKindByID(t *testing.T) {
+func TestApihoundDB_GetSourceKindByID(t *testing.T) {
 	var (
 		testSuite = setupIntegrationTestSuite(t)
 	)
@@ -496,7 +496,7 @@ func TestDeactivateSourceKindsByName(t *testing.T) {
 	}
 }
 
-func TestBloodhoundDB_GetSourceKindByIDs(t *testing.T) {
+func TestApihoundDB_GetSourceKindByIDs(t *testing.T) {
 	var (
 		testSuite = setupIntegrationTestSuite(t)
 	)

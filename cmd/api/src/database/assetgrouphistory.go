@@ -22,8 +22,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/specterops/bloodhound/cmd/api/src/database/types/null"
-	"github.com/specterops/bloodhound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/database/types/null"
+	"github.com/specterops/apihound/cmd/api/src/model"
 )
 
 // AssetGroupHistoryData defines the methods required to interact with the asset_group_history table
@@ -33,17 +33,17 @@ type AssetGroupHistoryData interface {
 	DeleteAssetGroupHistoryRecordsByCreatedDate(ctx context.Context, createdAt time.Time) (int64, error)
 }
 
-func (s *BloodhoundDB) CreateAssetGroupHistoryRecord(ctx context.Context, actorId, emailAddress string, target string, action model.AssetGroupHistoryAction, assetGroupTagId int, environmentId, note null.String) error {
+func (s *ApihoundDB) CreateAssetGroupHistoryRecord(ctx context.Context, actorId, emailAddress string, target string, action model.AssetGroupHistoryAction, assetGroupTagId int, environmentId, note null.String) error {
 	return CheckError(s.db.WithContext(ctx).Exec(fmt.Sprintf("INSERT INTO %s (actor, email, target, action, asset_group_tag_id, environment_id, note, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())", (model.AssetGroupHistory{}).TableName()),
 		actorId, emailAddress, target, action, assetGroupTagId, environmentId, note))
 }
 
-func (s *BloodhoundDB) DeleteAssetGroupHistoryRecordsByCreatedDate(ctx context.Context, createdAt time.Time) (int64, error) {
+func (s *ApihoundDB) DeleteAssetGroupHistoryRecordsByCreatedDate(ctx context.Context, createdAt time.Time) (int64, error) {
 	result := s.db.WithContext(ctx).Exec(fmt.Sprintf("DELETE FROM %s WHERE created_at < ?", (model.AssetGroupHistory{}).TableName()), createdAt)
 	return result.RowsAffected, CheckError(result)
 }
 
-func (s *BloodhoundDB) GetAssetGroupHistoryRecords(ctx context.Context, sqlFilter model.SQLFilter, sortItems model.Sort, skip, limit int) ([]model.AssetGroupHistory, int, error) {
+func (s *ApihoundDB) GetAssetGroupHistoryRecords(ctx context.Context, sqlFilter model.SQLFilter, sortItems model.Sort, skip, limit int) ([]model.AssetGroupHistory, int, error) {
 	var (
 		historyRecs     []model.AssetGroupHistory
 		skipLimitString string

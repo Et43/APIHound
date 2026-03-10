@@ -23,9 +23,9 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/specterops/bloodhound/packages/go/stbernard/analyzers/codeclimate"
-	"github.com/specterops/bloodhound/packages/go/stbernard/cmdrunner"
-	"github.com/specterops/bloodhound/packages/go/stbernard/environment"
+	"github.com/specterops/apihound/packages/go/stbernard/analyzers/codeclimate"
+	"github.com/specterops/apihound/packages/go/stbernard/cmdrunner"
+	"github.com/specterops/apihound/packages/go/stbernard/environment"
 )
 
 // Run golangci-lint for all module paths passed to it

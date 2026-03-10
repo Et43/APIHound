@@ -9,14 +9,14 @@ export GOOS := env_var_or_default("GOOS", host_os)
 export GOARCH := env_var_or_default("GOARCH", host_arch)
 export INTEGRATION_CONFIG_PATH := env_var_or_default("INTEGRATION_CONFIG_PATH", absolute_path("./local-harnesses/integration.config.json"))
 export SB_LOG_LEVEL := env_var_or_default("SB_LOG_LEVEL", "info")
-export SB_PG_CONNECTION := env_var_or_default("SB_PG_CONNECTION", "user=bloodhound password=bloodhoundcommunityedition dbname=bloodhound host=localhost port=65432")
+export SB_PG_CONNECTION := env_var_or_default("SB_PG_CONNECTION", "user=apihound password=apihoundcommunityedition dbname=apihound host=localhost port=65432")
 
 set positional-arguments
 
 # generate generic graph files
 [no-cd]
 bh-graphify path="":
-  @go run github.com/specterops/bloodhound/packages/go/graphify --path={{path}}
+  @go run github.com/specterops/apihound/packages/go/graphify --path={{path}}
 
 # run st bernard directly
 stbernard *ARGS:
@@ -160,14 +160,14 @@ bh-clean-docker-build target='dev' *ARGS='':
 bh-watch target='dev' *ARGS='--no-up':
   @docker compose --profile {{target}} -f docker-compose.dev.yml -f docker-compose.watch.yml watch {{ARGS}}
 
-# build local BHCE container image (ex: just build-bhce-container <linux/arm64|linux/amd64> edge v5.0.0)
-build-bhce-container platform='linux/amd64' tag='edge' version='v5.0.0' *ARGS='':
-  @docker buildx build -f dockerfiles/bloodhound.Dockerfile -t specterops/bloodhound:{{tag}} --platform={{platform}} --load --build-arg version={{version}}-{{tag}} {{ARGS}} .
+# build local APIHound container image (ex: just build-apihound-container <linux/arm64|linux/amd64> edge v5.0.0)
+build-apihound-container platform='linux/amd64' tag='edge' version='v5.0.0' *ARGS='':
+  @docker buildx build -f dockerfiles/apihound.Dockerfile -t specterops/apihound:{{tag}} --platform={{platform}} --load --build-arg version={{version}}-{{tag}} {{ARGS}} .
 
-# run local BHCE container image (ex: just build-bhce-container <linux/arm64|linux/amd64> custom v5.0.0)
-run-bhce-container platform='linux/amd64' tag='custom' version='v5.0.0' *ARGS='':
-  @just build-bhce-container {{platform}} {{tag}} {{version}} {{ARGS}}
-  @cd examples/docker-compose && BLOODHOUND_TAG={{tag}} docker compose up
+# run local APIHound container image (ex: just build-apihound-container <linux/arm64|linux/amd64> custom v5.0.0)
+run-apihound-container platform='linux/amd64' tag='custom' version='v5.0.0' *ARGS='':
+  @just build-apihound-container {{platform}} {{tag}} {{version}} {{ARGS}}
+  @cd examples/docker-compose && APIHOUND_TAG={{tag}} docker compose up
 
 # remove all node modules forcefully
 reset-node-modules:
@@ -180,7 +180,7 @@ reset-node-modules:
 # Initialize your dev environment (use "just init clean" to reset your config files)
 init wipe="":
   #!/usr/bin/env bash
-  echo "Init BloodHound CE"
+  echo "Init APIHound CE"
 
   echo "Make local copies of configuration files"
     if [[ -f "./local-harnesses/build.config.json" ]] && [[ "{{wipe}}" != "clean" ]]; then
@@ -264,4 +264,4 @@ init wipe="":
     just bh-testing build --no-cache
   fi
 
-  echo "BloodHound CE Init Complete"
+  echo "APIHound CE Init Complete"

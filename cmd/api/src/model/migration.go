@@ -19,7 +19,7 @@ package model
 import (
 	"time"
 
-	"github.com/specterops/bloodhound/cmd/api/src/version"
+	"github.com/specterops/apihound/cmd/api/src/version"
 )
 
 type Migration struct {

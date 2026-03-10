@@ -22,25 +22,25 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/specterops/bloodhound/cmd/api/src/config"
-	"github.com/specterops/bloodhound/cmd/api/src/daemons/changelog"
-	"github.com/specterops/bloodhound/cmd/api/src/database"
-	"github.com/specterops/bloodhound/cmd/api/src/model"
-	"github.com/specterops/bloodhound/cmd/api/src/model/appcfg"
-	"github.com/specterops/bloodhound/cmd/api/src/services/graphify"
-	"github.com/specterops/bloodhound/cmd/api/src/services/job"
-	"github.com/specterops/bloodhound/cmd/api/src/services/upload"
-	"github.com/specterops/bloodhound/packages/go/bhlog/attr"
-	"github.com/specterops/bloodhound/packages/go/bhlog/measure"
-	"github.com/specterops/bloodhound/packages/go/cache"
-	"github.com/specterops/bloodhound/packages/go/graphschema/ad"
-	"github.com/specterops/bloodhound/packages/go/graphschema/azure"
+	"github.com/specterops/apihound/cmd/api/src/config"
+	"github.com/specterops/apihound/cmd/api/src/daemons/changelog"
+	"github.com/specterops/apihound/cmd/api/src/database"
+	"github.com/specterops/apihound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/model/appcfg"
+	"github.com/specterops/apihound/cmd/api/src/services/graphify"
+	"github.com/specterops/apihound/cmd/api/src/services/job"
+	"github.com/specterops/apihound/cmd/api/src/services/upload"
+	"github.com/specterops/apihound/packages/go/bhlog/attr"
+	"github.com/specterops/apihound/packages/go/bhlog/measure"
+	"github.com/specterops/apihound/packages/go/cache"
+	"github.com/specterops/apihound/packages/go/graphschema/ad"
+	"github.com/specterops/apihound/packages/go/graphschema/azure"
 	"github.com/specterops/dawgs/graph"
 )
 
 var ErrAnalysisDisabled = errors.New("analysis is disabled by configuration")
 
-type BHCEPipeline struct {
+type APIHoundPipeline struct {
 	db                  database.Database
 	graphdb             graph.Database
 	cache               cache.Cache
@@ -52,8 +52,8 @@ type BHCEPipeline struct {
 	changelog           *changelog.Changelog
 }
 
-func NewPipeline(ctx context.Context, cfg config.Configuration, db database.Database, graphDB graph.Database, cache cache.Cache, ingestSchema upload.IngestSchema, cl *changelog.Changelog) *BHCEPipeline {
-	return &BHCEPipeline{
+func NewPipeline(ctx context.Context, cfg config.Configuration, db database.Database, graphDB graph.Database, cache cache.Cache, ingestSchema upload.IngestSchema, cl *changelog.Changelog) *APIHoundPipeline {
+	return &APIHoundPipeline{
 		db:                  db,
 		graphdb:             graphDB,
 		cache:               cache,
@@ -66,12 +66,12 @@ func NewPipeline(ctx context.Context, cfg config.Configuration, db database.Data
 	}
 }
 
-func (s *BHCEPipeline) Start(ctx context.Context) error {
+func (s *APIHoundPipeline) Start(ctx context.Context) error {
 	return s.PruneData(ctx)
 }
 
 // This handles the deletion of data if the customer requests it
-func (s *BHCEPipeline) DeleteData(ctx context.Context) error {
+func (s *APIHoundPipeline) DeleteData(ctx context.Context) error {
 	deleteRequest, ok := s.db.HasCollectedGraphDataDeletionRequest(ctx)
 	if !ok {
 		return nil
@@ -148,7 +148,7 @@ func filterDeletableKinds(kindsToDelete []string) graph.Kinds {
 
 // This is called on Daemon start. We get a list of all filenames we know/expect and delete any
 // other files. Would love to move this out of datapipe entirely eventually and into... somewhere
-func (s *BHCEPipeline) PruneData(ctx context.Context) error {
+func (s *APIHoundPipeline) PruneData(ctx context.Context) error {
 	if ingestTasks, err := s.db.GetAllIngestTasks(ctx); err != nil {
 		return fmt.Errorf("fetching available ingest tasks: %v", err)
 	} else {
@@ -165,7 +165,7 @@ func (s *BHCEPipeline) PruneData(ctx context.Context) error {
 
 // This is currently public to support as a first class testing seam, but with some refactoring may be split away from the
 // Daemon object enough to be self standing and pulled to an internal package namespace
-func (s *BHCEPipeline) IngestTasks(ctx context.Context) error {
+func (s *APIHoundPipeline) IngestTasks(ctx context.Context) error {
 	// Ingest all available ingest tasks
 	s.graphifyService.ProcessTasks(updateJobFunc(ctx, s.db))
 
@@ -216,11 +216,11 @@ func updateJobFunc(ctx context.Context, db database.Database) graphify.UpdateJob
 }
 
 // If the pipeline needs to do anything to the context, this is called before each other pipeline stage
-func (s *BHCEPipeline) IsPrimary(ctx context.Context, status model.DatapipeStatus) (bool, context.Context) {
+func (s *APIHoundPipeline) IsPrimary(ctx context.Context, status model.DatapipeStatus) (bool, context.Context) {
 	return true, ctx
 }
 
-func (s *BHCEPipeline) Analyze(ctx context.Context) error {
+func (s *APIHoundPipeline) Analyze(ctx context.Context) error {
 	// If there are completed ingest jobs or if analysis was user-requested, perform analysis.
 	if hasJobsWaitingForAnalysis, err := s.jobService.HasIngestJobsWaitingForAnalysis(); err != nil {
 		return fmt.Errorf("looking up jobs for analysis: %v", err)

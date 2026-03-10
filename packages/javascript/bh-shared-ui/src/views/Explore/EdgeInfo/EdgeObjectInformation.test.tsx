@@ -83,7 +83,7 @@ describe('EdgeObjectInformation', () => {
         expect(screen.getByText(/target_node/)).toBeInTheDocument();
         expect(screen.getByText(/Is ACL:/)).toBeInTheDocument();
         expect(screen.getByText(/FALSE/)).toBeInTheDocument();
-        expect(screen.getByText(/Last Seen by BloodHound:/)).toBeInTheDocument();
+        expect(screen.getByText(/Last Seen by APIHound:/)).toBeInTheDocument();
     });
 
     test('Error handling for fetching edge information', async () => {

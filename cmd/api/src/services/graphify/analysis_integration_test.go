@@ -23,9 +23,9 @@ import (
 	"path"
 	"testing"
 
-	"github.com/specterops/bloodhound/cmd/api/src/config"
-	"github.com/specterops/bloodhound/cmd/api/src/daemons/datapipe"
-	"github.com/specterops/bloodhound/packages/go/lab/generic"
+	"github.com/specterops/apihound/cmd/api/src/config"
+	"github.com/specterops/apihound/cmd/api/src/daemons/datapipe"
+	"github.com/specterops/apihound/packages/go/lab/generic"
 	"github.com/stretchr/testify/require"
 )
 

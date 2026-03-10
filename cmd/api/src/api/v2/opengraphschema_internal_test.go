@@ -18,7 +18,7 @@ package v2
 import (
 	"testing"
 
-	"github.com/specterops/bloodhound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/model"
 	"github.com/stretchr/testify/assert"
 )
 

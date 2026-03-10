@@ -18,10 +18,10 @@ services:
   app-db:
     image: docker.io/library/postgres:16
     environment:
-      - PGUSER=${POSTGRES_USER:-bloodhound}
-      - POSTGRES_USER=${POSTGRES_USER:-bloodhound}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-bloodhoundcommunityedition}
-      - POSTGRES_DB=${POSTGRES_DB:-bloodhound}
+      - PGUSER=${POSTGRES_USER:-apihound}
+      - POSTGRES_USER=${POSTGRES_USER:-apihound}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-apihoundcommunityedition}
+      - POSTGRES_DB=${POSTGRES_DB:-apihound}
     # Database ports are disabled by default. Please change your database password to something secure before uncommenting
     # ports:
     #   - 127.0.0.1:${POSTGRES_PORT:-5432}:5432
@@ -31,7 +31,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "pg_isready -U ${POSTGRES_USER:-bloodhound} -d ${POSTGRES_DB:-bloodhound} -h 127.0.0.1 -p 5432"
+          "pg_isready -U ${POSTGRES_USER:-apihound} -d ${POSTGRES_DB:-apihound} -h 127.0.0.1 -p 5432"
         ]
       interval: 10s
       timeout: 5s
@@ -41,7 +41,7 @@ services:
   graph-db:
     image: docker.io/library/neo4j:4.4.42
     environment:
-      - NEO4J_AUTH=${NEO4J_USER:-neo4j}/${NEO4J_SECRET:-bloodhoundcommunityedition}
+      - NEO4J_AUTH=${NEO4J_USER:-neo4j}/${NEO4J_SECRET:-apihoundcommunityedition}
       - NEO4J_dbms_allow__upgrade=${NEO4J_ALLOW_UPGRADE:-true}
     # Database ports are disabled by default. Please change your database password to something secure before uncommenting
     ports:
@@ -60,28 +60,28 @@ services:
       retries: 5
       start_period: 30s
 
-  bloodhound:
-    image: docker.io/specterops/bloodhound:${BLOODHOUND_TAG:-latest}
+  apihound:
+    image: docker.io/specterops/apihound:${APIHOUND_TAG:-latest}
     environment:
       - bhe_disable_cypher_complexity_limit=${bhe_disable_cypher_complexity_limit:-false}
       - bhe_enable_cypher_mutations=${bhe_enable_cypher_mutations:-false}
       - bhe_graph_query_memory_limit=${bhe_graph_query_memory_limit:-2}
-      - bhe_database_connection=user=${POSTGRES_USER:-bloodhound} password=${POSTGRES_PASSWORD:-bloodhoundcommunityedition} dbname=${POSTGRES_DB:-bloodhound} host=app-db
-      - bhe_neo4j_connection=neo4j://${NEO4J_USER:-neo4j}:${NEO4J_SECRET:-bloodhoundcommunityedition}@graph-db:7687/
+      - bhe_database_connection=user=${POSTGRES_USER:-apihound} password=${POSTGRES_PASSWORD:-apihoundcommunityedition} dbname=${POSTGRES_DB:-apihound} host=app-db
+      - bhe_neo4j_connection=neo4j://${NEO4J_USER:-neo4j}:${NEO4J_SECRET:-apihoundcommunityedition}@graph-db:7687/
       - bhe_recreate_default_admin=${bhe_recreate_default_admin:-false}
       - bhe_graph_driver=${GRAPH_DRIVER:-neo4j}
       ### Add additional environment variables you wish to use here.
       ### For common configuration options that you might want to use environment variables for, see `.env.example`
       ### example: bhe_database_connection=${bhe_database_connection}
-      ### The left side is the environment variable you're setting for bloodhound, the variable on the right in `${}`
+      ### The left side is the environment variable you're setting for apihound, the variable on the right in `${}`
       ### is the variable available outside of Docker
     ports:
       ### Default to localhost to prevent accidental publishing of the service to your outer networks
       ### These can be modified by your .env file or by setting the environment variables in your Docker host OS
-      - ${BLOODHOUND_HOST:-127.0.0.1}:${BLOODHOUND_PORT:-8080}:8080
-    ### Uncomment to use your own bloodhound.config.json to configure the application
+      - ${APIHOUND_HOST:-127.0.0.1}:${APIHOUND_PORT:-8080}:8080
+    ### Uncomment to use your own apihound.config.json to configure the application
     # volumes:
-    #   - ./bloodhound.config.json:/bloodhound.config.json:ro
+    #   - ./apihound.config.json:/apihound.config.json:ro
     depends_on:
       app-db:
         condition: service_healthy

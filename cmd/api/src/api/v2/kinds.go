@@ -21,8 +21,8 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/specterops/bloodhound/cmd/api/src/api"
-	"github.com/specterops/bloodhound/cmd/api/src/database"
+	"github.com/specterops/apihound/cmd/api/src/api"
+	"github.com/specterops/apihound/cmd/api/src/database"
 	"github.com/specterops/dawgs/graph"
 )
 

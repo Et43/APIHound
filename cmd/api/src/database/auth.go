@@ -29,11 +29,11 @@ import (
 	"github.com/gofrs/uuid"
 	"gorm.io/gorm"
 
-	"github.com/specterops/bloodhound/cmd/api/src/auth"
-	"github.com/specterops/bloodhound/cmd/api/src/database/types"
-	"github.com/specterops/bloodhound/cmd/api/src/database/types/null"
-	"github.com/specterops/bloodhound/cmd/api/src/model"
-	"github.com/specterops/bloodhound/cmd/api/src/model/appcfg"
+	"github.com/specterops/apihound/cmd/api/src/auth"
+	"github.com/specterops/apihound/cmd/api/src/database/types"
+	"github.com/specterops/apihound/cmd/api/src/database/types/null"
+	"github.com/specterops/apihound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/model/appcfg"
 )
 
 // NewClientAuthToken creates a new Client AuthToken row using the details provided
@@ -69,7 +69,7 @@ func NewClientAuthToken(ownerID uuid.UUID, hmacMethod string) (model.AuthToken, 
 
 // GetAllRoles retrieves all available roles in the db
 // SELECT * FROM roles
-func (s *BloodhoundDB) GetAllRoles(ctx context.Context, order string, filter model.SQLFilter) (model.Roles, error) {
+func (s *ApihoundDB) GetAllRoles(ctx context.Context, order string, filter model.SQLFilter) (model.Roles, error) {
 	var (
 		roles  model.Roles
 		cursor = s.preload(model.RoleAssociations()).WithContext(ctx)
@@ -87,7 +87,7 @@ func (s *BloodhoundDB) GetAllRoles(ctx context.Context, order string, filter mod
 
 // GetRoles retrieves all rows in the Roles table corresponding to the provided list of IDs
 // SELECT * FROM roles where ID in (...)
-func (s *BloodhoundDB) GetRoles(ctx context.Context, ids []int32) (model.Roles, error) {
+func (s *ApihoundDB) GetRoles(ctx context.Context, ids []int32) (model.Roles, error) {
 	var (
 		roles  model.Roles
 		result = s.preload(model.RoleAssociations()).WithContext(ctx).Where("id in ?", ids).Find(&roles)
@@ -98,7 +98,7 @@ func (s *BloodhoundDB) GetRoles(ctx context.Context, ids []int32) (model.Roles, 
 
 // GetRole retrieves the role associated with the provided ID
 // SELECT * FROM roles WHERE role_id = ....
-func (s *BloodhoundDB) GetRole(ctx context.Context, id int32) (model.Role, error) {
+func (s *ApihoundDB) GetRole(ctx context.Context, id int32) (model.Role, error) {
 	var (
 		role   model.Role
 		result = s.preload(model.RoleAssociations()).WithContext(ctx).First(&role, id)
@@ -109,7 +109,7 @@ func (s *BloodhoundDB) GetRole(ctx context.Context, id int32) (model.Role, error
 
 // GetAllPermissions retrieves all rows from the Permissions table
 // SELECT * FROM permissions
-func (s *BloodhoundDB) GetAllPermissions(ctx context.Context, order string, filter model.SQLFilter) (model.Permissions, error) {
+func (s *ApihoundDB) GetAllPermissions(ctx context.Context, order string, filter model.SQLFilter) (model.Permissions, error) {
 	var (
 		permissions model.Permissions
 		cursor      = s.db.WithContext(ctx)
@@ -128,7 +128,7 @@ func (s *BloodhoundDB) GetAllPermissions(ctx context.Context, order string, filt
 
 // GetPermission retrieves a row in the Permissions table corresponding to the ID provided
 // SELECT * FROM permissions WHERE permission_id = ...
-func (s *BloodhoundDB) GetPermission(ctx context.Context, id int) (model.Permission, error) {
+func (s *ApihoundDB) GetPermission(ctx context.Context, id int) (model.Permission, error) {
 	var (
 		permission model.Permission
 		result     = s.db.WithContext(ctx).First(&permission, id)
@@ -138,7 +138,7 @@ func (s *BloodhoundDB) GetPermission(ctx context.Context, id int) (model.Permiss
 }
 
 // InitializeSecretAuth creates new AuthSecret, User and Installation entries based on the input provided
-func (s *BloodhoundDB) InitializeSecretAuth(ctx context.Context, adminUser model.User, authSecret model.AuthSecret) (model.Installation, error) {
+func (s *ApihoundDB) InitializeSecretAuth(ctx context.Context, adminUser model.User, authSecret model.AuthSecret) (model.Installation, error) {
 	var (
 		updatedAdminUser  = adminUser
 		updatedAuthSecret = authSecret
@@ -180,7 +180,7 @@ func (s *BloodhoundDB) InitializeSecretAuth(ctx context.Context, adminUser model
 
 // CreateInstallation creates a new Installation row
 // INSERT INTO installations(....) VALUES (...)
-func (s *BloodhoundDB) CreateInstallation(ctx context.Context) (model.Installation, error) {
+func (s *ApihoundDB) CreateInstallation(ctx context.Context) (model.Installation, error) {
 	if newID, err := uuid.NewV4(); err != nil {
 		return model.Installation{}, err
 	} else {
@@ -197,7 +197,7 @@ func (s *BloodhoundDB) CreateInstallation(ctx context.Context) (model.Installati
 
 // GetInstallation retrieves the first row from installations
 // SELECT TOP 1 * FROM installations
-func (s *BloodhoundDB) GetInstallation(ctx context.Context) (model.Installation, error) {
+func (s *ApihoundDB) GetInstallation(ctx context.Context) (model.Installation, error) {
 	var (
 		installation model.Installation
 		result       = s.db.WithContext(ctx).First(&installation)
@@ -208,7 +208,7 @@ func (s *BloodhoundDB) GetInstallation(ctx context.Context) (model.Installation,
 
 // HasInstallation checks if an installation exists
 // SELECT CASE WHEN EXISTS (SELECT 1 FROM installations) THEN true ELSE false END
-func (s *BloodhoundDB) HasInstallation(ctx context.Context) (bool, error) {
+func (s *ApihoundDB) HasInstallation(ctx context.Context) (bool, error) {
 	if _, err := s.GetInstallation(ctx); err != nil {
 		if errors.Is(err, ErrNotFound) {
 			return false, nil
@@ -222,7 +222,7 @@ func (s *BloodhoundDB) HasInstallation(ctx context.Context) (bool, error) {
 
 // CreateUser creates a new user
 // INSERT INTO users (...) VALUES (...)
-func (s *BloodhoundDB) CreateUser(ctx context.Context, user model.User) (model.User, error) {
+func (s *ApihoundDB) CreateUser(ctx context.Context, user model.User) (model.User, error) {
 	updatedUser := user
 
 	if newID, err := uuid.NewV4(); err != nil {
@@ -257,7 +257,7 @@ func (s *BloodhoundDB) CreateUser(ctx context.Context, user model.User) (model.U
 
 // UpdateUser updates the roles associated with the user according to the input struct
 // UPDATE users SET roles = ....
-func (s *BloodhoundDB) UpdateUser(ctx context.Context, user model.User) error {
+func (s *ApihoundDB) UpdateUser(ctx context.Context, user model.User) error {
 	// Ensure lowercase emails
 	user.EmailAddress = null.StringFrom(strings.ToLower(user.EmailAddress.ValueOrZero()))
 
@@ -274,7 +274,7 @@ func (s *BloodhoundDB) UpdateUser(ctx context.Context, user model.User) error {
 
 		// Clear a user's etac list before applying their new one when saving the user model
 		if user.AllEnvironments || user.EnvironmentTargetedAccessControl != nil {
-			bhdb := NewBloodhoundDB(tx, s.idResolver)
+			bhdb := NewApihoundDB(tx, s.idResolver)
 			if err := bhdb.DeleteEnvironmentTargetedAccessControlForUser(ctx, user); err != nil {
 				return fmt.Errorf("error deleting user's environment list: %w", err)
 			}
@@ -286,7 +286,7 @@ func (s *BloodhoundDB) UpdateUser(ctx context.Context, user model.User) error {
 			if err := tx.Raw("SELECT * FROM auth_secrets WHERE user_id = ?", user.ID).First(&authSecret).Error; err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 				return err
 			} else if authSecret.ID > 0 {
-				bhdb := NewBloodhoundDB(tx, s.idResolver)
+				bhdb := NewApihoundDB(tx, s.idResolver)
 				if err := bhdb.DeleteAuthSecret(ctx, authSecret); err != nil {
 					return err
 				}
@@ -307,7 +307,7 @@ func (s *BloodhoundDB) UpdateUser(ctx context.Context, user model.User) error {
 	})
 }
 
-func (s *BloodhoundDB) GetAllUsers(ctx context.Context, order string, filter model.SQLFilter) (model.Users, error) {
+func (s *ApihoundDB) GetAllUsers(ctx context.Context, order string, filter model.SQLFilter) (model.Users, error) {
 	var (
 		users  model.Users
 		result *gorm.DB
@@ -329,7 +329,7 @@ func (s *BloodhoundDB) GetAllUsers(ctx context.Context, order string, filter mod
 
 // GetUser returns the user associated with the provided ID
 // SELECT * FROM users WHERE id = ...
-func (s *BloodhoundDB) GetUser(ctx context.Context, id uuid.UUID) (model.User, error) {
+func (s *ApihoundDB) GetUser(ctx context.Context, id uuid.UUID) (model.User, error) {
 	var (
 		user   model.User
 		result = s.preload(model.UserAssociations()).WithContext(ctx).First(&user, id)
@@ -340,7 +340,7 @@ func (s *BloodhoundDB) GetUser(ctx context.Context, id uuid.UUID) (model.User, e
 
 // DeleteUser removes all roles for a given user, thereby revoking all permissions
 // UPDATE users SET roles = nil WHERE user_id = ....
-func (s *BloodhoundDB) DeleteUser(ctx context.Context, user model.User) error {
+func (s *ApihoundDB) DeleteUser(ctx context.Context, user model.User) error {
 	auditEntry := model.AuditEntry{
 		Action: model.AuditLogActionDeleteUser,
 		Model:  &user,
@@ -367,7 +367,7 @@ func (s *BloodhoundDB) DeleteUser(ctx context.Context, user model.User) error {
 // principal_name and email address fields of a user.
 //
 // SELECT * FROM users WHERE lower(principal_name) = ... or lower(email_address) = ...
-func (s *BloodhoundDB) LookupUser(ctx context.Context, name string) (model.User, error) {
+func (s *ApihoundDB) LookupUser(ctx context.Context, name string) (model.User, error) {
 	var (
 		user          model.User
 		formattedName = strings.ToLower(name)
@@ -379,7 +379,7 @@ func (s *BloodhoundDB) LookupUser(ctx context.Context, name string) (model.User,
 
 // CreateAuthToken creates a new AuthToken row using the provided struct
 // INSERT INTO auth_tokens (...) VALUES (....)
-func (s *BloodhoundDB) CreateAuthToken(ctx context.Context, authToken model.AuthToken) (model.AuthToken, error) {
+func (s *ApihoundDB) CreateAuthToken(ctx context.Context, authToken model.AuthToken) (model.AuthToken, error) {
 	auditEntry := model.AuditEntry{
 		Action: model.AuditLogActionCreateAuthToken,
 		Model:  &authToken,
@@ -398,14 +398,14 @@ func (s *BloodhoundDB) CreateAuthToken(ctx context.Context, authToken model.Auth
 // UpdateAuthToken updates all fields in the AuthToken row as specified in the provided struct
 // UPDATE auth_tokens SET key = ..., hmac_method = ..., last_access = ...
 // WHERE user_id = ... AND client_id = ...
-func (s *BloodhoundDB) UpdateAuthToken(ctx context.Context, authToken model.AuthToken) error {
+func (s *ApihoundDB) UpdateAuthToken(ctx context.Context, authToken model.AuthToken) error {
 	result := s.db.WithContext(ctx).Save(&authToken)
 	return CheckError(result)
 }
 
 // GetAuthToken retrieves the AuthToken row associated with the provided ID
 // SELECT * FROM auth_tokens WHERE id = ....
-func (s *BloodhoundDB) GetAuthToken(ctx context.Context, id uuid.UUID) (model.AuthToken, error) {
+func (s *ApihoundDB) GetAuthToken(ctx context.Context, id uuid.UUID) (model.AuthToken, error) {
 	var (
 		authToken model.AuthToken
 		result    = s.db.WithContext(ctx).First(&authToken, id)
@@ -414,7 +414,7 @@ func (s *BloodhoundDB) GetAuthToken(ctx context.Context, id uuid.UUID) (model.Au
 	return authToken, CheckError(result)
 }
 
-func (s *BloodhoundDB) GetAllAuthTokens(ctx context.Context, order string, filter model.SQLFilter) (model.AuthTokens, error) {
+func (s *ApihoundDB) GetAllAuthTokens(ctx context.Context, order string, filter model.SQLFilter) (model.AuthTokens, error) {
 	var (
 		tokens model.AuthTokens
 		cursor = s.db.WithContext(ctx)
@@ -431,7 +431,7 @@ func (s *BloodhoundDB) GetAllAuthTokens(ctx context.Context, order string, filte
 	return tokens, CheckError(cursor.Find(&tokens))
 }
 
-func (s *BloodhoundDB) GetUserToken(ctx context.Context, userId, tokenId uuid.UUID) (model.AuthToken, error) {
+func (s *ApihoundDB) GetUserToken(ctx context.Context, userId, tokenId uuid.UUID) (model.AuthToken, error) {
 	var (
 		authToken model.AuthToken
 		result    = s.db.WithContext(ctx).First(&authToken, "id = ? AND user_id = ?", tokenId, userId)
@@ -441,7 +441,7 @@ func (s *BloodhoundDB) GetUserToken(ctx context.Context, userId, tokenId uuid.UU
 
 // DeleteAllAuthTokens deletes all tokens at startup if the APITokens parameter is disabled (enabled=false).
 // An audit log is created for this action.
-func (s *BloodhoundDB) DeleteAllAuthTokens(ctx context.Context) error {
+func (s *ApihoundDB) DeleteAllAuthTokens(ctx context.Context) error {
 	auditDetails := model.AuditData{
 		"table":   "auth_tokens",
 		"trigger": "startup",
@@ -464,13 +464,13 @@ func (s *BloodhoundDB) DeleteAllAuthTokens(ctx context.Context) error {
 
 // DeleteAuthToken deletes the provided AuthToken row
 // DELETE FROM auth_tokens WHERE id = ...
-func (s *BloodhoundDB) DeleteAuthToken(ctx context.Context, authToken model.AuthToken) error {
+func (s *ApihoundDB) DeleteAuthToken(ctx context.Context, authToken model.AuthToken) error {
 	return CheckError(s.db.WithContext(ctx).Where("id = ?", authToken.ID).Delete(&authToken))
 }
 
 // CreateAuthSecret creates a new AuthSecret row
 // INSERT INTO auth_secrets (...) VALUES (....)
-func (s *BloodhoundDB) CreateAuthSecret(ctx context.Context, authSecret model.AuthSecret) (model.AuthSecret, error) {
+func (s *ApihoundDB) CreateAuthSecret(ctx context.Context, authSecret model.AuthSecret) (model.AuthSecret, error) {
 	auditEntry := model.AuditEntry{
 		Action: model.AuditLogActionCreateAuthSecret,
 		Model:  &authSecret,
@@ -483,7 +483,7 @@ func (s *BloodhoundDB) CreateAuthSecret(ctx context.Context, authSecret model.Au
 
 // GetAuthSecret retrieves the AuthSecret row associated with the provided ID
 // SELECT * FROM auth_secrets WHERE id = ....
-func (s *BloodhoundDB) GetAuthSecret(ctx context.Context, id int32) (model.AuthSecret, error) {
+func (s *ApihoundDB) GetAuthSecret(ctx context.Context, id int32) (model.AuthSecret, error) {
 	var (
 		authSecret model.AuthSecret
 		result     = s.db.WithContext(ctx).First(&authSecret, id)
@@ -495,7 +495,7 @@ func (s *BloodhoundDB) GetAuthSecret(ctx context.Context, id int32) (model.AuthS
 // UpdateAuthSecret updates the auth secret with the input struct specified
 // UPDATE auth_secrets SET digest = .., hmac_method = ..., expires_at = ...
 // WHERE user_id = ....
-func (s *BloodhoundDB) UpdateAuthSecret(ctx context.Context, authSecret model.AuthSecret) error {
+func (s *ApihoundDB) UpdateAuthSecret(ctx context.Context, authSecret model.AuthSecret) error {
 	auditEntry := model.AuditEntry{
 		Action: model.AuditLogActionUpdateAuthSecret,
 		Model:  &authSecret,
@@ -508,7 +508,7 @@ func (s *BloodhoundDB) UpdateAuthSecret(ctx context.Context, authSecret model.Au
 
 // DeleteAuthSecret deletes the auth secret row corresponding to the struct specified
 // DELETE FROM auth_secrets WHERE user_id = ...
-func (s *BloodhoundDB) DeleteAuthSecret(ctx context.Context, authSecret model.AuthSecret) error {
+func (s *ApihoundDB) DeleteAuthSecret(ctx context.Context, authSecret model.AuthSecret) error {
 	auditEntry := model.AuditEntry{
 		Action: model.AuditLogActionDeleteAuthSecret,
 		Model:  &authSecret,
@@ -521,7 +521,7 @@ func (s *BloodhoundDB) DeleteAuthSecret(ctx context.Context, authSecret model.Au
 
 // CreateUserSession creates a new UserSession row
 // INSERT INTO user_sessions (...) VALUES (..)
-func (s *BloodhoundDB) CreateUserSession(ctx context.Context, userSession model.UserSession) (model.UserSession, error) {
+func (s *ApihoundDB) CreateUserSession(ctx context.Context, userSession model.UserSession) (model.UserSession, error) {
 	var newUserSession = userSession
 
 	err := s.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
@@ -537,12 +537,12 @@ func (s *BloodhoundDB) CreateUserSession(ctx context.Context, userSession model.
 
 // EndUserSession terminates the provided session
 // UPDATE user_sessions SET expires_at = <now> WHERE user_id = ...
-func (s *BloodhoundDB) EndUserSession(ctx context.Context, userSession model.UserSession) {
+func (s *ApihoundDB) EndUserSession(ctx context.Context, userSession model.UserSession) {
 	s.db.WithContext(ctx).Exec(`UPDATE user_sessions SET expires_at = NOW(), updated_at = NOW() WHERE user_id = ?`, userSession.UserID)
 }
 
 // corresponding retrival function is model.UserSession.GetFlag()
-func (s *BloodhoundDB) SetUserSessionFlag(ctx context.Context, userSession *model.UserSession, key model.SessionFlagKey, state bool) error {
+func (s *ApihoundDB) SetUserSessionFlag(ctx context.Context, userSession *model.UserSession, key model.SessionFlagKey, state bool) error {
 	if userSession.ID == 0 {
 		return errors.New("invalid session - missing session id")
 	}
@@ -564,7 +564,7 @@ func (s *BloodhoundDB) SetUserSessionFlag(ctx context.Context, userSession *mode
 	})
 }
 
-func (s *BloodhoundDB) LookupActiveSessionsByUser(ctx context.Context, user model.User) ([]model.UserSession, error) {
+func (s *ApihoundDB) LookupActiveSessionsByUser(ctx context.Context, user model.User) ([]model.UserSession, error) {
 	var userSessions []model.UserSession
 
 	result := s.db.WithContext(ctx).Where("expires_at >= NOW() AND user_id = ?", user.ID).Find(&userSessions)
@@ -573,7 +573,7 @@ func (s *BloodhoundDB) LookupActiveSessionsByUser(ctx context.Context, user mode
 
 // GetUserSession retrieves the UserSession row associated with the provided ID
 // SELECT * FROM user_sessions WHERE id = ...
-func (s *BloodhoundDB) GetUserSession(ctx context.Context, id int64) (model.UserSession, error) {
+func (s *ApihoundDB) GetUserSession(ctx context.Context, id int64) (model.UserSession, error) {
 	var (
 		userSession model.UserSession
 		result      = s.preload(model.UserSessionAssociations()).WithContext(ctx).Find(&userSession, id)
@@ -583,6 +583,6 @@ func (s *BloodhoundDB) GetUserSession(ctx context.Context, id int64) (model.User
 }
 
 // SweepSessions deletes all sessions that have already expired
-func (s *BloodhoundDB) SweepSessions(ctx context.Context) {
+func (s *ApihoundDB) SweepSessions(ctx context.Context) {
 	s.db.WithContext(ctx).Where("expires_at < NOW()").Delete(&model.UserSession{})
 }

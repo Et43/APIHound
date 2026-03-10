@@ -26,8 +26,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/specterops/bloodhound/cmd/api/src/api"
-	"github.com/specterops/bloodhound/packages/go/headers"
+	"github.com/specterops/apihound/cmd/api/src/api"
+	"github.com/specterops/apihound/packages/go/headers"
 )
 
 var errUnsupportedEncoding = errors.New("content encoding is not supported")

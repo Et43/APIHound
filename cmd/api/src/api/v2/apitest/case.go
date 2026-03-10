@@ -19,10 +19,10 @@ package apitest
 import (
 	"net/http"
 
-	"github.com/specterops/bloodhound/cmd/api/src/api"
-	"github.com/specterops/bloodhound/cmd/api/src/auth"
-	bhectx "github.com/specterops/bloodhound/cmd/api/src/ctx"
-	"github.com/specterops/bloodhound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/api"
+	"github.com/specterops/apihound/cmd/api/src/auth"
+	bhectx "github.com/specterops/apihound/cmd/api/src/ctx"
+	"github.com/specterops/apihound/cmd/api/src/model"
 )
 
 type Case struct {

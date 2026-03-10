@@ -1,3 +1,3 @@
-# BloodHound Sample Data
+# APIHound Sample Data
 
-BloodHound sample data has been moved to the [wiki](https://github.com/SpecterOps/BloodHound/wiki/Example-Data).
+APIHound sample data has been moved to the [wiki](https://github.com/SpecterOps/APIHound/wiki/Example-Data).

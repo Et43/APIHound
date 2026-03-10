@@ -430,7 +430,7 @@ export const TagForm: FC = () => {
                                 <CardDescription className='pb-3 pl-3'>
                                     Currently there are (<span className='font-bold'>{remainingZonesOrLabels}</span>){' '}
                                     available {tagTypePlural}.{' '}
-                                    <Link href='https://support.bloodhoundenterprise.io/hc/en-us/requests/new'>
+                                    <Link href='https://support.apihoundenterprise.io/hc/en-us/requests/new'>
                                         Contact sales
                                     </Link>{' '}
                                     to increase the limit.

@@ -80,7 +80,7 @@ const server = setupServer(
             })
         );
     }),
-    rest.get('/api/v2/bloodhound-users-minimal', (_, res, ctx) => {
+    rest.get('/api/v2/apihound-users-minimal', (_, res, ctx) => {
         return res(
             ctx.json({
                 data: {

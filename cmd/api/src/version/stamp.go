@@ -57,7 +57,7 @@ func newVersion(major, minor, patch, prerelease string) (Version, error) {
 
 func init() {
 	if newVersion, err := newVersion(majorVersion, minorVersion, patchVersion, prereleaseVersion); err != nil {
-		panic(fmt.Sprintf("BloodHound version information incorrect. Please inspect build output and ensure that compiler ldflags have been set correctly: %v", err))
+		panic(fmt.Sprintf("APIHound version information incorrect. Please inspect build output and ensure that compiler ldflags have been set correctly: %v", err))
 	} else {
 		version = newVersion
 	}

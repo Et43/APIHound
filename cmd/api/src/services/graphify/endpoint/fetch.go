@@ -22,9 +22,9 @@ import (
 	"log/slog"
 	"slices"
 
-	"github.com/specterops/bloodhound/packages/go/analysis"
-	"github.com/specterops/bloodhound/packages/go/bhlog/measure"
-	"github.com/specterops/bloodhound/packages/go/ein"
+	"github.com/specterops/apihound/packages/go/analysis"
+	"github.com/specterops/apihound/packages/go/bhlog/measure"
+	"github.com/specterops/apihound/packages/go/ein"
 	"github.com/specterops/dawgs/cypher/models/cypher"
 	"github.com/specterops/dawgs/graph"
 	"github.com/specterops/dawgs/query"

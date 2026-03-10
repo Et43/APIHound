@@ -28,11 +28,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/specterops/bloodhound/cmd/api/src/api"
-	"github.com/specterops/bloodhound/cmd/api/src/config"
-	"github.com/specterops/bloodhound/cmd/api/src/database/types"
-	"github.com/specterops/bloodhound/cmd/api/src/model/appcfg"
-	"github.com/specterops/bloodhound/packages/go/headers"
+	"github.com/specterops/apihound/cmd/api/src/api"
+	"github.com/specterops/apihound/cmd/api/src/config"
+	"github.com/specterops/apihound/cmd/api/src/database/types"
+	"github.com/specterops/apihound/cmd/api/src/model/appcfg"
+	"github.com/specterops/apihound/packages/go/headers"
 )
 
 type IngestControl struct {

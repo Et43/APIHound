@@ -17,7 +17,5 @@
 package ein
 
 const (
-	SerialError           = "error deserializing %s: %v"
-	ExtractError          = "failed to extract owner id/type from directory object: %v"
-	AccessAllowedCallback = "AccessAllowedCallback"
+	SerialError = "error deserializing %%s: %%v"
 )

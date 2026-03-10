@@ -22,8 +22,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/specterops/bloodhound/cmd/api/src/model/ingest"
-	"github.com/specterops/bloodhound/cmd/api/src/services/graphify"
+	"github.com/specterops/apihound/cmd/api/src/model/ingest"
+	"github.com/specterops/apihound/cmd/api/src/services/graphify"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

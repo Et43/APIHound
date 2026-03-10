@@ -14,30 +14,30 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-{{- if .Values.bloodhound.ingress.enabled }}
+{{- if .Values.apihound.ingress.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ .Values.bloodhound.name }}-ingress
+  name: {{ .Values.apihound.name }}-ingress
   namespace: {{ .Values.namespace }}
 spec:
   rules:
-  - host: {{ .Values.bloodhound.ingress.host }}
+  - host: {{ .Values.apihound.ingress.host }}
     http:
       paths:
-      - path: {{ .Values.bloodhound.ingress.path }}
+      - path: {{ .Values.apihound.ingress.path }}
         pathType: Prefix
         backend:
           service:
-            name: {{ .Values.bloodhound.name }}-service
+            name: {{ .Values.apihound.name }}-service
             port:
-              number: {{ .Values.bloodhound.service.port }}
-  {{- if .Values.bloodhound.tls.enabled }}
+              number: {{ .Values.apihound.service.port }}
+  {{- if .Values.apihound.tls.enabled }}
   tls:
   - hosts:
-    - {{ .Values.bloodhound.ingress.host }}
-    {{- if .Values.bloodhound.tls.customCert }}
-    secretName: {{ .Values.bloodhound.tls.certSecret }}
+    - {{ .Values.apihound.ingress.host }}
+    {{- if .Values.apihound.tls.customCert }}
+    secretName: {{ .Values.apihound.tls.certSecret }}
     {{- end }}
   {{- end }}
 {{- end }}

@@ -27,17 +27,17 @@ import (
 	"testing"
 
 	"github.com/peterldowns/pgtestdb"
-	"github.com/specterops/bloodhound/cmd/api/src/auth"
-	"github.com/specterops/bloodhound/cmd/api/src/config"
-	"github.com/specterops/bloodhound/cmd/api/src/daemons/changelog"
-	"github.com/specterops/bloodhound/cmd/api/src/daemons/datapipe"
-	"github.com/specterops/bloodhound/cmd/api/src/database"
-	"github.com/specterops/bloodhound/cmd/api/src/migrations"
-	"github.com/specterops/bloodhound/cmd/api/src/services/graphify"
-	"github.com/specterops/bloodhound/cmd/api/src/services/upload"
-	"github.com/specterops/bloodhound/cmd/api/src/test/integration/utils"
-	"github.com/specterops/bloodhound/packages/go/cache"
-	"github.com/specterops/bloodhound/packages/go/graphschema"
+	"github.com/specterops/apihound/cmd/api/src/auth"
+	"github.com/specterops/apihound/cmd/api/src/config"
+	"github.com/specterops/apihound/cmd/api/src/daemons/changelog"
+	"github.com/specterops/apihound/cmd/api/src/daemons/datapipe"
+	"github.com/specterops/apihound/cmd/api/src/database"
+	"github.com/specterops/apihound/cmd/api/src/migrations"
+	"github.com/specterops/apihound/cmd/api/src/services/graphify"
+	"github.com/specterops/apihound/cmd/api/src/services/upload"
+	"github.com/specterops/apihound/cmd/api/src/test/integration/utils"
+	"github.com/specterops/apihound/packages/go/cache"
+	"github.com/specterops/apihound/packages/go/graphschema"
 	"github.com/specterops/dawgs"
 	"github.com/specterops/dawgs/drivers/pg"
 	"github.com/specterops/dawgs/graph"
@@ -51,9 +51,9 @@ type IntegrationTestSuite struct {
 	Context         context.Context
 	GraphifyService graphify.GraphifyService
 	GraphDB         graph.Database
-	BHDatabase      *database.BloodhoundDB
+	BHDatabase      *database.ApihoundDB
 	WorkDir         string
-	Daemon          *datapipe.BHCEPipeline
+	Daemon          *datapipe.APIHoundPipeline
 }
 
 // setupIntegrationTestSuite initializes and returns a test suite containing
@@ -75,7 +75,7 @@ func setupIntegrationTestSuite(t *testing.T, fixturesPath string) IntegrationTes
 	gormDB, err := database.OpenDatabase(connConf.URL())
 	require.NoError(t, err)
 
-	db := database.NewBloodhoundDB(gormDB, auth.NewIdentityResolver())
+	db := database.NewApihoundDB(gormDB, auth.NewIdentityResolver())
 
 	graphDB, err := dawgs.Open(ctx, pg.DriverName, dawgs.Config{
 		GraphQueryMemoryLimit: 1024 * 1024 * 1024 * 2,

@@ -22,7 +22,7 @@ import (
 	"math"
 	"testing"
 
-	"github.com/specterops/bloodhound/packages/go/cache"
+	"github.com/specterops/apihound/packages/go/cache"
 	"github.com/specterops/dawgs/graph"
 )
 

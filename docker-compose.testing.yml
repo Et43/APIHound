@@ -21,9 +21,9 @@ services:
     command: -c config_file=/etc/postgresql.conf
     shm_size: 1gb
     environment:
-      - POSTGRES_USER=bloodhound
-      - POSTGRES_PASSWORD=bloodhoundcommunityedition
-      - POSTGRES_DB=bloodhound
+      - POSTGRES_USER=apihound
+      - POSTGRES_PASSWORD=apihoundcommunityedition
+      - POSTGRES_DB=apihound
     ports:
       - 127.0.0.1:65432:5432
     volumes:
@@ -36,7 +36,7 @@ services:
       context: tools/docker-compose
       dockerfile: neo4j.Dockerfile
     environment:
-      - NEO4J_AUTH=neo4j/bloodhoundcommunityedition
+      - NEO4J_AUTH=neo4j/apihoundcommunityedition
       - NEO4J_dbms_security_auth__enabled=false
       - NEO4J_server_logs_debug_enabled=true
     ports:

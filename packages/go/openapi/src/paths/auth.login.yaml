@@ -18,8 +18,8 @@ parameters:
   - $ref: './../parameters/header.prefer.yaml'
 post:
   operationId: Login
-  summary: Login to BloodHound
-  description: Login to BloodHound with user credentials or a one time password.
+  summary: Login to APIHound
+  description: Login to APIHound with user credentials or a one time password.
   tags:
     - Auth
     - Community
@@ -52,7 +52,7 @@ post:
               type: string
         example:
           login_method: secret
-          username: cool_user@bloodhoundenterprise.io
+          username: cool_user@apihoundenterprise.io
           secret: MySup3rS3cr3tPassw0rd!!!
   responses:
     200:

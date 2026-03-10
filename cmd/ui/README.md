@@ -2,7 +2,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Contributing
 
-Welcome to the BloodHound UI! If this is your first time contributing, please check out our [contributing
+Welcome to the APIHound UI! If this is your first time contributing, please check out our [contributing
 guide](./CONTRIBUTING.md) for instructions on setting up your environment. If you find something isn't well documented,
 feel free to submit a PR. Cheers!
 

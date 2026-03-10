@@ -29,10 +29,10 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
-	"github.com/specterops/bloodhound/cmd/api/src/database"
-	"github.com/specterops/bloodhound/cmd/api/src/database/types/null"
-	"github.com/specterops/bloodhound/cmd/api/src/model"
-	"github.com/specterops/bloodhound/cmd/api/src/test/integration"
+	"github.com/specterops/apihound/cmd/api/src/database"
+	"github.com/specterops/apihound/cmd/api/src/database/types/null"
+	"github.com/specterops/apihound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/test/integration"
 	"github.com/specterops/dawgs/graph"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -762,7 +762,7 @@ func TestDatabase_GetAssetGroupTags(t *testing.T) {
 		require.NoError(t, err)
 		require.GreaterOrEqual(t, len(items), 2)
 		for _, itm := range items {
-			if itm.CreatedBy == model.AssetGroupActorBloodHound {
+			if itm.CreatedBy == model.AssetGroupActorAPIHound {
 				continue
 			}
 			require.Equal(t, itm.Type, model.AssetGroupTagTypeLabel)
@@ -780,7 +780,7 @@ func TestDatabase_GetAssetGroupTags(t *testing.T) {
 		require.NoError(t, err)
 		require.GreaterOrEqual(t, len(items), 2)
 		for _, itm := range items {
-			if itm.CreatedBy == model.AssetGroupActorBloodHound {
+			if itm.CreatedBy == model.AssetGroupActorAPIHound {
 				continue
 			}
 			require.Equal(t, itm.Type, model.AssetGroupTagTypeTier)
@@ -804,7 +804,7 @@ func TestDatabase_GetAssetGroupTags(t *testing.T) {
 		require.NoError(t, err)
 		require.GreaterOrEqual(t, len(items), 4)
 		for _, itm := range items {
-			if itm.CreatedBy == model.AssetGroupActorBloodHound {
+			if itm.CreatedBy == model.AssetGroupActorAPIHound {
 				continue
 			}
 			require.Contains(t, types, itm.Type)
@@ -956,7 +956,7 @@ func TestDatabase_GetAssetGroupTagSelectorsBySelectorIdFilteredAndPaginated(t *t
 
 		results := make(model.AssetGroupTagSelectors, 0, 2)
 		for _, n := range orig_results {
-			if n.CreatedBy != model.AssetGroupActorBloodHound {
+			if n.CreatedBy != model.AssetGroupActorAPIHound {
 				results = append(results, n)
 			}
 		}
@@ -993,7 +993,7 @@ func TestDatabase_GetAssetGroupTagSelectorsBySelectorIdFilteredAndPaginated(t *t
 
 		results := make(model.AssetGroupTagSelectors, 0, 1)
 		for _, n := range orig_results {
-			if n.CreatedBy != model.AssetGroupActorBloodHound {
+			if n.CreatedBy != model.AssetGroupActorAPIHound {
 				results = append(results, n)
 			}
 		}

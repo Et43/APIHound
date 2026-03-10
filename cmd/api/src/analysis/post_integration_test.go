@@ -22,9 +22,9 @@ import (
 	"context"
 	"testing"
 
-	"github.com/specterops/bloodhound/cmd/api/src/test/integration"
-	ad2 "github.com/specterops/bloodhound/packages/go/analysis/ad"
-	schema "github.com/specterops/bloodhound/packages/go/graphschema"
+	"github.com/specterops/apihound/cmd/api/src/test/integration"
+	ad2 "github.com/specterops/apihound/packages/go/analysis/ad"
+	schema "github.com/specterops/apihound/packages/go/graphschema"
 	"github.com/specterops/dawgs/graph"
 	"github.com/stretchr/testify/require"
 )

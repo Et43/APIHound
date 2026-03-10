@@ -18,7 +18,7 @@ import PrivilegeZonesProvider from './PrivilegeZonesProvider';
 
 import { FC } from 'react';
 
-const BHCEPrivilegeZones: FC = () => {
+const APIHoundPrivilegeZones: FC = () => {
     return (
         <PrivilegeZonesProvider>
             <PrivilegeZones />
@@ -26,4 +26,4 @@ const BHCEPrivilegeZones: FC = () => {
     );
 };
 
-export default BHCEPrivilegeZones;
+export default APIHoundPrivilegeZones;

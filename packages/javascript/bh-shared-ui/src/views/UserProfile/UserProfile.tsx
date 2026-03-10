@@ -29,7 +29,7 @@ import {
     UserTokenManagementDialog,
 } from '../../components';
 import { useAPITokensConfiguration } from '../../hooks';
-import { useSelf } from '../../hooks/useBloodHoundUsers';
+import { useSelf } from '../../hooks/useAPIHoundUsers';
 import { useNotifications } from '../../providers';
 import { apiClient, getUsername } from '../../utils';
 

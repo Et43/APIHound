@@ -334,7 +334,7 @@ const CypherSearchInner = ({
 
                         <Button asChild variant='secondary' size={'small'} className='px-1.5'>
                             <a
-                                href='https://bloodhound.specterops.io/analyze-data/bloodhound-gui/cypher-search'
+                                href='https://apihound.specterops.io/analyze-data/apihound-gui/cypher-search'
                                 rel='noreferrer'
                                 target='_blank'
                                 aria-label='Learn more about cypher'

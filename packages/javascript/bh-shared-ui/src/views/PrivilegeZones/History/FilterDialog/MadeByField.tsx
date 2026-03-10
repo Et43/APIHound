@@ -28,10 +28,10 @@ import {
 } from '@bloodhoundenterprise/doodleui';
 import { faClose } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { BloodHoundString, User } from 'js-client-library';
+import { APIHoundString, User } from 'js-client-library';
 import { FC, useMemo } from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { useBloodHoundUsers } from '../../../../hooks/useBloodHoundUsers';
+import { useAPIHoundUsers } from '../../../../hooks/useAPIHoundUsers';
 import { cn } from '../../../../utils';
 import { AssetGroupTagHistoryFilters } from '../types';
 
@@ -53,7 +53,7 @@ const filterAndSortUsers = (users: User[]) => {
 const MadeByField: FC<{
     form: UseFormReturn<AssetGroupTagHistoryFilters>;
 }> = ({ form }) => {
-    const bloodHoundUsersQuery = useBloodHoundUsers();
+    const bloodHoundUsersQuery = useAPIHoundUsers();
     const users = useMemo(() => filterAndSortUsers(bloodHoundUsersQuery.data ?? []), [bloodHoundUsersQuery.data]);
 
     return (
@@ -90,7 +90,7 @@ const MadeByField: FC<{
                             <Skeleton className='h-10 w-24' />
                         ) : (
                             <SelectContent>
-                                <SelectItem value={BloodHoundString}>{BloodHoundString}</SelectItem>
+                                <SelectItem value={APIHoundString}>{APIHoundString}</SelectItem>
                                 {users.map((user) => (
                                     <SelectItem key={user.id} value={user.email_address || user.id}>
                                         {user.email_address || user.principal_name}

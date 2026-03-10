@@ -14,18 +14,18 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-{{- if .Values.bloodhound.service.enabled }}
+{{- if .Values.apihound.service.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.bloodhound.name }}-service
+  name: {{ .Values.apihound.name }}-service
   namespace: {{ .Values.namespace }}
 spec:
-  type: {{ .Values.bloodhound.service.type }}
+  type: {{ .Values.apihound.service.type }}
   ports:
-    - port: {{ .Values.bloodhound.service.port }}
-      targetPort: {{ .Values.bloodhound.service.targetPort }}
+    - port: {{ .Values.apihound.service.port }}
+      targetPort: {{ .Values.apihound.service.targetPort }}
       protocol: TCP
   selector:
-    app: {{ .Values.bloodhound.appName }}
+    app: {{ .Values.apihound.appName }}
 {{- end }}

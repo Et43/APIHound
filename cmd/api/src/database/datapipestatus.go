@@ -20,7 +20,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/specterops/bloodhound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/model"
 )
 
 type DatapipeStatusData interface {
@@ -30,17 +30,17 @@ type DatapipeStatusData interface {
 }
 
 // This should be called at the end of a successful analysis run (not always every analysis)
-func (s *BloodhoundDB) UpdateLastAnalysisCompleteTime(ctx context.Context) error {
+func (s *ApihoundDB) UpdateLastAnalysisCompleteTime(ctx context.Context) error {
 	now := time.Now().UTC()
 	return s.db.WithContext(ctx).Exec("UPDATE datapipe_status SET updated_at = ?, last_complete_analysis_at = ?", now, now).Error
 }
 
-func (s *BloodhoundDB) SetDatapipeStatus(ctx context.Context, status model.DatapipeStatus) error {
+func (s *ApihoundDB) SetDatapipeStatus(ctx context.Context, status model.DatapipeStatus) error {
 	now := time.Now().UTC()
 	return s.db.WithContext(ctx).Exec("UPDATE datapipe_status SET status = ?, updated_at = ?;", status, now).Error
 }
 
-func (s *BloodhoundDB) GetDatapipeStatus(ctx context.Context) (model.DatapipeStatusWrapper, error) {
+func (s *ApihoundDB) GetDatapipeStatus(ctx context.Context) (model.DatapipeStatusWrapper, error) {
 	var datapipeStatus model.DatapipeStatusWrapper
 
 	tx := s.db.WithContext(ctx).Select("status, updated_at, last_complete_analysis_at, last_analysis_run_at").Table("datapipe_status").First(&datapipeStatus)

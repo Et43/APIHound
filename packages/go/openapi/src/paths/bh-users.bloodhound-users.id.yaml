@@ -26,9 +26,9 @@ parameters:
 get:
   operationId: GetUser
   summary: Get a user
-  description: Get a BloodHound user's details.
+  description: Get a APIHound user's details.
   tags:
-    - BloodHound Users
+    - APIHound Users
     - Community
     - Enterprise
   responses:
@@ -57,9 +57,9 @@ get:
 patch:
   operationId: UpdateUser
   summary: Update a User
-  description: Update a BloodHound user's properties'.
+  description: Update a APIHound user's properties'.
   tags:
-    - BloodHound Users
+    - APIHound Users
     - Community
     - Enterprise
   requestBody:
@@ -88,9 +88,9 @@ patch:
 delete:
   operationId: DeleteUser
   summary: Delete a User
-  description: Deletes an existing BloodHound user.
+  description: Deletes an existing APIHound user.
   tags:
-    - BloodHound Users
+    - APIHound Users
     - Community
     - Enterprise
   responses:

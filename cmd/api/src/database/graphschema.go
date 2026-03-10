@@ -22,7 +22,7 @@ import (
 	"strings"
 
 	"github.com/lib/pq"
-	"github.com/specterops/bloodhound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/model"
 	"github.com/specterops/dawgs/cypher/models"
 	"github.com/specterops/dawgs/graph"
 	"gorm.io/gorm"
@@ -99,7 +99,7 @@ type FilterAndPagination struct {
 }
 
 // CreateGraphSchemaExtension creates a new row in the extensions table. A GraphSchemaExtension struct is returned, populated with the value as it stands in the database.
-func (s *BloodhoundDB) CreateGraphSchemaExtension(ctx context.Context, name string, displayName string, version string, namespace string) (model.GraphSchemaExtension, error) {
+func (s *ApihoundDB) CreateGraphSchemaExtension(ctx context.Context, name string, displayName string, version string, namespace string) (model.GraphSchemaExtension, error) {
 	var (
 		extension = model.GraphSchemaExtension{
 			Name:        name,
@@ -139,7 +139,7 @@ func (s *BloodhoundDB) CreateGraphSchemaExtension(ctx context.Context, name stri
 }
 
 // GetGraphSchemaExtensionById gets a row from the extensions table by id. It returns a GraphSchemaExtension struct populated with the data, or an error if that id does not exist.
-func (s *BloodhoundDB) GetGraphSchemaExtensionById(ctx context.Context, extensionId int32) (model.GraphSchemaExtension, error) {
+func (s *ApihoundDB) GetGraphSchemaExtensionById(ctx context.Context, extensionId int32) (model.GraphSchemaExtension, error) {
 	var extension model.GraphSchemaExtension
 
 	if result := s.db.WithContext(ctx).Raw(fmt.Sprintf(`
@@ -155,7 +155,7 @@ func (s *BloodhoundDB) GetGraphSchemaExtensionById(ctx context.Context, extensio
 
 // GetGraphSchemaExtensions gets all the rows from the extensions table that match the given SQLFilter. It returns a slice of GraphSchemaExtension structs
 // populated with the data, as well as an integer giving the total number of rows returned by the query (excluding any given pagination)
-func (s *BloodhoundDB) GetGraphSchemaExtensions(ctx context.Context, extensionFilters model.Filters, sort model.Sort, skip, limit int) (model.GraphSchemaExtensions, int, error) {
+func (s *ApihoundDB) GetGraphSchemaExtensions(ctx context.Context, extensionFilters model.Filters, sort model.Sort, skip, limit int) (model.GraphSchemaExtensions, int, error) {
 	var (
 		extensions    = model.GraphSchemaExtensions{}
 		totalRowCount int
@@ -194,7 +194,7 @@ func (s *BloodhoundDB) GetGraphSchemaExtensions(ctx context.Context, extensionFi
 }
 
 // UpdateGraphSchemaExtension updates an existing Graph Schema Extension. Only the `name`, `display_name`, and `version` fields are updatable. It returns the updated extension, or an error if the update violates schema constraints or did not succeed.
-func (s *BloodhoundDB) UpdateGraphSchemaExtension(ctx context.Context, extension model.GraphSchemaExtension) (model.GraphSchemaExtension, error) {
+func (s *ApihoundDB) UpdateGraphSchemaExtension(ctx context.Context, extension model.GraphSchemaExtension) (model.GraphSchemaExtension, error) {
 	if result := s.db.WithContext(ctx).Raw(fmt.Sprintf(`
 		UPDATE %s
 		SET name = ?, display_name = ?, version = ?, namespace = ?, updated_at = NOW()
@@ -219,7 +219,7 @@ func (s *BloodhoundDB) UpdateGraphSchemaExtension(ctx context.Context, extension
 // It returns an error if the extension does not exist. Built-In Extensions will return an error if there
 // is an attempt to delete it.
 // Source Kinds are deactivated only if they don't reference any other extensions environment.
-func (s *BloodhoundDB) DeleteGraphSchemaExtension(ctx context.Context, extensionId int32) error {
+func (s *ApihoundDB) DeleteGraphSchemaExtension(ctx context.Context, extensionId int32) error {
 	var (
 		schemaExtension model.GraphSchemaExtension
 		isBuiltin       bool
@@ -296,7 +296,7 @@ func (s *BloodhoundDB) DeleteGraphSchemaExtension(ctx context.Context, extension
 //
 // Since this inserts directly into the kinds table, the business logic calling this func
 // must also call the DAWGS RefreshKinds function to ensure the kinds are reloaded into the in memory kind map.
-func (s *BloodhoundDB) CreateGraphSchemaNodeKind(ctx context.Context, name string, extensionId int32, displayName string, description string, isDisplayKind bool, icon, iconColor string) (model.GraphSchemaNodeKind, error) {
+func (s *ApihoundDB) CreateGraphSchemaNodeKind(ctx context.Context, name string, extensionId int32, displayName string, description string, isDisplayKind bool, icon, iconColor string) (model.GraphSchemaNodeKind, error) {
 	var schemaNodeKind = model.GraphSchemaNodeKind{}
 	if result := s.db.WithContext(ctx).Raw(`
 	WITH dawgs_kind (id, name) AS ( SELECT id, name FROM upsert_kind(?)),
@@ -320,7 +320,7 @@ func (s *BloodhoundDB) CreateGraphSchemaNodeKind(ctx context.Context, name strin
 
 // GetGraphSchemaNodeKinds - returns all rows from the schema_node_kinds table that matches the given model.Filters. It returns a slice of model.GraphSchemaNodeKinds structs
 // populated with data, as well as an integer indicating the total number of rows returned by the query (excluding any given pagination).
-func (s *BloodhoundDB) GetGraphSchemaNodeKinds(ctx context.Context, filters model.Filters, sort model.Sort, skip, limit int) (model.GraphSchemaNodeKinds, int, error) {
+func (s *ApihoundDB) GetGraphSchemaNodeKinds(ctx context.Context, filters model.Filters, sort model.Sort, skip, limit int) (model.GraphSchemaNodeKinds, int, error) {
 	var (
 		schemaNodeKinds = model.GraphSchemaNodeKinds{}
 		totalRowCount   int
@@ -383,7 +383,7 @@ func (s *BloodhoundDB) GetGraphSchemaNodeKinds(ctx context.Context, filters mode
 }
 
 // GetGraphSchemaNodeKindById - gets a row from the schema_node_kinds table by id. It returns a model.GraphSchemaNodeKind struct populated with the data, or an error if that id does not exist.
-func (s *BloodhoundDB) GetGraphSchemaNodeKindById(ctx context.Context, schemaNodeKindId int32) (model.GraphSchemaNodeKind, error) {
+func (s *ApihoundDB) GetGraphSchemaNodeKindById(ctx context.Context, schemaNodeKindId int32) (model.GraphSchemaNodeKind, error) {
 	var schemaNodeKind model.GraphSchemaNodeKind
 	if result := s.db.WithContext(ctx).Raw(fmt.Sprintf(`
 		SELECT %s.id, name, schema_extension_id, display_name, description, is_display_kind, icon, icon_color, created_at, updated_at, deleted_at
@@ -399,7 +399,7 @@ func (s *BloodhoundDB) GetGraphSchemaNodeKindById(ctx context.Context, schemaNod
 //
 // This function does NOT update the DAWGS name column since the schema_node_kinds table FKs to the DAWGS kind table, and that
 // table is append only. A new node kind should be created instead.
-func (s *BloodhoundDB) UpdateGraphSchemaNodeKind(ctx context.Context, schemaNodeKind model.GraphSchemaNodeKind) (model.GraphSchemaNodeKind, error) {
+func (s *ApihoundDB) UpdateGraphSchemaNodeKind(ctx context.Context, schemaNodeKind model.GraphSchemaNodeKind) (model.GraphSchemaNodeKind, error) {
 	if result := s.db.WithContext(ctx).Raw(fmt.Sprintf(`
 		WITH updated_row AS (
 			UPDATE %s
@@ -425,7 +425,7 @@ func (s *BloodhoundDB) UpdateGraphSchemaNodeKind(ctx context.Context, schemaNode
 
 // UpdateGraphSchemaNodeKindIconByKindId - updates the icon name and color for a row in the schema_node_kinds table based on the provided id. It will return an
 // error if the target schema node kind does not exist.
-func (s *BloodhoundDB) UpdateGraphSchemaNodeKindIconById(ctx context.Context, id int32, icon model.CustomNodeIcon) (model.GraphSchemaNodeKind, error) {
+func (s *ApihoundDB) UpdateGraphSchemaNodeKindIconById(ctx context.Context, id int32, icon model.CustomNodeIcon) (model.GraphSchemaNodeKind, error) {
 	var schemaNodeKind model.GraphSchemaNodeKind
 	if result := s.db.WithContext(ctx).Raw(fmt.Sprintf(`
 		WITH updated_row AS (
@@ -446,7 +446,7 @@ func (s *BloodhoundDB) UpdateGraphSchemaNodeKindIconById(ctx context.Context, id
 }
 
 // DeleteGraphSchemaNodeKind - deletes a schema_node_kinds row based on the provided id. Will return an error if that id does not exist.
-func (s *BloodhoundDB) DeleteGraphSchemaNodeKind(ctx context.Context, schemaNodeKindId int32) error {
+func (s *ApihoundDB) DeleteGraphSchemaNodeKind(ctx context.Context, schemaNodeKindId int32) error {
 	var schemaNodeKind model.GraphSchemaNodeKind
 
 	if result := s.db.WithContext(ctx).Exec(fmt.Sprintf(`DELETE FROM %s WHERE id = ?`, schemaNodeKind.TableName()), schemaNodeKindId); result.Error != nil {
@@ -458,7 +458,7 @@ func (s *BloodhoundDB) DeleteGraphSchemaNodeKind(ctx context.Context, schemaNode
 }
 
 // CreateGraphSchemaProperty creates a new row in the schema_properties table. A GraphSchemaProperty struct is returned, populated with the value as it stands in the database.
-func (s *BloodhoundDB) CreateGraphSchemaProperty(ctx context.Context, extensionId int32, name string, displayName string, dataType string, description string) (model.GraphSchemaProperty, error) {
+func (s *ApihoundDB) CreateGraphSchemaProperty(ctx context.Context, extensionId int32, name string, displayName string, dataType string, description string) (model.GraphSchemaProperty, error) {
 	var extensionProperty model.GraphSchemaProperty
 
 	if result := s.db.WithContext(ctx).Raw(fmt.Sprintf(`
@@ -478,7 +478,7 @@ func (s *BloodhoundDB) CreateGraphSchemaProperty(ctx context.Context, extensionI
 
 // GetGraphSchemaProperties - returns all rows from the schema_properties table that matches the given model.Filters. It returns a slice of model.GraphSchemaProperties structs
 // populated with data, as well as an integer indicating the total number of rows returned by the query (excluding any given pagination).
-func (s *BloodhoundDB) GetGraphSchemaProperties(ctx context.Context, filters model.Filters, sort model.Sort, skip, limit int) (model.GraphSchemaProperties, int, error) {
+func (s *ApihoundDB) GetGraphSchemaProperties(ctx context.Context, filters model.Filters, sort model.Sort, skip, limit int) (model.GraphSchemaProperties, int, error) {
 	var (
 		schemaProperties = model.GraphSchemaProperties{}
 		totalRowCount    int
@@ -512,7 +512,7 @@ func (s *BloodhoundDB) GetGraphSchemaProperties(ctx context.Context, filters mod
 }
 
 // GetGraphSchemaPropertyById gets a row from the schema_properties table by id. It returns a GraphSchemaProperty struct populated with the data, or an error if that id does not exist.
-func (s *BloodhoundDB) GetGraphSchemaPropertyById(ctx context.Context, extensionPropertyId int32) (model.GraphSchemaProperty, error) {
+func (s *ApihoundDB) GetGraphSchemaPropertyById(ctx context.Context, extensionPropertyId int32) (model.GraphSchemaProperty, error) {
 	var extensionProperty model.GraphSchemaProperty
 
 	if result := s.db.WithContext(ctx).Raw(fmt.Sprintf(`
@@ -528,7 +528,7 @@ func (s *BloodhoundDB) GetGraphSchemaPropertyById(ctx context.Context, extension
 
 // UpdateGraphSchemaProperty - updates a row in the schema_properties table based on the provided id. It will return an
 // error if the target property does not exist or if any of the updates violate the schema constraints.
-func (s *BloodhoundDB) UpdateGraphSchemaProperty(ctx context.Context, property model.GraphSchemaProperty) (model.GraphSchemaProperty, error) {
+func (s *ApihoundDB) UpdateGraphSchemaProperty(ctx context.Context, property model.GraphSchemaProperty) (model.GraphSchemaProperty, error) {
 	if result := s.db.WithContext(ctx).Raw(fmt.Sprintf(`
 		UPDATE %s SET name = ?, schema_extension_id = ?, display_name = ?, data_type = ?, description = ?, updated_at = NOW() WHERE id = ?
 		RETURNING id, schema_extension_id, name, display_name, data_type, description, created_at, updated_at, deleted_at`,
@@ -546,7 +546,7 @@ func (s *BloodhoundDB) UpdateGraphSchemaProperty(ctx context.Context, property m
 }
 
 // DeleteGraphSchemaProperty - deletes a schema_properties row based on the provided id. It will return an error if that id does not exist.
-func (s *BloodhoundDB) DeleteGraphSchemaProperty(ctx context.Context, propertyID int32) error {
+func (s *ApihoundDB) DeleteGraphSchemaProperty(ctx context.Context, propertyID int32) error {
 	var property model.GraphSchemaProperty
 
 	if result := s.db.WithContext(ctx).Exec(fmt.Sprintf(`
@@ -566,7 +566,7 @@ func (s *BloodhoundDB) DeleteGraphSchemaProperty(ctx context.Context, propertyID
 //
 // Since this inserts directly into the kinds table, the business logic calling this func
 // must also call the DAWGS RefreshKinds function to ensure the kinds are reloaded into the in memory kind map.
-func (s *BloodhoundDB) CreateGraphSchemaRelationshipKind(ctx context.Context, name string, schemaExtensionId int32, description string, isTraversable bool) (model.GraphSchemaRelationshipKind, error) {
+func (s *ApihoundDB) CreateGraphSchemaRelationshipKind(ctx context.Context, name string, schemaExtensionId int32, description string, isTraversable bool) (model.GraphSchemaRelationshipKind, error) {
 	var schemaRelationshipKind model.GraphSchemaRelationshipKind
 
 	if result := s.db.WithContext(ctx).Raw(`
@@ -590,7 +590,7 @@ func (s *BloodhoundDB) CreateGraphSchemaRelationshipKind(ctx context.Context, na
 
 // GetGraphSchemaRelationshipKinds - returns all rows from the schema_relationship_kinds table that matches the given model.Filters. It returns a slice of model.GraphSchemaRelationshipKinds
 // populated with data, as well as an integer indicating the total number of rows returned by the query (excluding any given pagination).
-func (s *BloodhoundDB) GetGraphSchemaRelationshipKinds(ctx context.Context, relationshipKindFilters model.Filters, sort model.Sort, skip, limit int) (model.GraphSchemaRelationshipKinds, int, error) {
+func (s *ApihoundDB) GetGraphSchemaRelationshipKinds(ctx context.Context, relationshipKindFilters model.Filters, sort model.Sort, skip, limit int) (model.GraphSchemaRelationshipKinds, int, error) {
 	var (
 		schemaRelationshipKinds = model.GraphSchemaRelationshipKinds{}
 		totalRowCount           int
@@ -625,7 +625,7 @@ func (s *BloodhoundDB) GetGraphSchemaRelationshipKinds(ctx context.Context, rela
 
 // GetTraversableRelationshipKindsByExtensionID returns all traversable relationship kinds for a given schema extension.
 // This is a purpose-built query for the analysis pipeline that needs traversable edges for graph traversal.
-func (s *BloodhoundDB) GetTraversableRelationshipKindsByExtensionID(ctx context.Context, extensionID int32) (model.GraphSchemaRelationshipKinds, error) {
+func (s *ApihoundDB) GetTraversableRelationshipKindsByExtensionID(ctx context.Context, extensionID int32) (model.GraphSchemaRelationshipKinds, error) {
 	var query = fmt.Sprintf(`
 		SELECT rk.id, k.name, rk.schema_extension_id, rk.description, rk.is_traversable,
 		       rk.created_at, rk.updated_at, rk.deleted_at
@@ -641,7 +641,7 @@ func (s *BloodhoundDB) GetTraversableRelationshipKindsByExtensionID(ctx context.
 	return kinds, nil
 }
 
-func (s *BloodhoundDB) GetGraphSchemaRelationshipKindsWithSchemaName(ctx context.Context, relationshipKindFilters model.Filters, sort model.Sort, skip, limit int) (model.GraphSchemaRelationshipKindsWithNamedSchema, int, error) {
+func (s *ApihoundDB) GetGraphSchemaRelationshipKindsWithSchemaName(ctx context.Context, relationshipKindFilters model.Filters, sort model.Sort, skip, limit int) (model.GraphSchemaRelationshipKindsWithNamedSchema, int, error) {
 	var (
 		schemaRelationshipKinds = model.GraphSchemaRelationshipKindsWithNamedSchema{}
 		totalRowCount           int
@@ -679,7 +679,7 @@ func (s *BloodhoundDB) GetGraphSchemaRelationshipKindsWithSchemaName(ctx context
 }
 
 // GetGraphSchemaRelationshipKindById - retrieves a row from the schema_relationship_kinds table
-func (s *BloodhoundDB) GetGraphSchemaRelationshipKindById(ctx context.Context, schemaRelationshipKindId int32) (model.GraphSchemaRelationshipKind, error) {
+func (s *ApihoundDB) GetGraphSchemaRelationshipKindById(ctx context.Context, schemaRelationshipKindId int32) (model.GraphSchemaRelationshipKind, error) {
 	var schemaRelationshipKind model.GraphSchemaRelationshipKind
 	if result := s.db.WithContext(ctx).Raw(fmt.Sprintf(`
 	SELECT %s.id, name, schema_extension_id, description, is_traversable, created_at, updated_at, deleted_at
@@ -695,7 +695,7 @@ func (s *BloodhoundDB) GetGraphSchemaRelationshipKindById(ctx context.Context, s
 //
 // This function does NOT update the DAWGS name column since the schema_relationship_kinds table FKs to the DAWGS kind table, and that
 // table is append only. A new edge kind should be created instead.
-func (s *BloodhoundDB) UpdateGraphSchemaRelationshipKind(ctx context.Context, schemaRelationshipKind model.GraphSchemaRelationshipKind) (model.GraphSchemaRelationshipKind, error) {
+func (s *ApihoundDB) UpdateGraphSchemaRelationshipKind(ctx context.Context, schemaRelationshipKind model.GraphSchemaRelationshipKind) (model.GraphSchemaRelationshipKind, error) {
 	if result := s.db.WithContext(ctx).Raw(fmt.Sprintf(`
 		WITH updated_row as (
 			UPDATE %s
@@ -720,7 +720,7 @@ func (s *BloodhoundDB) UpdateGraphSchemaRelationshipKind(ctx context.Context, sc
 }
 
 // DeleteGraphSchemaRelationshipKind - deletes a schema_relationship_kind row based on the provided id. It will return an error if that id does not exist.
-func (s *BloodhoundDB) DeleteGraphSchemaRelationshipKind(ctx context.Context, schemaRelationshipKindId int32) error {
+func (s *ApihoundDB) DeleteGraphSchemaRelationshipKind(ctx context.Context, schemaRelationshipKindId int32) error {
 	var schemaRelationshipKind model.GraphSchemaRelationshipKind
 	if result := s.db.WithContext(ctx).Exec(fmt.Sprintf(`DELETE FROM %s WHERE id = ?`, schemaRelationshipKind.TableName()), schemaRelationshipKindId); result.Error != nil {
 		return CheckError(result)
@@ -731,7 +731,7 @@ func (s *BloodhoundDB) DeleteGraphSchemaRelationshipKind(ctx context.Context, sc
 }
 
 // CreateEnvironment - creates a new schema_environment.
-func (s *BloodhoundDB) CreateEnvironment(ctx context.Context, extensionId int32, environmentKindId int32, sourceKindId int32) (model.SchemaEnvironment, error) {
+func (s *ApihoundDB) CreateEnvironment(ctx context.Context, extensionId int32, environmentKindId int32, sourceKindId int32) (model.SchemaEnvironment, error) {
 	var schemaEnvironment model.SchemaEnvironment
 
 	if result := s.db.WithContext(ctx).Raw(fmt.Sprintf(`
@@ -752,7 +752,7 @@ func (s *BloodhoundDB) CreateEnvironment(ctx context.Context, extensionId int32,
 // This is the core implementation that all other GetEnvironment* methods delegate to.
 // Common use case: filter by schema_extension_id to get all environments for a specific extension.
 // Example: filters := model.Filters{"se.schema_extension_id": []model.Filter{{Operator: model.Equals, Value: "1"}}}
-func (s *BloodhoundDB) GetEnvironmentsFiltered(ctx context.Context, filters model.Filters) ([]model.SchemaEnvironment, error) {
+func (s *ApihoundDB) GetEnvironmentsFiltered(ctx context.Context, filters model.Filters) ([]model.SchemaEnvironment, error) {
 	var result []model.SchemaEnvironment
 
 	sqlFilter, err := buildSQLFilter(filters)
@@ -794,12 +794,12 @@ func (s *BloodhoundDB) GetEnvironmentsFiltered(ctx context.Context, filters mode
 }
 
 // GetEnvironments - retrieves list of schema environments.
-func (s *BloodhoundDB) GetEnvironments(ctx context.Context) ([]model.SchemaEnvironment, error) {
+func (s *ApihoundDB) GetEnvironments(ctx context.Context) ([]model.SchemaEnvironment, error) {
 	return s.GetEnvironmentsFiltered(ctx, model.Filters{})
 }
 
 // GetEnvironmentsByExtensionId - retrieves a slice of model.SchemaEnvironment by extension id.
-func (s *BloodhoundDB) GetEnvironmentsByExtensionId(ctx context.Context, extensionId int32) ([]model.SchemaEnvironment, error) {
+func (s *ApihoundDB) GetEnvironmentsByExtensionId(ctx context.Context, extensionId int32) ([]model.SchemaEnvironment, error) {
 	filters := model.Filters{
 		"se.schema_extension_id": []model.Filter{{Operator: model.Equals, Value: fmt.Sprintf("%d", extensionId)}},
 	}
@@ -807,7 +807,7 @@ func (s *BloodhoundDB) GetEnvironmentsByExtensionId(ctx context.Context, extensi
 }
 
 // GetEnvironmentByEnvironmentKindId - retrieves a schema environment by environment_kind_id.
-func (s *BloodhoundDB) GetEnvironmentByEnvironmentKindId(ctx context.Context, environmentKindId int32) (model.SchemaEnvironment, error) {
+func (s *ApihoundDB) GetEnvironmentByEnvironmentKindId(ctx context.Context, environmentKindId int32) (model.SchemaEnvironment, error) {
 	filters := model.Filters{
 		"se.environment_kind_id": []model.Filter{{Operator: model.Equals, Value: fmt.Sprintf("%d", environmentKindId)}},
 	}
@@ -824,7 +824,7 @@ func (s *BloodhoundDB) GetEnvironmentByEnvironmentKindId(ctx context.Context, en
 }
 
 // GetEnvironmentById - retrieves a schema environment by id.
-func (s *BloodhoundDB) GetEnvironmentById(ctx context.Context, environmentId int32) (model.SchemaEnvironment, error) {
+func (s *ApihoundDB) GetEnvironmentById(ctx context.Context, environmentId int32) (model.SchemaEnvironment, error) {
 	var schemaEnvironment model.SchemaEnvironment
 
 	if result := s.db.WithContext(ctx).Raw(fmt.Sprintf(`
@@ -841,7 +841,7 @@ func (s *BloodhoundDB) GetEnvironmentById(ctx context.Context, environmentId int
 }
 
 // DeleteEnvironment - deletes a schema environment by id.
-func (s *BloodhoundDB) DeleteEnvironment(ctx context.Context, environmentId int32) error {
+func (s *ApihoundDB) DeleteEnvironment(ctx context.Context, environmentId int32) error {
 	var schemaEnvironment model.SchemaEnvironment
 
 	if result := s.db.WithContext(ctx).Exec(fmt.Sprintf(`DELETE FROM %s WHERE id = ?`, schemaEnvironment.TableName()), environmentId); result.Error != nil {
@@ -854,7 +854,7 @@ func (s *BloodhoundDB) DeleteEnvironment(ctx context.Context, environmentId int3
 }
 
 // CreateSchemaFinding - creates a new schema finding.
-func (s *BloodhoundDB) CreateSchemaFinding(ctx context.Context, findingType model.SchemaFindingType, extensionId int32, kindId int32, environmentId int32, name string, displayName string) (model.SchemaFinding, error) {
+func (s *ApihoundDB) CreateSchemaFinding(ctx context.Context, findingType model.SchemaFindingType, extensionId int32, kindId int32, environmentId int32, name string, displayName string) (model.SchemaFinding, error) {
 	var finding model.SchemaFinding
 
 	if result := s.db.WithContext(ctx).Raw(fmt.Sprintf(`
@@ -871,7 +871,7 @@ func (s *BloodhoundDB) CreateSchemaFinding(ctx context.Context, findingType mode
 	return finding, nil
 }
 
-func (s *BloodhoundDB) GetSchemaFindings(ctx context.Context, filters model.Filters) ([]model.SchemaFinding, error) {
+func (s *ApihoundDB) GetSchemaFindings(ctx context.Context, filters model.Filters) ([]model.SchemaFinding, error) {
 	var (
 		findings    []model.SchemaFinding
 		whereClause string
@@ -951,7 +951,7 @@ func (s *BloodhoundDB) GetSchemaFindings(ctx context.Context, filters model.Filt
 }
 
 // GetSchemaFindingById - retrieves a schema finding by id.
-func (s *BloodhoundDB) GetSchemaFindingById(ctx context.Context, findingId int32) (model.SchemaFinding, error) {
+func (s *ApihoundDB) GetSchemaFindingById(ctx context.Context, findingId int32) (model.SchemaFinding, error) {
 	if findings, err := s.GetSchemaFindings(ctx, model.Filters{"id": []model.Filter{{Value: strconv.Itoa(int(findingId)), Operator: model.Equals}}}); err != nil {
 		return model.SchemaFinding{}, err
 	} else if len(findings) == 0 {
@@ -962,7 +962,7 @@ func (s *BloodhoundDB) GetSchemaFindingById(ctx context.Context, findingId int32
 }
 
 // GetSchemaFindingByName - retrieves a schema finding by finding name.
-func (s *BloodhoundDB) GetSchemaFindingByName(ctx context.Context, name string) (model.SchemaFinding, error) {
+func (s *ApihoundDB) GetSchemaFindingByName(ctx context.Context, name string) (model.SchemaFinding, error) {
 	if findings, err := s.GetSchemaFindings(ctx, model.Filters{"name": []model.Filter{{Value: name, Operator: model.Equals}}}); err != nil {
 		return model.SchemaFinding{}, err
 	} else if len(findings) == 0 {
@@ -973,12 +973,12 @@ func (s *BloodhoundDB) GetSchemaFindingByName(ctx context.Context, name string) 
 }
 
 // GetSchemaFindingsByExtensionId - returns all findings by extension id.
-func (s *BloodhoundDB) GetSchemaFindingsByExtensionId(ctx context.Context, extensionId int32) ([]model.SchemaFinding, error) {
+func (s *ApihoundDB) GetSchemaFindingsByExtensionId(ctx context.Context, extensionId int32) ([]model.SchemaFinding, error) {
 	return s.GetSchemaFindings(ctx, model.Filters{"extension_id": []model.Filter{{Value: strconv.Itoa(int(extensionId)), Operator: model.Equals}}})
 }
 
 // DeleteSchemaFinding - deletes a schema finding by id.
-func (s *BloodhoundDB) DeleteSchemaFinding(ctx context.Context, findingId int32) error {
+func (s *ApihoundDB) DeleteSchemaFinding(ctx context.Context, findingId int32) error {
 	var finding model.SchemaFinding
 
 	if result := s.db.WithContext(ctx).Exec(fmt.Sprintf(`DELETE FROM %s WHERE id = ?`, finding.TableName()), findingId); result.Error != nil {
@@ -990,11 +990,11 @@ func (s *BloodhoundDB) DeleteSchemaFinding(ctx context.Context, findingId int32)
 	return nil
 }
 
-func (s *BloodhoundDB) CreateSchemaFindingSubtype(ctx context.Context, findingId int32, subtype string) error {
+func (s *ApihoundDB) CreateSchemaFindingSubtype(ctx context.Context, findingId int32, subtype string) error {
 	return CheckError(s.db.WithContext(ctx).Create(&model.SchemaFindingsSubtype{SchemaFindingId: findingId, Subtype: subtype}))
 }
 
-func (s *BloodhoundDB) CreateRemediation(ctx context.Context, findingId int32, shortDescription string, longDescription string, shortRemediation string, longRemediation string) (model.Remediation, error) {
+func (s *ApihoundDB) CreateRemediation(ctx context.Context, findingId int32, shortDescription string, longDescription string, shortRemediation string, longRemediation string) (model.Remediation, error) {
 	var remediation model.Remediation
 
 	if result := s.db.WithContext(ctx).Raw(`
@@ -1025,7 +1025,7 @@ func (s *BloodhoundDB) CreateRemediation(ctx context.Context, findingId int32, s
 	return remediation, nil
 }
 
-func (s *BloodhoundDB) GetRemediationByFindingId(ctx context.Context, findingId int32) (model.Remediation, error) {
+func (s *ApihoundDB) GetRemediationByFindingId(ctx context.Context, findingId int32) (model.Remediation, error) {
 	var remediation model.Remediation
 
 	if result := s.db.WithContext(ctx).Raw(fmt.Sprintf(`
@@ -1047,7 +1047,7 @@ func (s *BloodhoundDB) GetRemediationByFindingId(ctx context.Context, findingId 
 	return remediation, nil
 }
 
-func (s *BloodhoundDB) GetRemediationByFindingName(ctx context.Context, findingName string) (model.Remediation, error) {
+func (s *ApihoundDB) GetRemediationByFindingName(ctx context.Context, findingName string) (model.Remediation, error) {
 	var remediation model.Remediation
 
 	if result := s.db.WithContext(ctx).Raw(fmt.Sprintf(`
@@ -1071,7 +1071,7 @@ func (s *BloodhoundDB) GetRemediationByFindingName(ctx context.Context, findingN
 	return remediation, nil
 }
 
-func (s *BloodhoundDB) UpdateRemediation(ctx context.Context, findingId int32, shortDescription string, longDescription string, shortRemediation string, longRemediation string) (model.Remediation, error) {
+func (s *ApihoundDB) UpdateRemediation(ctx context.Context, findingId int32, shortDescription string, longDescription string, shortRemediation string, longRemediation string) (model.Remediation, error) {
 	var remediation model.Remediation
 
 	if result := s.db.WithContext(ctx).Raw(`
@@ -1103,7 +1103,7 @@ func (s *BloodhoundDB) UpdateRemediation(ctx context.Context, findingId int32, s
 	return remediation, nil
 }
 
-func (s *BloodhoundDB) DeleteRemediation(ctx context.Context, findingId int32) error {
+func (s *ApihoundDB) DeleteRemediation(ctx context.Context, findingId int32) error {
 	if result := s.db.WithContext(ctx).Exec(fmt.Sprintf(`DELETE FROM %s WHERE finding_id = ?`, model.Remediation{}.TableName()), findingId); result.Error != nil {
 		return CheckError(result)
 	} else if result.RowsAffected == 0 {
@@ -1113,7 +1113,7 @@ func (s *BloodhoundDB) DeleteRemediation(ctx context.Context, findingId int32) e
 	return nil
 }
 
-func (s *BloodhoundDB) CreatePrincipalKind(ctx context.Context, environmentId int32, principalKind int32) (model.SchemaEnvironmentPrincipalKind, error) {
+func (s *ApihoundDB) CreatePrincipalKind(ctx context.Context, environmentId int32, principalKind int32) (model.SchemaEnvironmentPrincipalKind, error) {
 	var envPrincipalKind model.SchemaEnvironmentPrincipalKind
 
 	if result := s.db.WithContext(ctx).Raw(`
@@ -1131,7 +1131,7 @@ func (s *BloodhoundDB) CreatePrincipalKind(ctx context.Context, environmentId in
 }
 
 // GetPrincipalKindsByEnvironmentID - retrieves a schema environments principal kind by environment id.
-func (s *BloodhoundDB) GetPrincipalKindsByEnvironmentId(ctx context.Context, environmentId int32) (model.SchemaEnvironmentPrincipalKinds, error) {
+func (s *ApihoundDB) GetPrincipalKindsByEnvironmentId(ctx context.Context, environmentId int32) (model.SchemaEnvironmentPrincipalKinds, error) {
 	var envPrincipalKinds model.SchemaEnvironmentPrincipalKinds
 
 	if result := s.db.WithContext(ctx).Raw(fmt.Sprintf(`
@@ -1145,7 +1145,7 @@ func (s *BloodhoundDB) GetPrincipalKindsByEnvironmentId(ctx context.Context, env
 	return envPrincipalKinds, nil
 }
 
-func (s *BloodhoundDB) DeletePrincipalKind(ctx context.Context, environmentId int32, principalKind int32) error {
+func (s *ApihoundDB) DeletePrincipalKind(ctx context.Context, environmentId int32, principalKind int32) error {
 	if result := s.db.WithContext(ctx).Exec(fmt.Sprintf(`
 		DELETE FROM %s
 		WHERE environment_id = ? AND principal_kind = ?`, model.SchemaEnvironmentPrincipalKind{}.TableName()),
@@ -1160,7 +1160,7 @@ func (s *BloodhoundDB) DeletePrincipalKind(ctx context.Context, environmentId in
 
 // GetDisplayNodeGraphKinds - returns a map of all node kinds that are display kinds.
 // An empty map will be returned if no valid node kinds exist. An error will be returned if encountered.
-func (s *BloodhoundDB) GetDisplayNodeGraphKinds(ctx context.Context) (map[graph.Kind]bool, error) {
+func (s *ApihoundDB) GetDisplayNodeGraphKinds(ctx context.Context) (map[graph.Kind]bool, error) {
 
 	if displaySchemaNodeKinds, _, err := s.GetGraphSchemaNodeKinds(ctx, model.Filters{"is_display_kind": []model.Filter{
 		{

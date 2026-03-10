@@ -25,11 +25,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/specterops/bloodhound/packages/go/headers"
-	"github.com/specterops/bloodhound/packages/go/mediatypes"
+	"github.com/specterops/apihound/packages/go/headers"
+	"github.com/specterops/apihound/packages/go/mediatypes"
 	"github.com/stretchr/testify/require"
 
-	"github.com/specterops/bloodhound/cmd/api/src/api"
+	"github.com/specterops/apihound/cmd/api/src/api"
 )
 
 func TestWriteErrorResponse_InvalidFormat(t *testing.T) {

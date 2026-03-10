@@ -21,23 +21,23 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/specterops/bloodhound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/model"
 )
 
-func (s *BloodhoundDB) CreateIngestTask(ctx context.Context, ingestTask model.IngestTask) (model.IngestTask, error) {
+func (s *ApihoundDB) CreateIngestTask(ctx context.Context, ingestTask model.IngestTask) (model.IngestTask, error) {
 	result := s.db.WithContext(ctx).Create(&ingestTask)
 
 	return ingestTask, CheckError(result)
 }
 
-func (s *BloodhoundDB) GetAllIngestTasks(ctx context.Context) (model.IngestTasks, error) {
+func (s *ApihoundDB) GetAllIngestTasks(ctx context.Context) (model.IngestTasks, error) {
 	var ingestTasks model.IngestTasks
 	result := s.db.WithContext(ctx).Find(&ingestTasks)
 
 	return ingestTasks, CheckError(result)
 }
 
-func (s *BloodhoundDB) CountAllIngestTasks(ctx context.Context) (int64, error) {
+func (s *ApihoundDB) CountAllIngestTasks(ctx context.Context) (int64, error) {
 	var (
 		ingestTaskCount  int64
 		ingestTasksModel model.IngestTasks
@@ -47,12 +47,12 @@ func (s *BloodhoundDB) CountAllIngestTasks(ctx context.Context) (int64, error) {
 	return ingestTaskCount, CheckError(result)
 }
 
-func (s *BloodhoundDB) DeleteIngestTask(ctx context.Context, ingestTask model.IngestTask) error {
+func (s *ApihoundDB) DeleteIngestTask(ctx context.Context, ingestTask model.IngestTask) error {
 	result := s.db.WithContext(ctx).Delete(&ingestTask)
 	return CheckError(result)
 }
 
-func (s *BloodhoundDB) GetIngestTasksForJob(ctx context.Context, jobID int64) (model.IngestTasks, error) {
+func (s *ApihoundDB) GetIngestTasksForJob(ctx context.Context, jobID int64) (model.IngestTasks, error) {
 	var ingestTasks model.IngestTasks
 	// TODO rename this PG column to job_id, it's very confusing
 	result := s.db.WithContext(ctx).Where("task_id=?", jobID).Find(&ingestTasks)
@@ -60,7 +60,7 @@ func (s *BloodhoundDB) GetIngestTasksForJob(ctx context.Context, jobID int64) (m
 	return ingestTasks, CheckError(result)
 }
 
-func (s *BloodhoundDB) CreateCompositionInfo(ctx context.Context, nodes model.EdgeCompositionNodes, edges model.EdgeCompositionEdges) (model.EdgeCompositionNodes, model.EdgeCompositionEdges, error) {
+func (s *ApihoundDB) CreateCompositionInfo(ctx context.Context, nodes model.EdgeCompositionNodes, edges model.EdgeCompositionEdges) (model.EdgeCompositionNodes, model.EdgeCompositionEdges, error) {
 	return nodes, edges, s.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		if err := tx.Create(&nodes).Error; err != nil {
 			return err

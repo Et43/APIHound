@@ -24,8 +24,8 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/specterops/bloodhound/packages/go/ein"
-	"github.com/specterops/bloodhound/packages/go/errorlist"
+	"github.com/specterops/apihound/packages/go/ein"
+	"github.com/specterops/apihound/packages/go/errorlist"
 	"github.com/specterops/dawgs/graph"
 )
 

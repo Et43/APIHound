@@ -24,13 +24,13 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/specterops/bloodhound/cmd/api/src/database"
-	"github.com/specterops/bloodhound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/database"
+	"github.com/specterops/apihound/cmd/api/src/model"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-func TestBloodhoundDB_UpsertOpenGraphExtension(t *testing.T) {
+func TestApihoundDB_UpsertOpenGraphExtension(t *testing.T) {
 	testSuite := setupIntegrationTestSuite(t)
 	defer teardownIntegrationTestSuite(t, &testSuite)
 
@@ -1030,7 +1030,7 @@ func TestBloodhoundDB_UpsertOpenGraphExtension(t *testing.T) {
 	}
 }
 
-func getAndCompareGraphExtension(t *testing.T, testContext context.Context, db *database.BloodhoundDB, want model.GraphExtensionInput) int32 {
+func getAndCompareGraphExtension(t *testing.T, testContext context.Context, db *database.ApihoundDB, want model.GraphExtensionInput) int32 {
 	t.Helper()
 	var gotGraphExtension model.GraphSchemaExtension
 

@@ -22,13 +22,13 @@ import (
 	"context"
 	"testing"
 
-	"github.com/specterops/bloodhound/cmd/api/src/database"
+	"github.com/specterops/apihound/cmd/api/src/database"
 	"github.com/specterops/dawgs/graph"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-func TestBloodhoundDB_UpsertSchemaEnvironmentWithPrincipalKinds(t *testing.T) {
+func TestApihoundDB_UpsertSchemaEnvironmentWithPrincipalKinds(t *testing.T) {
 	type args struct {
 		environmentKind string
 		sourceKind      string
@@ -36,14 +36,14 @@ func TestBloodhoundDB_UpsertSchemaEnvironmentWithPrincipalKinds(t *testing.T) {
 	}
 	tests := []struct {
 		name          string
-		setupData     func(t *testing.T, db *database.BloodhoundDB) int32
+		setupData     func(t *testing.T, db *database.ApihoundDB) int32
 		args          args
-		assert        func(t *testing.T, db *database.BloodhoundDB, args args)
+		assert        func(t *testing.T, db *database.ApihoundDB, args args)
 		expectedError string
 	}{
 		{
 			name: "Success: Create new environment with principal kinds",
-			setupData: func(t *testing.T, db *database.BloodhoundDB) int32 {
+			setupData: func(t *testing.T, db *database.ApihoundDB) int32 {
 				t.Helper()
 				ext, err := db.CreateGraphSchemaExtension(context.Background(), "TestExt", "Test", "v1.0.0", "test_namespace_1")
 				require.NoError(t, err, "unexpected error occurred when creating extension")
@@ -55,7 +55,7 @@ func TestBloodhoundDB_UpsertSchemaEnvironmentWithPrincipalKinds(t *testing.T) {
 				sourceKind:      "Base",
 				principalKinds:  []string{"Tag_Tier_Zero", "Tag_Owned"},
 			},
-			assert: func(t *testing.T, db *database.BloodhoundDB, args args) {
+			assert: func(t *testing.T, db *database.ApihoundDB, args args) {
 				t.Helper()
 
 				environmentKind, err := db.GetKindByName(context.Background(), args.environmentKind)
@@ -87,12 +87,12 @@ func TestBloodhoundDB_UpsertSchemaEnvironmentWithPrincipalKinds(t *testing.T) {
 		},
 		{
 			name: "Success: Upsert replaces existing environment",
-			setupData: func(t *testing.T, db *database.BloodhoundDB) int32 {
+			setupData: func(t *testing.T, db *database.ApihoundDB) int32 {
 				t.Helper()
 				ext, err := db.CreateGraphSchemaExtension(context.Background(), "TestExt", "Test", "v1.0.0", "test_namespace_2")
 				require.NoError(t, err, "unexpected error occurred when creating extension")
 
-				err = db.Transaction(context.Background(), func(tx *database.BloodhoundDB) error {
+				err = db.Transaction(context.Background(), func(tx *database.ApihoundDB) error {
 					return tx.UpsertSchemaEnvironmentWithPrincipalKinds(
 						context.Background(),
 						ext.ID,
@@ -110,7 +110,7 @@ func TestBloodhoundDB_UpsertSchemaEnvironmentWithPrincipalKinds(t *testing.T) {
 				sourceKind:      "Base",
 				principalKinds:  []string{"Tag_Tier_Zero"},
 			},
-			assert: func(t *testing.T, db *database.BloodhoundDB, args args) {
+			assert: func(t *testing.T, db *database.ApihoundDB, args args) {
 				t.Helper()
 
 				environmentKind, err := db.GetKindByName(context.Background(), args.environmentKind)
@@ -132,7 +132,7 @@ func TestBloodhoundDB_UpsertSchemaEnvironmentWithPrincipalKinds(t *testing.T) {
 		},
 		{
 			name: "Success: Source kind auto-registers",
-			setupData: func(t *testing.T, db *database.BloodhoundDB) int32 {
+			setupData: func(t *testing.T, db *database.ApihoundDB) int32 {
 				t.Helper()
 				ext, err := db.CreateGraphSchemaExtension(context.Background(), "TestExt", "Test", "v1.0.0", "test_namespace_3")
 				require.NoError(t, err, "unexpected error occurred when creating extension")
@@ -143,7 +143,7 @@ func TestBloodhoundDB_UpsertSchemaEnvironmentWithPrincipalKinds(t *testing.T) {
 				sourceKind:      "NewSource_" + t.Name(), // Make unique per test
 				principalKinds:  []string{"Tag_Tier_Zero"},
 			},
-			assert: func(t *testing.T, db *database.BloodhoundDB, args args) {
+			assert: func(t *testing.T, db *database.ApihoundDB, args args) {
 				t.Helper()
 
 				sourceKind, err := db.GetSourceKindByName(context.Background(), args.sourceKind)
@@ -155,7 +155,7 @@ func TestBloodhoundDB_UpsertSchemaEnvironmentWithPrincipalKinds(t *testing.T) {
 		},
 		{
 			name: "Error: Environment kind not found",
-			setupData: func(t *testing.T, db *database.BloodhoundDB) int32 {
+			setupData: func(t *testing.T, db *database.ApihoundDB) int32 {
 				t.Helper()
 				ext, err := db.CreateGraphSchemaExtension(context.Background(), "TestExt", "Test", "v1.0.0", "test_namespace_4")
 				require.NoError(t, err, "unexpected error occurred when creating extension")
@@ -168,7 +168,7 @@ func TestBloodhoundDB_UpsertSchemaEnvironmentWithPrincipalKinds(t *testing.T) {
 				principalKinds:  []string{},
 			},
 			expectedError: "environment kind 'NonExistent' not found",
-			assert: func(t *testing.T, db *database.BloodhoundDB, args args) {
+			assert: func(t *testing.T, db *database.ApihoundDB, args args) {
 				t.Helper()
 
 				_, err := db.GetKindByName(context.Background(), args.environmentKind)
@@ -177,7 +177,7 @@ func TestBloodhoundDB_UpsertSchemaEnvironmentWithPrincipalKinds(t *testing.T) {
 		},
 		{
 			name: "Error: Principal kind not found",
-			setupData: func(t *testing.T, db *database.BloodhoundDB) int32 {
+			setupData: func(t *testing.T, db *database.ApihoundDB) int32 {
 				t.Helper()
 				ext, err := db.CreateGraphSchemaExtension(context.Background(), "TestExt", "Test", "v1.0.0", "test_namespace_5")
 				require.NoError(t, err, "unexpected error occurred when creating extension")
@@ -190,7 +190,7 @@ func TestBloodhoundDB_UpsertSchemaEnvironmentWithPrincipalKinds(t *testing.T) {
 				principalKinds:  []string{"NonExistent"},
 			},
 			expectedError: "principal kind 'NonExistent' not found",
-			assert: func(t *testing.T, db *database.BloodhoundDB, args args) {
+			assert: func(t *testing.T, db *database.ApihoundDB, args args) {
 				t.Helper()
 
 				// Verify no environment was created for this extension
@@ -206,7 +206,7 @@ func TestBloodhoundDB_UpsertSchemaEnvironmentWithPrincipalKinds(t *testing.T) {
 		},
 		{
 			name: "Rollback: Partial failure on second principal kind",
-			setupData: func(t *testing.T, db *database.BloodhoundDB) int32 {
+			setupData: func(t *testing.T, db *database.ApihoundDB) int32 {
 				t.Helper()
 				ext, err := db.CreateGraphSchemaExtension(context.Background(), "TestExt", "Test", "v1.0.0", "test_namespace_6")
 				require.NoError(t, err, "unexpected error occurred when creating extension")
@@ -219,7 +219,7 @@ func TestBloodhoundDB_UpsertSchemaEnvironmentWithPrincipalKinds(t *testing.T) {
 				principalKinds:  []string{"Tag_Owned", "NonExistent"},
 			},
 			expectedError: "principal kind 'NonExistent' not found",
-			assert: func(t *testing.T, db *database.BloodhoundDB, args args) {
+			assert: func(t *testing.T, db *database.ApihoundDB, args args) {
 				t.Helper()
 
 				environmentKind, err := db.GetKindByName(context.Background(), args.environmentKind)
@@ -231,12 +231,12 @@ func TestBloodhoundDB_UpsertSchemaEnvironmentWithPrincipalKinds(t *testing.T) {
 		},
 		{
 			name: "Success: Multiple environments with different combinations",
-			setupData: func(t *testing.T, db *database.BloodhoundDB) int32 {
+			setupData: func(t *testing.T, db *database.ApihoundDB) int32 {
 				t.Helper()
 				ext, err := db.CreateGraphSchemaExtension(context.Background(), "TestExt", "Test", "v1.0.0", "test_namespace_7")
 				require.NoError(t, err, "unexpected error occurred when creating extension")
 
-				err = db.Transaction(context.Background(), func(tx *database.BloodhoundDB) error {
+				err = db.Transaction(context.Background(), func(tx *database.ApihoundDB) error {
 					return tx.UpsertSchemaEnvironmentWithPrincipalKinds(
 						context.Background(),
 						ext.ID,
@@ -254,7 +254,7 @@ func TestBloodhoundDB_UpsertSchemaEnvironmentWithPrincipalKinds(t *testing.T) {
 				sourceKind:      "Base",
 				principalKinds:  []string{"Tag_Owned"},
 			},
-			assert: func(t *testing.T, db *database.BloodhoundDB, args args) {
+			assert: func(t *testing.T, db *database.ApihoundDB, args args) {
 				t.Helper()
 
 				// Count environments created in setup + this test
@@ -295,7 +295,7 @@ func TestBloodhoundDB_UpsertSchemaEnvironmentWithPrincipalKinds(t *testing.T) {
 
 			extensionID := tt.setupData(t, testSuite.BHDatabase)
 
-			err := testSuite.BHDatabase.Transaction(context.Background(), func(tx *database.BloodhoundDB) error {
+			err := testSuite.BHDatabase.Transaction(context.Background(), func(tx *database.ApihoundDB) error {
 				return tx.UpsertSchemaEnvironmentWithPrincipalKinds(
 					context.Background(),
 					extensionID,

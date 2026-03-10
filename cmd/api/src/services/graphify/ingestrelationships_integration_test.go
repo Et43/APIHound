@@ -20,12 +20,12 @@ package graphify
 import (
 	"testing"
 
-	"github.com/specterops/bloodhound/cmd/api/src/services/graphify/endpoint"
-	"github.com/specterops/bloodhound/cmd/api/src/test/integration"
-	"github.com/specterops/bloodhound/packages/go/ein"
-	"github.com/specterops/bloodhound/packages/go/graphschema"
-	"github.com/specterops/bloodhound/packages/go/graphschema/ad"
-	"github.com/specterops/bloodhound/packages/go/graphschema/common"
+	"github.com/specterops/apihound/cmd/api/src/services/graphify/endpoint"
+	"github.com/specterops/apihound/cmd/api/src/test/integration"
+	"github.com/specterops/apihound/packages/go/ein"
+	"github.com/specterops/apihound/packages/go/graphschema"
+	"github.com/specterops/apihound/packages/go/graphschema/ad"
+	"github.com/specterops/apihound/packages/go/graphschema/common"
 	"github.com/specterops/dawgs/graph"
 	"github.com/specterops/dawgs/query"
 	"github.com/stretchr/testify/require"

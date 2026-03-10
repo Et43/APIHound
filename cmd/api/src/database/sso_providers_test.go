@@ -22,15 +22,15 @@ import (
 	"context"
 	"testing"
 
-	"github.com/specterops/bloodhound/cmd/api/src/database/types/null"
-	"github.com/specterops/bloodhound/cmd/api/src/model"
-	"github.com/specterops/bloodhound/cmd/api/src/model/appcfg"
-	"github.com/specterops/bloodhound/cmd/api/src/test/integration"
+	"github.com/specterops/apihound/cmd/api/src/database/types/null"
+	"github.com/specterops/apihound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/model/appcfg"
+	"github.com/specterops/apihound/cmd/api/src/test/integration"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-func TestBloodhoundDB_CreateAndGetSSOProvider(t *testing.T) {
+func TestApihoundDB_CreateAndGetSSOProvider(t *testing.T) {
 	var (
 		testCtx = context.Background()
 		dbInst  = integration.SetupDB(t)
@@ -38,11 +38,11 @@ func TestBloodhoundDB_CreateAndGetSSOProvider(t *testing.T) {
 	defer dbInst.Close(testCtx)
 
 	t.Run("successfully create an SSO provider (SAML)", func(t *testing.T) {
-		result, err := dbInst.CreateSSOProvider(testCtx, "Bloodhound Gang", model.SessionAuthProviderSAML, model.SSOProviderConfig{})
+		result, err := dbInst.CreateSSOProvider(testCtx, "Apihound Gang", model.SessionAuthProviderSAML, model.SSOProviderConfig{})
 		require.NoError(t, err)
 
-		assert.Equal(t, "Bloodhound Gang", result.Name)
-		assert.Equal(t, "bloodhound-gang", result.Slug)
+		assert.Equal(t, "Apihound Gang", result.Name)
+		assert.Equal(t, "apihound-gang", result.Slug)
 		assert.Equal(t, model.SessionAuthProviderSAML, result.Type)
 		assert.NotEmpty(t, result.ID)
 	})
@@ -56,11 +56,11 @@ func TestBloodhoundDB_CreateAndGetSSOProvider(t *testing.T) {
 			},
 		}
 
-		result, err := dbInst.CreateSSOProvider(testCtx, "Bloodhound Gang2", model.SessionAuthProviderSAML, config)
+		result, err := dbInst.CreateSSOProvider(testCtx, "Apihound Gang2", model.SessionAuthProviderSAML, config)
 		require.NoError(t, err)
 
-		assert.Equal(t, "Bloodhound Gang2", result.Name)
-		assert.Equal(t, "bloodhound-gang2", result.Slug)
+		assert.Equal(t, "Apihound Gang2", result.Name)
+		assert.Equal(t, "apihound-gang2", result.Slug)
 		assert.Equal(t, model.SessionAuthProviderSAML, result.Type)
 		assert.Equal(t, true, result.Config.AutoProvision.Enabled)
 		assert.Equal(t, int32(3), result.Config.AutoProvision.DefaultRoleId)
@@ -69,11 +69,11 @@ func TestBloodhoundDB_CreateAndGetSSOProvider(t *testing.T) {
 	})
 
 	t.Run("successfully create an SSO provider (OIDC)", func(t *testing.T) {
-		result, err := dbInst.CreateSSOProvider(testCtx, "Bloodhound Gang3", model.SessionAuthProviderOIDC, model.SSOProviderConfig{})
+		result, err := dbInst.CreateSSOProvider(testCtx, "Apihound Gang3", model.SessionAuthProviderOIDC, model.SSOProviderConfig{})
 		require.NoError(t, err)
 
-		assert.Equal(t, "Bloodhound Gang3", result.Name)
-		assert.Equal(t, "bloodhound-gang3", result.Slug)
+		assert.Equal(t, "Apihound Gang3", result.Name)
+		assert.Equal(t, "apihound-gang3", result.Slug)
 		assert.Equal(t, model.SessionAuthProviderOIDC, result.Type)
 		assert.NotEmpty(t, result.ID)
 	})
@@ -87,11 +87,11 @@ func TestBloodhoundDB_CreateAndGetSSOProvider(t *testing.T) {
 			},
 		}
 
-		result, err := dbInst.CreateSSOProvider(testCtx, "Bloodhound Gang4", model.SessionAuthProviderOIDC, config)
+		result, err := dbInst.CreateSSOProvider(testCtx, "Apihound Gang4", model.SessionAuthProviderOIDC, config)
 		require.NoError(t, err)
 
-		assert.Equal(t, "Bloodhound Gang4", result.Name)
-		assert.Equal(t, "bloodhound-gang4", result.Slug)
+		assert.Equal(t, "Apihound Gang4", result.Name)
+		assert.Equal(t, "apihound-gang4", result.Slug)
 		assert.Equal(t, model.SessionAuthProviderOIDC, result.Type)
 		assert.Equal(t, true, result.Config.AutoProvision.Enabled)
 		assert.Equal(t, int32(3), result.Config.AutoProvision.DefaultRoleId)
@@ -100,7 +100,7 @@ func TestBloodhoundDB_CreateAndGetSSOProvider(t *testing.T) {
 	})
 }
 
-func TestBloodhoundDB_DeleteSSOProvider(t *testing.T) {
+func TestApihoundDB_DeleteSSOProvider(t *testing.T) {
 	var (
 		testCtx = context.Background()
 		dbInst  = integration.SetupDB(t)
@@ -199,7 +199,7 @@ func TestBloodhoundDB_DeleteSSOProvider(t *testing.T) {
 	})
 }
 
-func TestBloodhoundDB_GetAllSSOProviders(t *testing.T) {
+func TestApihoundDB_GetAllSSOProviders(t *testing.T) {
 	var (
 		testCtx = context.Background()
 		dbInst  = integration.SetupDB(t)
@@ -302,7 +302,7 @@ func TestBloodhoundDB_GetAllSSOProviders(t *testing.T) {
 	})
 }
 
-func TestBloodhoundDB_GetSSOProviderBySlug(t *testing.T) {
+func TestApihoundDB_GetSSOProviderBySlug(t *testing.T) {
 	var (
 		testCtx = context.Background()
 		dbInst  = integration.SetupDB(t)
@@ -346,7 +346,7 @@ func TestBloodhoundDB_GetSSOProviderBySlug(t *testing.T) {
 	})
 }
 
-func TestBloodhoundDB_GetSSOProviderUsers(t *testing.T) {
+func TestApihoundDB_GetSSOProviderUsers(t *testing.T) {
 	var (
 		testCtx = context.Background()
 		dbInst  = integration.SetupDB(t)
@@ -354,7 +354,7 @@ func TestBloodhoundDB_GetSSOProviderUsers(t *testing.T) {
 	defer dbInst.Close(testCtx)
 
 	t.Run("successfully list SSO provider users (SAML)", func(t *testing.T) {
-		provider, err := dbInst.CreateSSOProvider(testCtx, "Bloodhound Gang", model.SessionAuthProviderSAML, model.SSOProviderConfig{})
+		provider, err := dbInst.CreateSSOProvider(testCtx, "Apihound Gang", model.SessionAuthProviderSAML, model.SSOProviderConfig{})
 		require.NoError(t, err)
 
 		user, err := dbInst.CreateUser(testCtx, model.User{
@@ -380,7 +380,7 @@ func TestBloodhoundDB_GetSSOProviderUsers(t *testing.T) {
 			},
 		}
 
-		provider, err := dbInst.CreateSSOProvider(testCtx, "Bloodhound Gang2", model.SessionAuthProviderSAML, config)
+		provider, err := dbInst.CreateSSOProvider(testCtx, "Apihound Gang2", model.SessionAuthProviderSAML, config)
 		require.NoError(t, err)
 		assert.Equal(t, true, provider.Config.AutoProvision.Enabled)
 		assert.Equal(t, int32(3), provider.Config.AutoProvision.DefaultRoleId)
@@ -401,7 +401,7 @@ func TestBloodhoundDB_GetSSOProviderUsers(t *testing.T) {
 	})
 
 	t.Run("successfully list SSO provider users (OIDC)", func(t *testing.T) {
-		provider, err := dbInst.CreateSSOProvider(testCtx, "Bloodhound Gang3", model.SessionAuthProviderOIDC, model.SSOProviderConfig{})
+		provider, err := dbInst.CreateSSOProvider(testCtx, "Apihound Gang3", model.SessionAuthProviderOIDC, model.SSOProviderConfig{})
 		require.NoError(t, err)
 
 		user, err := dbInst.CreateUser(testCtx, model.User{
@@ -427,7 +427,7 @@ func TestBloodhoundDB_GetSSOProviderUsers(t *testing.T) {
 			},
 		}
 
-		provider, err := dbInst.CreateSSOProvider(testCtx, "Bloodhound Gang4", model.SessionAuthProviderOIDC, config)
+		provider, err := dbInst.CreateSSOProvider(testCtx, "Apihound Gang4", model.SessionAuthProviderOIDC, config)
 		require.NoError(t, err)
 		assert.Equal(t, true, provider.Config.AutoProvision.Enabled)
 		assert.Equal(t, int32(3), provider.Config.AutoProvision.DefaultRoleId)
@@ -448,7 +448,7 @@ func TestBloodhoundDB_GetSSOProviderUsers(t *testing.T) {
 	})
 }
 
-func TestBloodhoundDB_GetSSOProviderById(t *testing.T) {
+func TestApihoundDB_GetSSOProviderById(t *testing.T) {
 	var (
 		testCtx = context.Background()
 		dbInst  = integration.SetupDB(t)
@@ -495,7 +495,7 @@ func TestBloodhoundDB_GetSSOProviderById(t *testing.T) {
 
 	t.Run("successfully get sso provider by id (OIDC)", func(t *testing.T) {
 		oidcProvider := model.OIDCProvider{
-			ClientID: "bloodhound",
+			ClientID: "apihound",
 			Issuer:   "https://localhost/auth",
 		}
 
@@ -518,7 +518,7 @@ func TestBloodhoundDB_GetSSOProviderById(t *testing.T) {
 			},
 		}
 		oidcProvider := model.OIDCProvider{
-			ClientID: "bloodhound2",
+			ClientID: "apihound2",
 			Issuer:   "https://localhost/auth",
 		}
 

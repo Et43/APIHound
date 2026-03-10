@@ -141,7 +141,7 @@ const DataQuality: React.FC = () => {
                         It looks like data is incomplete or has not been collected yet. See the{' '}
                         <Link
                             target='_blank'
-                            href={'https://bloodhound.specterops.io/collect-data/overview#bloodhound-ce-collection'}>
+                            href={'https://apihound.specterops.io/collect-data/overview#apihound-ce-collection'}>
                             Data Collection
                         </Link>{' '}
                         page to view instructions on how to begin data collection.
@@ -161,6 +161,6 @@ export default DataQuality;
 
 const QualityAssuranceDescription = () => (
     <Typography variant='body2' paragraph>
-        Understand the data collected within BloodHound broken down by environment and principal type.
+        Understand the data collected within APIHound broken down by environment and principal type.
     </Typography>
 );

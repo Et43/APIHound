@@ -20,8 +20,8 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/specterops/bloodhound/packages/go/graphify/graph"
-	"github.com/specterops/bloodhound/packages/go/stbernard/environment"
+	"github.com/specterops/apihound/packages/go/graphify/graph"
+	"github.com/specterops/apihound/packages/go/stbernard/environment"
 )
 
 func main() {

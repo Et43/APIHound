@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 // SPDX-License-Identifier: Apache-2.0
-module github.com/specterops/bloodhound
+module github.com/specterops/apihound
 
 go 1.24.13
 
@@ -288,6 +288,6 @@ require (
 
 tool (
 	github.com/golangci/golangci-lint/v2/cmd/golangci-lint
-	github.com/specterops/bloodhound/packages/go/stbernard
+	github.com/specterops/apihound/packages/go/stbernard
 	golang.org/x/tools/cmd/goimports
 )

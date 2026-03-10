@@ -22,9 +22,9 @@ import (
 	"testing"
 
 	"github.com/gorilla/mux"
-	"github.com/specterops/bloodhound/cmd/api/src/api/middleware"
-	"github.com/specterops/bloodhound/cmd/api/src/database/mocks"
-	"github.com/specterops/bloodhound/cmd/api/src/model/appcfg"
+	"github.com/specterops/apihound/cmd/api/src/api/middleware"
+	"github.com/specterops/apihound/cmd/api/src/database/mocks"
+	"github.com/specterops/apihound/cmd/api/src/model/appcfg"
 	"go.uber.org/mock/gomock"
 )
 

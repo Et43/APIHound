@@ -45,7 +45,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ children }) => {
                     <div className='h-full w-auto text-center box-border p-16'>
                         <img
                             src={`${import.meta.env.BASE_URL}${imageUrl}`}
-                            alt='BloodHound'
+                            alt='APIHound'
                             style={{
                                 width: '100%',
                             }}

@@ -22,9 +22,9 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/specterops/bloodhound/cmd/api/src/database"
-	"github.com/specterops/bloodhound/cmd/api/src/model"
-	"github.com/specterops/bloodhound/packages/go/bhlog/attr"
+	"github.com/specterops/apihound/cmd/api/src/database"
+	"github.com/specterops/apihound/cmd/api/src/model"
+	"github.com/specterops/apihound/packages/go/bhlog/attr"
 )
 
 const (

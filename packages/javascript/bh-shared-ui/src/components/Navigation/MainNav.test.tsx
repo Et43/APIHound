@@ -25,7 +25,7 @@ import { MainNavData, MainNavDataListItem, MainNavLogoDataObject } from './types
 const MainNavLogoData: MainNavLogoDataObject = {
     project: {
         route: '/',
-        icon: <AppIcon.BHCELogo size={24} />,
+        icon: <AppIcon.APIHoundLogo size={24} />,
     },
     specterOps: {
         image: {
@@ -138,7 +138,7 @@ describe('MainNav', () => {
 
         const versionNumberContainer = await within(MainNavBar).findByTestId('global_nav-version-number');
         const versionNumberLabel = await within(versionNumberContainer).findByText(
-            `BloodHound: ${currentVersionNumber}`
+            `APIHound: ${currentVersionNumber}`
         );
 
         // ---- collapsed classes ----

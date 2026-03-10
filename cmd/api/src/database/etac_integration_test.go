@@ -22,13 +22,13 @@ import (
 	"context"
 	"testing"
 
-	"github.com/specterops/bloodhound/cmd/api/src/database/types/null"
-	"github.com/specterops/bloodhound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/database/types/null"
+	"github.com/specterops/apihound/cmd/api/src/model"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-func TestBloodhoundDB_AccessControlList(t *testing.T) {
+func TestApihoundDB_AccessControlList(t *testing.T) {
 	t.Parallel()
 
 	suite := setupIntegrationTestSuite(t)

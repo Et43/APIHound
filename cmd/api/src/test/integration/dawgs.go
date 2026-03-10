@@ -24,9 +24,9 @@ import (
 	"testing"
 
 	"github.com/peterldowns/pgtestdb"
-	"github.com/specterops/bloodhound/cmd/api/src/config"
-	"github.com/specterops/bloodhound/cmd/api/src/test"
-	"github.com/specterops/bloodhound/cmd/api/src/test/integration/utils"
+	"github.com/specterops/apihound/cmd/api/src/config"
+	"github.com/specterops/apihound/cmd/api/src/test"
+	"github.com/specterops/apihound/cmd/api/src/test/integration/utils"
 	"github.com/specterops/dawgs"
 	"github.com/specterops/dawgs/drivers/pg"
 	"github.com/specterops/dawgs/graph"

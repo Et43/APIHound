@@ -20,8 +20,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/specterops/bloodhound/cmd/api/src/services/graphify/endpoint"
-	graph_mocks "github.com/specterops/bloodhound/cmd/api/src/vendormocks/dawgs/graph"
+	"github.com/specterops/apihound/cmd/api/src/services/graphify/endpoint"
+	graph_mocks "github.com/specterops/apihound/cmd/api/src/vendormocks/dawgs/graph"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
 )

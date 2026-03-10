@@ -15,7 +15,7 @@
 // SPDX-License-Identifier: Apache-2.0
 import { Role } from 'js-client-library';
 
-// Some constants and helper functions for working with bloodhound user roles
+// Some constants and helper functions for working with apihound user roles
 export const Roles = {
     UPLOAD_ONLY: 'Upload-Only',
     READ_ONLY: 'Read-Only',

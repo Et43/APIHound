@@ -19,27 +19,27 @@ package database
 import (
 	"context"
 
-	"github.com/specterops/bloodhound/cmd/api/src/model"
-	"github.com/specterops/bloodhound/cmd/api/src/model/appcfg"
+	"github.com/specterops/apihound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/model/appcfg"
 	"gorm.io/gorm"
 )
 
-func (s *BloodhoundDB) GetFlag(ctx context.Context, id int32) (appcfg.FeatureFlag, error) {
+func (s *ApihoundDB) GetFlag(ctx context.Context, id int32) (appcfg.FeatureFlag, error) {
 	var flag appcfg.FeatureFlag
 	return flag, CheckError(s.db.WithContext(ctx).Find(&flag, id))
 }
 
-func (s *BloodhoundDB) GetFlagByKey(ctx context.Context, key string) (appcfg.FeatureFlag, error) {
+func (s *ApihoundDB) GetFlagByKey(ctx context.Context, key string) (appcfg.FeatureFlag, error) {
 	var flag appcfg.FeatureFlag
 	return flag, CheckError(s.db.WithContext(ctx).Where("key = ?", key).First(&flag))
 }
 
-func (s *BloodhoundDB) GetAllFlags(ctx context.Context) ([]appcfg.FeatureFlag, error) {
+func (s *ApihoundDB) GetAllFlags(ctx context.Context) ([]appcfg.FeatureFlag, error) {
 	var flags []appcfg.FeatureFlag
 	return flags, CheckError(s.db.WithContext(ctx).Find(&flags))
 }
 
-func (s *BloodhoundDB) SetFlag(ctx context.Context, flag appcfg.FeatureFlag) error {
+func (s *ApihoundDB) SetFlag(ctx context.Context, flag appcfg.FeatureFlag) error {
 	var (
 		auditEntry = model.AuditEntry{
 			Action: model.AuditLogActionToggleEarlyAccessFeatureFlag,

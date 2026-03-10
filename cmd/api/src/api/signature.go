@@ -29,7 +29,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/specterops/bloodhound/packages/go/headers"
+	"github.com/specterops/apihound/packages/go/headers"
 )
 
 const ErrTemplateHMACSignature string = "unable to compute hmac signature: %w"
@@ -92,7 +92,7 @@ func (s *SelfDestructingTempFile) Name() string {
 	return s.file.Name()
 }
 
-// NewRequestSignature generates the BloodHound request signature using the provided hash function.
+// NewRequestSignature generates the APIHound request signature using the provided hash function.
 // NOTE: The given io.Reader will be read to EOF. Consider using io.TeeReader so that the body may be read again after the signature has been created.
 func NewRequestSignature(ctx context.Context, hasher func() hash.Hash, key string, datetime string, requestMethod string, requestURI string, body io.Reader) ([]byte, error) {
 	if hasher == nil {

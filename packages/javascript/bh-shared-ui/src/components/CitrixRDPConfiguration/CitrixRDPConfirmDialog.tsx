@@ -34,9 +34,9 @@ type CitrixRDPConfirmDialogProps = {
 };
 export const dialogTitle = 'Confirm environment configuration';
 const enabledDialogDescription =
-    'Analysis has been added with Citrix Configuration, this will ensure that BloodHound can account for Direct Access RDP connections. \n\nCompensating controls handled within Citrix are not handled by BloodHound at this time.';
+    'Analysis has been added with Citrix Configuration, this will ensure that APIHound can account for Direct Access RDP connections. \n\nCompensating controls handled within Citrix are not handled by APIHound at this time.';
 const disabledDialogDescription =
-    'Analysis has been removed with Citrix Configuration, this will result in BloodHound performing analysis to account for this change';
+    'Analysis has been removed with Citrix Configuration, this will result in APIHound performing analysis to account for this change';
 
 const CitrixRDPConfirmDialog: FC<CitrixRDPConfirmDialogProps> = ({
     open,

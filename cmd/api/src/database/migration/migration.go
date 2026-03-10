@@ -20,7 +20,7 @@ import (
 	"embed"
 	"io/fs"
 
-	"github.com/specterops/bloodhound/cmd/api/src/version"
+	"github.com/specterops/apihound/cmd/api/src/version"
 	"gorm.io/gorm"
 )
 
@@ -43,7 +43,7 @@ type Migration struct {
 	Version  version.Version
 }
 
-// Migrator is the main SQL migration tool for BloodHound.
+// Migrator is the main SQL migration tool for APIHound.
 type Migrator struct {
 	Sources        []Source
 	ExtensionsData []Source

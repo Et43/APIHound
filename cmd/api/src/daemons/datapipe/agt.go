@@ -25,16 +25,16 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/specterops/bloodhound/cmd/api/src/database"
-	"github.com/specterops/bloodhound/cmd/api/src/database/types/null"
-	"github.com/specterops/bloodhound/cmd/api/src/model"
-	"github.com/specterops/bloodhound/cmd/api/src/model/appcfg"
-	"github.com/specterops/bloodhound/packages/go/bhlog/attr"
-	"github.com/specterops/bloodhound/packages/go/bhlog/measure"
-	"github.com/specterops/bloodhound/packages/go/graphschema"
-	"github.com/specterops/bloodhound/packages/go/graphschema/ad"
-	"github.com/specterops/bloodhound/packages/go/graphschema/azure"
-	"github.com/specterops/bloodhound/packages/go/graphschema/common"
+	"github.com/specterops/apihound/cmd/api/src/database"
+	"github.com/specterops/apihound/cmd/api/src/database/types/null"
+	"github.com/specterops/apihound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/model/appcfg"
+	"github.com/specterops/apihound/packages/go/bhlog/attr"
+	"github.com/specterops/apihound/packages/go/bhlog/measure"
+	"github.com/specterops/apihound/packages/go/graphschema"
+	"github.com/specterops/apihound/packages/go/graphschema/ad"
+	"github.com/specterops/apihound/packages/go/graphschema/azure"
+	"github.com/specterops/apihound/packages/go/graphschema/common"
 	"github.com/specterops/dawgs/cardinality"
 	"github.com/specterops/dawgs/graph"
 	"github.com/specterops/dawgs/ops"
@@ -545,7 +545,7 @@ func SelectNodes(ctx context.Context, db database.Database, graphDb graph.Databa
 
 			if (selector.AutoCertify == model.SelectorAutoCertifyMethodSeedsOnly && node.Source == model.AssetGroupSelectorNodeSourceSeed) || selector.AutoCertify == model.SelectorAutoCertifyMethodAllMembers {
 				certified = model.AssetGroupCertificationAuto
-				certifiedBy = null.StringFrom(model.AssetGroupActorBloodHound)
+				certifiedBy = null.StringFrom(model.AssetGroupActorAPIHound)
 			}
 
 			// Missing, insert the record
@@ -581,7 +581,7 @@ func SelectNodes(ctx context.Context, db database.Database, graphDb graph.Databa
 					certifiedBy = oldSelectorNode.CertifiedBy
 				} else if oldSelectorNode.Certified == model.AssetGroupCertificationPending && ((selector.AutoCertify == model.SelectorAutoCertifyMethodSeedsOnly && oldSelectorNode.Source == model.AssetGroupSelectorNodeSourceSeed) || selector.AutoCertify == model.SelectorAutoCertifyMethodAllMembers) {
 					certified = model.AssetGroupCertificationAuto
-					certifiedBy = null.StringFrom(model.AssetGroupActorBloodHound)
+					certifiedBy = null.StringFrom(model.AssetGroupActorAPIHound)
 				}
 
 				if graphNode, ok := nodesWithSrcSet[oldSelectorNode.NodeId]; !ok {
@@ -1006,7 +1006,7 @@ func migrateCustomObjectIdSelectorNames(ctx context.Context, db database.Databas
 							return nil
 						}
 						selector.Name = name
-						if _, err := db.UpdateAssetGroupTagSelector(ctx, model.AssetGroupActorBloodHound, "", selector); err != nil {
+						if _, err := db.UpdateAssetGroupTagSelector(ctx, model.AssetGroupActorAPIHound, "", selector); err != nil {
 							slog.WarnContext(ctx, "AGT: customSelectorMigration - Failed to migrate custom selector name", slog.Any("selector", selector))
 							countSkipped++
 						}

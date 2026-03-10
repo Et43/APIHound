@@ -20,7 +20,7 @@ import { Button } from '@bloodhoundenterprise/doodleui';
 import { AppLink } from '../../components';
 import { usePZPathParams } from '../../hooks';
 
-const docsBasePath = 'bloodhound.specterops.io/analyze-data';
+const docsBasePath = 'apihound.specterops.io/analyze-data';
 const pzPath = 'privilege-zones';
 
 export const RulesLink: FC = () => {

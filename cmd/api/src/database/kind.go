@@ -19,8 +19,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/specterops/bloodhound/cmd/api/src/model"
-	"github.com/specterops/bloodhound/cmd/api/src/utils"
+	"github.com/specterops/apihound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/utils"
 )
 
 type Kind interface {
@@ -28,7 +28,7 @@ type Kind interface {
 	GetKindsByIDs(ctx context.Context, ids ...int32) ([]model.Kind, error)
 }
 
-func (s *BloodhoundDB) GetKindByName(ctx context.Context, name string) (model.Kind, error) {
+func (s *ApihoundDB) GetKindByName(ctx context.Context, name string) (model.Kind, error) {
 	const query = `
 		SELECT id, name
 		FROM kind
@@ -49,7 +49,7 @@ func (s *BloodhoundDB) GetKindByName(ctx context.Context, name string) (model.Ki
 	return kind, nil
 }
 
-func (s *BloodhoundDB) GetKindsByIDs(ctx context.Context, ids ...int32) ([]model.Kind, error) {
+func (s *ApihoundDB) GetKindsByIDs(ctx context.Context, ids ...int32) ([]model.Kind, error) {
 	if len(ids) == 0 {
 		return []model.Kind{}, nil
 	}

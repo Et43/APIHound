@@ -21,14 +21,14 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/specterops/bloodhound/cmd/api/src/api"
-	apimocks "github.com/specterops/bloodhound/cmd/api/src/api/mocks"
-	"github.com/specterops/bloodhound/cmd/api/src/api/v2/auth"
-	authPkg "github.com/specterops/bloodhound/cmd/api/src/auth"
-	"github.com/specterops/bloodhound/cmd/api/src/config"
-	"github.com/specterops/bloodhound/cmd/api/src/database/mocks"
-	mocks_graph "github.com/specterops/bloodhound/cmd/api/src/queries/mocks"
-	"github.com/specterops/bloodhound/cmd/api/src/services/dogtags"
+	"github.com/specterops/apihound/cmd/api/src/api"
+	apimocks "github.com/specterops/apihound/cmd/api/src/api/mocks"
+	"github.com/specterops/apihound/cmd/api/src/api/v2/auth"
+	authPkg "github.com/specterops/apihound/cmd/api/src/auth"
+	"github.com/specterops/apihound/cmd/api/src/config"
+	"github.com/specterops/apihound/cmd/api/src/database/mocks"
+	mocks_graph "github.com/specterops/apihound/cmd/api/src/queries/mocks"
+	"github.com/specterops/apihound/cmd/api/src/services/dogtags"
 	"go.uber.org/mock/gomock"
 )
 

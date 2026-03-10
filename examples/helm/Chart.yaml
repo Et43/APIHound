@@ -15,8 +15,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 apiVersion: v2
-name: bloodhound
-description: A Helm Chart for deploying BloodHound on Kubernetes
+name: apihound
+description: A Helm Chart for deploying APIHound on Kubernetes
 type: application
 version: 0.1.0
 appVersion: "5.3.1"

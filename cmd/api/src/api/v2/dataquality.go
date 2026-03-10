@@ -23,11 +23,11 @@ import (
 	"strings"
 
 	"github.com/gorilla/mux"
-	"github.com/specterops/bloodhound/cmd/api/src/api"
-	"github.com/specterops/bloodhound/cmd/api/src/model"
-	"github.com/specterops/bloodhound/cmd/api/src/utils"
-	"github.com/specterops/bloodhound/packages/go/analysis/ad"
-	"github.com/specterops/bloodhound/packages/go/bhlog/measure"
+	"github.com/specterops/apihound/cmd/api/src/api"
+	"github.com/specterops/apihound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/utils"
+	"github.com/specterops/apihound/packages/go/analysis/ad"
+	"github.com/specterops/apihound/packages/go/bhlog/measure"
 	"github.com/specterops/dawgs/graph"
 )
 

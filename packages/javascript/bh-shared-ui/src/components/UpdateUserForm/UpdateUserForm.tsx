@@ -41,7 +41,7 @@ import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { MAX_EMAIL_LENGTH, MAX_NAME_LENGTH, MIN_NAME_LENGTH } from '../../constants';
 import { useAvailableEnvironments } from '../../hooks';
-import { useGetUser } from '../../hooks/useBloodHoundUsers';
+import { useGetUser } from '../../hooks/useAPIHoundUsers';
 import { useListDisplayRoles } from '../../hooks/useListDisplayRoles/useListDisplayRoles';
 import { useSSOProviders } from '../../hooks/useSSOProviders';
 import { isAdminRole, isETACRole } from '../../utils/roles';

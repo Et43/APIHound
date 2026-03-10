@@ -21,17 +21,17 @@ import (
 	"strings"
 	"time"
 
-	"github.com/specterops/bloodhound/cmd/api/src/database/types/null"
-	"github.com/specterops/bloodhound/packages/go/analysis"
-	"github.com/specterops/bloodhound/packages/go/graphschema"
-	"github.com/specterops/bloodhound/packages/go/graphschema/ad"
-	"github.com/specterops/bloodhound/packages/go/graphschema/azure"
-	"github.com/specterops/bloodhound/packages/go/graphschema/common"
+	"github.com/specterops/apihound/cmd/api/src/database/types/null"
+	"github.com/specterops/apihound/packages/go/analysis"
+	"github.com/specterops/apihound/packages/go/graphschema"
+	"github.com/specterops/apihound/packages/go/graphschema/ad"
+	"github.com/specterops/apihound/packages/go/graphschema/azure"
+	"github.com/specterops/apihound/packages/go/graphschema/common"
 	"github.com/specterops/dawgs/graph"
 )
 
 const (
-	AssetGroupActorBloodHound          = "BloodHound"
+	AssetGroupActorAPIHound          = "APIHound"
 	AssetGroupTierZeroPosition         = 1
 	AssetGroupTierHygienePlaceholderId = 0
 )

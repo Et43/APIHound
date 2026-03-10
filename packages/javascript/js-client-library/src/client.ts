@@ -1091,29 +1091,29 @@ class BHEAPIClient {
         this.baseClient.delete(`/api/v2/tokens/${tokenId}`, options);
 
     listUsers = (options?: RequestOptions) =>
-        this.baseClient.get<types.ListUsersResponse>('/api/v2/bloodhound-users', options);
+        this.baseClient.get<types.ListUsersResponse>('/api/v2/apihound-users', options);
 
     listUsersMinimal = (options?: RequestOptions) =>
-        this.baseClient.get<types.ListUsersResponse>('/api/v2/bloodhound-users-minimal', options);
+        this.baseClient.get<types.ListUsersResponse>('/api/v2/apihound-users-minimal', options);
 
     getUser = (userId: string, options?: RequestOptions) =>
-        this.baseClient.get(`/api/v2/bloodhound-users/${userId}`, options);
+        this.baseClient.get(`/api/v2/apihound-users/${userId}`, options);
 
     createUser = (user: CreateUserRequest, options?: RequestOptions) =>
-        this.baseClient.post('/api/v2/bloodhound-users', user, options);
+        this.baseClient.post('/api/v2/apihound-users', user, options);
 
     updateUser = (userId: string, user: UpdateUserRequest, options?: RequestOptions) =>
-        this.baseClient.patch(`/api/v2/bloodhound-users/${userId}`, user, options);
+        this.baseClient.patch(`/api/v2/apihound-users/${userId}`, user, options);
 
     deleteUser = (userId: string, options?: RequestOptions) =>
-        this.baseClient.delete(`/api/v2/bloodhound-users/${userId}`, options);
+        this.baseClient.delete(`/api/v2/apihound-users/${userId}`, options);
 
     expireUserAuthSecret = (userId: string, options?: RequestOptions) =>
-        this.baseClient.delete(`/api/v2/bloodhound-users/${userId}/secret`, options);
+        this.baseClient.delete(`/api/v2/apihound-users/${userId}/secret`, options);
 
     putUserAuthSecret = (userId: string, payload: PutUserAuthSecretRequest, options?: RequestOptions) =>
         this.baseClient.put(
-            `/api/v2/bloodhound-users/${userId}/secret`,
+            `/api/v2/apihound-users/${userId}/secret`,
             {
                 current_secret: payload.currentSecret,
                 needs_password_reset: payload.needsPasswordReset,
@@ -1123,11 +1123,11 @@ class BHEAPIClient {
         );
 
     enrollMFA = (userId: string, data: { secret: string }, options?: RequestOptions) =>
-        this.baseClient.post(`/api/v2/bloodhound-users/${userId}/mfa`, data, options);
+        this.baseClient.post(`/api/v2/apihound-users/${userId}/mfa`, data, options);
 
     disenrollMFA = (userId: string, data: { secret?: string }, options?: RequestOptions) =>
         this.baseClient.delete(
-            `/api/v2/bloodhound-users/${userId}/mfa`,
+            `/api/v2/apihound-users/${userId}/mfa`,
             Object.assign(
                 {
                     headers: { 'Content-Type': 'application/json' },
@@ -1138,10 +1138,10 @@ class BHEAPIClient {
         );
 
     getMFAActivationStatus = (userId: string, options?: RequestOptions) =>
-        this.baseClient.get(`/api/v2/bloodhound-users/${userId}/mfa-activation`, options);
+        this.baseClient.get(`/api/v2/apihound-users/${userId}/mfa-activation`, options);
 
     activateMFA = (userId: string, data: { otp: string }, options?: RequestOptions) =>
-        this.baseClient.post(`/api/v2/bloodhound-users/${userId}/mfa-activation`, data, options);
+        this.baseClient.post(`/api/v2/apihound-users/${userId}/mfa-activation`, data, options);
 
     acceptEULA = (options?: RequestOptions) => this.baseClient.put('/api/v2/accept-eula', options);
 

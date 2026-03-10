@@ -18,8 +18,8 @@ parameters:
   - $ref: './../parameters/header.prefer.yaml'
 post:
   operationId: Logout
-  summary: Logout of BloodHound
-  description: Logout of BloodHound and delete the user session JWT.
+  summary: Logout of APIHound
+  description: Logout of APIHound and delete the user session JWT.
   tags:
     - Auth
     - Community

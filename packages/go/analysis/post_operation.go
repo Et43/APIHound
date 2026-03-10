@@ -24,10 +24,10 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/specterops/bloodhound/packages/go/bhlog/attr"
-	"github.com/specterops/bloodhound/packages/go/bhlog/level"
-	"github.com/specterops/bloodhound/packages/go/bhlog/measure"
-	"github.com/specterops/bloodhound/packages/go/graphschema/common"
+	"github.com/specterops/apihound/packages/go/bhlog/attr"
+	"github.com/specterops/apihound/packages/go/bhlog/level"
+	"github.com/specterops/apihound/packages/go/bhlog/measure"
+	"github.com/specterops/apihound/packages/go/graphschema/common"
 	"github.com/specterops/dawgs/graph"
 	"github.com/specterops/dawgs/ops"
 )

@@ -22,26 +22,26 @@ import (
 	"context"
 	"testing"
 
-	"github.com/specterops/bloodhound/cmd/api/src/database"
-	"github.com/specterops/bloodhound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/database"
+	"github.com/specterops/apihound/cmd/api/src/model"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-func TestBloodhoundDB_UpsertRemediation(t *testing.T) {
+func TestApihoundDB_UpsertRemediation(t *testing.T) {
 	type args struct {
 		shortDescription, longDescription, shortRemediation, longRemediation string
 	}
 	tests := []struct {
 		name          string
-		setupData     func(t *testing.T, db *database.BloodhoundDB) int32 // Returns findingID
+		setupData     func(t *testing.T, db *database.ApihoundDB) int32 // Returns findingID
 		args          args
-		assert        func(t *testing.T, db *database.BloodhoundDB, findingId int32)
+		assert        func(t *testing.T, db *database.ApihoundDB, findingId int32)
 		expectedError string
 	}{
 		{
 			name: "Success: Update existing remediation",
-			setupData: func(t *testing.T, db *database.BloodhoundDB) int32 {
+			setupData: func(t *testing.T, db *database.ApihoundDB) int32 {
 				t.Helper()
 				ext, err := db.CreateGraphSchemaExtension(context.Background(), "TestExt", "Test", "v1.0.0", "test_namespace_1")
 				require.NoError(t, err)
@@ -63,7 +63,7 @@ func TestBloodhoundDB_UpsertRemediation(t *testing.T) {
 				shortRemediation: "updated short remediation",
 				longRemediation:  "updated long remediation",
 			},
-			assert: func(t *testing.T, db *database.BloodhoundDB, findingId int32) {
+			assert: func(t *testing.T, db *database.ApihoundDB, findingId int32) {
 				t.Helper()
 
 				remediation, err := db.GetRemediationByFindingId(context.Background(), findingId)
@@ -78,7 +78,7 @@ func TestBloodhoundDB_UpsertRemediation(t *testing.T) {
 		},
 		{
 			name: "Success: Create remediation when none exists",
-			setupData: func(t *testing.T, db *database.BloodhoundDB) int32 {
+			setupData: func(t *testing.T, db *database.ApihoundDB) int32 {
 				t.Helper()
 				ext, err := db.CreateGraphSchemaExtension(context.Background(), "TestExt", "Test", "v1.0.0", "test_namespace_1")
 				require.NoError(t, err)
@@ -98,7 +98,7 @@ func TestBloodhoundDB_UpsertRemediation(t *testing.T) {
 				shortRemediation: "new short remediation",
 				longRemediation:  "new long remediation",
 			},
-			assert: func(t *testing.T, db *database.BloodhoundDB, findingId int32) {
+			assert: func(t *testing.T, db *database.ApihoundDB, findingId int32) {
 				t.Helper()
 
 				remediation, err := db.GetRemediationByFindingId(context.Background(), findingId)
@@ -121,7 +121,7 @@ func TestBloodhoundDB_UpsertRemediation(t *testing.T) {
 			findingId := tt.setupData(t, testSuite.BHDatabase)
 
 			// Wrap the call in a transaction
-			err := testSuite.BHDatabase.Transaction(context.Background(), func(tx *database.BloodhoundDB) error {
+			err := testSuite.BHDatabase.Transaction(context.Background(), func(tx *database.ApihoundDB) error {
 				return tx.UpsertRemediation(
 					context.Background(),
 					findingId,

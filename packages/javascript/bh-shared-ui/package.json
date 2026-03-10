@@ -1,6 +1,6 @@
 {
     "name": "bh-shared-ui",
-    "description": "Shared React Components and Utilities for use in BloodHound and BloodHound Enterprise",
+    "description": "Shared React Components and Utilities for use in APIHound and APIHound Enterprise",
     "main": "dist/index",
     "types": "dist/index",
     "files": [
@@ -16,7 +16,7 @@
         "format": "prettier --write \"src/**/*.@(js|jsx|ts|tsx|md|html|css|scss|json)\"",
         "check-format": "prettier  --list-different \"src/**/*.@(js|jsx|ts|tsx|md|html|css|scss|json)\""
     },
-    "author": "The BloodHound Enterprise Team (https://bloodhoundenterprise.io/)",
+    "author": "The APIHound Enterprise Team (https://apihoundenterprise.io/)",
     "license": "MIT",
     "dependencies": {
         "@bloodhoundenterprise/doodleui": "^1.0.0-alpha.40",

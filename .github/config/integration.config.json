@@ -10,12 +10,12 @@
     "datapipe_interval": 1,
     "graph_driver": "pg",
     "database": {
-        "connection": "user=bloodhound password=bloodhoundcommunityedition dbname=bloodhound host=localhost port=65432"
+        "connection": "user=apihound password=apihoundcommunityedition dbname=apihound host=localhost port=65432"
     },
     "default_admin": {
         "principal_name": "admin",
         "password": "admin",
-        "first_name": "BloodHound",
+        "first_name": "APIHound",
         "last_name": "Dev",
         "expire_now": true
     }

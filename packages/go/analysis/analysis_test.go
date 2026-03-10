@@ -19,10 +19,10 @@ package analysis_test
 import (
 	"testing"
 
-	"github.com/specterops/bloodhound/packages/go/analysis"
-	"github.com/specterops/bloodhound/packages/go/graphschema/ad"
-	"github.com/specterops/bloodhound/packages/go/graphschema/azure"
-	"github.com/specterops/bloodhound/packages/go/slicesext"
+	"github.com/specterops/apihound/packages/go/analysis"
+	"github.com/specterops/apihound/packages/go/graphschema/ad"
+	"github.com/specterops/apihound/packages/go/graphschema/azure"
+	"github.com/specterops/apihound/packages/go/slicesext"
 	"github.com/specterops/dawgs/graph"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

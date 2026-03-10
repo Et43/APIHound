@@ -144,7 +144,7 @@ const mfaUser = {
     },
 };
 
-export const testBloodHoundUsers = [testAuthenticatedUser, testMarshallLaw, mfaUser];
+export const testAPIHoundUsers = [testAuthenticatedUser, testMarshallLaw, mfaUser];
 
 export const testSSOProviders: SSOProvider[] = [
     {
@@ -202,16 +202,16 @@ export const bloodHoundUsersHandlers: RestHandler<MockedRequest<DefaultBodyType>
             })
         );
     }),
-    rest.get('/api/v2/bloodhound-users', (req, res, ctx) => {
+    rest.get('/api/v2/apihound-users', (req, res, ctx) => {
         return res(
             ctx.json({
                 data: {
-                    users: testBloodHoundUsers,
+                    users: testAPIHoundUsers,
                 },
             })
         );
     }),
-    rest.get('/api/v2/bloodhound-users/1', (req, res, ctx) => {
+    rest.get('/api/v2/apihound-users/1', (req, res, ctx) => {
         return res(
             ctx.json({
                 data: testMarshallLaw,
@@ -231,7 +231,7 @@ export const bloodHoundUsersHandlers: RestHandler<MockedRequest<DefaultBodyType>
     rest.get('/api/v2/roles', (req, res, ctx) => {
         return res(ctx.json({ data: testRoles }));
     }),
-    rest.patch('/api/v2/bloodhound-users/1', (req, res, ctx) => {
+    rest.patch('/api/v2/apihound-users/1', (req, res, ctx) => {
         return res(ctx.json({ data: { ...testMarshallLaw, sso_provider_id: null, AuthSecret: null } }));
     }),
 ];

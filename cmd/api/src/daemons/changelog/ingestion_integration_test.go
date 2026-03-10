@@ -28,10 +28,10 @@ import (
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/peterldowns/pgtestdb"
-	"github.com/specterops/bloodhound/cmd/api/src/auth"
-	"github.com/specterops/bloodhound/cmd/api/src/database"
-	"github.com/specterops/bloodhound/cmd/api/src/model/appcfg"
-	"github.com/specterops/bloodhound/cmd/api/src/test/integration/utils"
+	"github.com/specterops/apihound/cmd/api/src/auth"
+	"github.com/specterops/apihound/cmd/api/src/database"
+	"github.com/specterops/apihound/cmd/api/src/model/appcfg"
+	"github.com/specterops/apihound/cmd/api/src/test/integration/utils"
 	"github.com/specterops/dawgs"
 	"github.com/specterops/dawgs/drivers/pg"
 	"github.com/specterops/dawgs/graph"
@@ -42,23 +42,23 @@ import (
 type IntegrationTestSuite struct {
 	Context      context.Context
 	GraphDB      graph.Database
-	BloodhoundDB *database.BloodhoundDB
+	ApihoundDB *database.ApihoundDB
 }
 
 // enable changelog by getting existing flag and setting it
 func (s *IntegrationTestSuite) enableChangelog(t *testing.T) {
-	flag, err := s.BloodhoundDB.GetFlagByKey(s.Context, appcfg.FeatureChangelog)
+	flag, err := s.ApihoundDB.GetFlagByKey(s.Context, appcfg.FeatureChangelog)
 	require.NoError(t, err)
 	flag.Enabled = true
-	require.NoError(t, s.BloodhoundDB.SetFlag(s.Context, flag))
+	require.NoError(t, s.ApihoundDB.SetFlag(s.Context, flag))
 }
 
 // disable changelog by getting existing flag and setting it
 func (s *IntegrationTestSuite) disableChangelog(t *testing.T) {
-	flag, err := s.BloodhoundDB.GetFlagByKey(s.Context, appcfg.FeatureChangelog)
+	flag, err := s.ApihoundDB.GetFlagByKey(s.Context, appcfg.FeatureChangelog)
 	require.NoError(t, err)
 	flag.Enabled = false
-	require.NoError(t, s.BloodhoundDB.SetFlag(s.Context, flag))
+	require.NoError(t, s.ApihoundDB.SetFlag(s.Context, flag))
 }
 
 var (
@@ -114,14 +114,14 @@ func setupIntegrationTest(t *testing.T) IntegrationTestSuite {
 	gormDB, err := database.OpenDatabase(connConf.URL())
 	require.NoError(t, err)
 
-	db := database.NewBloodhoundDB(gormDB, auth.NewIdentityResolver())
+	db := database.NewApihoundDB(gormDB, auth.NewIdentityResolver())
 	require.NoError(t, db.Migrate(ctx))
 	require.NoError(t, db.PopulateExtensionData(ctx))
 
 	return IntegrationTestSuite{
 		Context:      ctx,
 		GraphDB:      graphDB,
-		BloodhoundDB: db,
+		ApihoundDB: db,
 	}
 }
 
@@ -171,8 +171,8 @@ func teardownIntegrationTest(t *testing.T, suite *IntegrationTestSuite) {
 		}
 	}
 
-	if suite.BloodhoundDB != nil {
-		suite.BloodhoundDB.Close(suite.Context)
+	if suite.ApihoundDB != nil {
+		suite.ApihoundDB.Close(suite.Context)
 	}
 }
 

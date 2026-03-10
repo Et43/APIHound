@@ -39,10 +39,10 @@ services:
     command: -c config_file=/etc/postgresql.conf
     shm_size: 1gb
     environment:
-      - PGUSER=${BH_POSTGRES_USER:-bloodhound}
-      - POSTGRES_USER=${BH_POSTGRES_USER:-bloodhound}
-      - POSTGRES_PASSWORD=${BH_POSTGRES_PASSWORD:-bloodhoundcommunityedition}
-      - POSTGRES_DB=${BH_POSTGRES_DB:-bloodhound}
+      - PGUSER=${BH_POSTGRES_USER:-apihound}
+      - POSTGRES_USER=${BH_POSTGRES_USER:-apihound}
+      - POSTGRES_PASSWORD=${BH_POSTGRES_PASSWORD:-apihoundcommunityedition}
+      - POSTGRES_DB=${BH_POSTGRES_DB:-apihound}
     ports:
       - ${BH_POSTGRES_PORT:-127.0.0.1:5432}:5432
     volumes:
@@ -52,7 +52,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "pg_isready -U ${BH_POSTGRES_USER:-bloodhound} -d 'dbname=${BH_POSTGRES_DB:-bloodhound}' -h 127.0.0.1 -p 5432",
+          "pg_isready -U ${BH_POSTGRES_USER:-apihound} -d 'dbname=${BH_POSTGRES_DB:-apihound}' -h 127.0.0.1 -p 5432",
         ]
       interval: 10s
       timeout: 5s
@@ -71,8 +71,8 @@ services:
       context: tools/docker-compose
       dockerfile: pgadmin.Dockerfile
     environment:
-      PGADMIN_DEFAULT_EMAIL: ${BH_PG_ADMIN_EMAIL:-bloodhound@specterops.io}
-      PGADMIN_DEFAULT_PASSWORD: ${BH_PG_ADMIN_PASSWORD:-bloodhoundcommunityedition}
+      PGADMIN_DEFAULT_EMAIL: ${BH_PG_ADMIN_EMAIL:-apihound@specterops.io}
+      PGADMIN_DEFAULT_PASSWORD: ${BH_PG_ADMIN_PASSWORD:-apihoundcommunityedition}
       PGADMIN_LISTEN_PORT: 5050
     ports:
       - ${BH_PG_ADMIN_PORT:-127.0.0.1:5050}:5050
@@ -98,7 +98,7 @@ services:
       context: tools/docker-compose
       dockerfile: neo4j.Dockerfile
     environment:
-      - NEO4J_AUTH=${BH_NEO4J_AUTH:-neo4j/bloodhoundcommunityedition}
+      - NEO4J_AUTH=${BH_NEO4J_AUTH:-neo4j/apihoundcommunityedition}
       - NEO4J_dbms_allow__upgrade=${BH_NEO4J_ALLOW_UPGRADE:-true}
     ports:
       - ${BH_NEO4J_PORT:-127.0.0.1:7687}:7687
@@ -137,11 +137,11 @@ services:
       - ${TOOLAPI_PORT:-127.0.0.1:2112}:2112
     labels:
       - traefik.enable=true
-      - traefik.http.routers.bhapi.rule=Host(`${BH_HOSTNAME:-bloodhound.localhost}`) && PathPrefix(`/api`)
+      - traefik.http.routers.bhapi.rule=Host(`${BH_HOSTNAME:-apihound.localhost}`) && PathPrefix(`/api`)
       - traefik.http.routers.bhapi.service=bhapi
       - traefik.http.services.bhapi.loadbalancer.server.port=8080
     volumes:
-      - .:/bloodhound:ro
+      - .:/apihound:ro
       - ../dawgs:/dawgs
       - ./local-harnesses/${BH_CONFIG_FILE:-build.config.json}:/build.config.json:ro
       - go-pkg-mod:/go/pkg/mod
@@ -163,15 +163,15 @@ services:
     command: sh -c "yarn dev"
     labels:
       - traefik.enable=true
-      - traefik.http.routers.bhui.rule=Host(`${BH_HOSTNAME:-bloodhound.localhost}`)
+      - traefik.http.routers.bhui.rule=Host(`${BH_HOSTNAME:-apihound.localhost}`)
       - traefik.http.middlewares.add-bh-ui.addprefix.prefix=/ui
       - traefik.http.routers.bhui.service=bhui
       - traefik.http.services.bhui.loadbalancer.server.port=3000
     volumes:
-      - ./cmd/ui/public:/bloodhound/cmd/ui/public:ro
-      - ./cmd/ui/src:/bloodhound/cmd/ui/src:ro
-      - ./packages/javascript/bh-shared-ui/src:/bloodhound/packages/javascript/bh-shared-ui/src:ro
-      - ./packages/javascript/js-client-library/src:/bloodhound/packages/javascript/js-client-library/src:ro
+      - ./cmd/ui/public:/apihound/cmd/ui/public:ro
+      - ./cmd/ui/src:/apihound/cmd/ui/src:ro
+      - ./packages/javascript/bh-shared-ui/src:/apihound/packages/javascript/bh-shared-ui/src:ro
+      - ./packages/javascript/js-client-library/src:/apihound/packages/javascript/js-client-library/src:ro
       - ui-cache:/.cache
 
   debug-api:
@@ -193,11 +193,11 @@ services:
       - ${DEBUG_PORT:-127.0.0.1:3456}:2345
     labels:
       - traefik.enable=true
-      - traefik.http.routers.debugapi.rule=Host(`${BH_HOSTNAME:-bloodhound.localhost}`) && PathPrefix(`/api`)
+      - traefik.http.routers.debugapi.rule=Host(`${BH_HOSTNAME:-apihound.localhost}`) && PathPrefix(`/api`)
       - traefik.http.routers.debugapi.service=debugapi
       - traefik.http.services.debugapi.loadbalancer.server.port=8080
     volumes:
-      - .:/bloodhound:ro
+      - .:/apihound:ro
       - ../dawgs:/dawgs:ro
       - ./local-harnesses/${BH_CONFIG_FILE:-build.config.json}:/build.config.json:ro
     depends_on:
@@ -226,8 +226,8 @@ services:
       AUTHENTIK_POSTGRESQL__HOST: authentik-db
       AUTHENTIK_POSTGRESQL__USER: ${ATK_BH_PG_USER:-authentik}
       AUTHENTIK_POSTGRESQL__NAME: ${ATK_BH_PG_DB:-authentik}
-      AUTHENTIK_POSTGRESQL__PASSWORD: ${ATK_BH_PG_PASS:-bloodhoundcommunityedition}
-      AUTHENTIK_SECRET_KEY: ${ATK_BH_SECRET:-bloodhoundcommunityedition}
+      AUTHENTIK_POSTGRESQL__PASSWORD: ${ATK_BH_PG_PASS:-apihoundcommunityedition}
+      AUTHENTIK_SECRET_KEY: ${ATK_BH_SECRET:-apihoundcommunityedition}
     labels:
       - traefik.enable=true
       - traefik.http.routers.authentik.rule=Host(`${BH_AUTHENTIK_HOSTNAME:-authentik.localhost}`)
@@ -252,8 +252,8 @@ services:
       AUTHENTIK_POSTGRESQL__HOST: authentik-db
       AUTHENTIK_POSTGRESQL__USER: ${ATK_BH_PG_USER:-authentik}
       AUTHENTIK_POSTGRESQL__NAME: ${ATK_BH_PG_DB:-authentik}
-      AUTHENTIK_POSTGRESQL__PASSWORD: ${ATK_BH_PG_PASS:-bloodhoundcommunityedition}
-      AUTHENTIK_SECRET_KEY: ${ATK_BH_SECRET:-bloodhoundcommunityedition}
+      AUTHENTIK_POSTGRESQL__PASSWORD: ${ATK_BH_PG_PASS:-apihoundcommunityedition}
+      AUTHENTIK_SECRET_KEY: ${ATK_BH_SECRET:-apihoundcommunityedition}
     depends_on:
       - authentik-db
       - authentik-valkey
@@ -283,7 +283,7 @@ services:
     volumes:
       - authentik-db:/var/lib/postgresql/data
     environment:
-      POSTGRES_PASSWORD: ${ATK_BH_PG_PASS:-bloodhoundcommunityedition}
+      POSTGRES_PASSWORD: ${ATK_BH_PG_PASS:-apihoundcommunityedition}
       POSTGRES_USER: ${ATK_BH_PG_USER:-authentik}
       POSTGRES_DB: ${ATK_BH_PG_DB:-authentik}
 

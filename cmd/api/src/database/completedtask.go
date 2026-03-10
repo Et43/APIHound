@@ -19,21 +19,21 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/specterops/bloodhound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/model"
 )
 
 const (
 	completedTasksTable = "completed_tasks"
 )
 
-func (s *BloodhoundDB) CreateCompletedTask(ctx context.Context, task model.CompletedTask) (model.CompletedTask, error) {
+func (s *ApihoundDB) CreateCompletedTask(ctx context.Context, task model.CompletedTask) (model.CompletedTask, error) {
 	result := s.db.WithContext(ctx).Raw(
 		fmt.Sprintf("INSERT INTO %s (ingest_job_id, file_name, parent_file_name,  errors, warnings, created_at, updated_at) VALUES (?, ?, ?, ?, ?, NOW(), NOW()) RETURNING id;", completedTasksTable),
 		task.IngestJobId, task.FileName, task.ParentFileName, task.Errors, task.Warnings).Scan(&task.ID)
 	return task, CheckError(result)
 }
 
-func (s *BloodhoundDB) GetCompletedTasks(ctx context.Context, ingestJobId int64) ([]model.CompletedTask, error) {
+func (s *ApihoundDB) GetCompletedTasks(ctx context.Context, ingestJobId int64) ([]model.CompletedTask, error) {
 	var completedTasks []model.CompletedTask
 	result := s.db.WithContext(ctx).Raw(fmt.Sprintf("SELECT id, ingest_job_id, file_name, parent_file_name, errors, warnings, created_at, updated_at FROM %s WHERE ingest_job_id = ?;", completedTasksTable), ingestJobId).Scan(&completedTasks)
 

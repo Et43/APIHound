@@ -26,9 +26,9 @@ import (
 	"sync"
 
 	"github.com/Masterminds/semver/v3"
-	"github.com/specterops/bloodhound/packages/go/stbernard/cmdrunner"
-	"github.com/specterops/bloodhound/packages/go/stbernard/environment"
-	"github.com/specterops/bloodhound/packages/go/stbernard/git"
+	"github.com/specterops/apihound/packages/go/stbernard/cmdrunner"
+	"github.com/specterops/apihound/packages/go/stbernard/environment"
+	"github.com/specterops/apihound/packages/go/stbernard/git"
 )
 
 // BuildMainPackages builds all main packages for the given module
@@ -64,10 +64,10 @@ func buildModuleMainPackages(buildDir string, modPath string, version semver.Ver
 		mu   sync.Mutex
 
 		command             = "go"
-		majorString         = fmt.Sprintf("-X 'github.com/specterops/bloodhound/cmd/api/src/version.majorVersion=%d'", version.Major())
-		minorString         = fmt.Sprintf("-X 'github.com/specterops/bloodhound/cmd/api/src/version.minorVersion=%d'", version.Minor())
-		patchString         = fmt.Sprintf("-X 'github.com/specterops/bloodhound/cmd/api/src/version.patchVersion=%d'", version.Patch())
-		prereleaseString    = fmt.Sprintf("-X 'github.com/specterops/bloodhound/cmd/api/src/version.prereleaseVersion=%s'", version.Prerelease())
+		majorString         = fmt.Sprintf("-X 'github.com/specterops/apihound/cmd/api/src/version.majorVersion=%d'", version.Major())
+		minorString         = fmt.Sprintf("-X 'github.com/specterops/apihound/cmd/api/src/version.minorVersion=%d'", version.Minor())
+		patchString         = fmt.Sprintf("-X 'github.com/specterops/apihound/cmd/api/src/version.patchVersion=%d'", version.Patch())
+		prereleaseString    = fmt.Sprintf("-X 'github.com/specterops/apihound/cmd/api/src/version.prereleaseVersion=%s'", version.Prerelease())
 		ldflagArgComponents = []string{majorString, minorString, patchString}
 	)
 

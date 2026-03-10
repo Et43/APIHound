@@ -22,9 +22,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/specterops/bloodhound/cmd/api/src/model"
-	"github.com/specterops/bloodhound/cmd/api/src/services/opengraphschema"
-	schemamocks "github.com/specterops/bloodhound/cmd/api/src/services/opengraphschema/mocks"
+	"github.com/specterops/apihound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/services/opengraphschema"
+	schemamocks "github.com/specterops/apihound/cmd/api/src/services/opengraphschema/mocks"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"

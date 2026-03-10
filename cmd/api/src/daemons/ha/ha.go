@@ -26,7 +26,7 @@ type HAMutex interface {
 	TryLock() (LockResult, error)
 }
 
-// dummyHA is a no-op implementation for BHCE that always reports as primary
+// dummyHA is a no-op implementation for APIHound that always reports as primary
 type dummyHA struct{}
 
 func (d *dummyHA) TryLock() (LockResult, error) {

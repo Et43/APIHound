@@ -20,7 +20,7 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/specterops/bloodhound/cmd/api/src/api"
+	"github.com/specterops/apihound/cmd/api/src/api"
 
 	"github.com/stretchr/testify/require"
 )

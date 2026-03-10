@@ -22,11 +22,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/specterops/bloodhound/cmd/api/src/test"
-	"github.com/specterops/bloodhound/cmd/api/src/test/must"
-	"github.com/specterops/bloodhound/packages/go/graphschema/ad"
-	"github.com/specterops/bloodhound/packages/go/graphschema/azure"
-	"github.com/specterops/bloodhound/packages/go/graphschema/common"
+	"github.com/specterops/apihound/cmd/api/src/test"
+	"github.com/specterops/apihound/cmd/api/src/test/must"
+	"github.com/specterops/apihound/packages/go/graphschema/ad"
+	"github.com/specterops/apihound/packages/go/graphschema/azure"
+	"github.com/specterops/apihound/packages/go/graphschema/common"
 	_ "github.com/specterops/dawgs/drivers/neo4j"
 	"github.com/specterops/dawgs/graph"
 )
@@ -39,7 +39,7 @@ var DefaultRelProperties = graph.AsProperties(graph.PropertyMap{
 //
 // Deprecated: this suite of integration utils is deprecated and should be avoided
 // Integration tests should be updated to reflect the latest standards.
-// See commit https://github.com/SpecterOps/BloodHound/commit/a6cc43013fd769b97cc52cbc60b2314494054c9a#diff-e6bcb50873ade3cf33cef4e3e0ff566fb8ac1367b4ade36f4511bc2172a760e1
+// See commit https://github.com/SpecterOps/APIHound/commit/a6cc43013fd769b97cc52cbc60b2314494054c9a#diff-e6bcb50873ade3cf33cef4e3e0ff566fb8ac1367b4ade36f4511bc2172a760e1
 // for implementation guidance. Additional detailed information can be found in Confluence.
 func NewGraphTestContext(t *testing.T, schema graph.Schema) *GraphTestContext {
 	testCtx := test.NewContext(t)

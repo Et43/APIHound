@@ -19,7 +19,7 @@ package tests
 import (
 	"context"
 
-	"github.com/specterops/bloodhound/packages/go/graphschema/common"
+	"github.com/specterops/apihound/packages/go/graphschema/common"
 	"github.com/specterops/dawgs/graph"
 )
 

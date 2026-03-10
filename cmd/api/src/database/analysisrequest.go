@@ -24,7 +24,7 @@ import (
 	"time"
 
 	"github.com/lib/pq"
-	"github.com/specterops/bloodhound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/model"
 	"gorm.io/gorm"
 )
 
@@ -37,12 +37,12 @@ type AnalysisRequestData interface {
 	RequestCollectedGraphDataDeletion(ctx context.Context, request model.AnalysisRequest) error
 }
 
-func (s *BloodhoundDB) DeleteAnalysisRequest(ctx context.Context) error {
+func (s *ApihoundDB) DeleteAnalysisRequest(ctx context.Context) error {
 	tx := s.db.WithContext(ctx).Exec(`truncate analysis_request_switch;`)
 	return tx.Error
 }
 
-func (s *BloodhoundDB) GetAnalysisRequest(ctx context.Context) (model.AnalysisRequest, error) {
+func (s *ApihoundDB) GetAnalysisRequest(ctx context.Context) (model.AnalysisRequest, error) {
 	var analysisRequest model.AnalysisRequest
 
 	tx := s.db.WithContext(ctx).Select("requested_by, request_type, requested_at").Table("analysis_request_switch").First(&analysisRequest)
@@ -50,7 +50,7 @@ func (s *BloodhoundDB) GetAnalysisRequest(ctx context.Context) (model.AnalysisRe
 	return analysisRequest, CheckError(tx)
 }
 
-func (s *BloodhoundDB) HasAnalysisRequest(ctx context.Context) bool {
+func (s *ApihoundDB) HasAnalysisRequest(ctx context.Context) bool {
 	var exists bool
 
 	tx := s.db.WithContext(ctx).Raw(`select exists(select * from analysis_request_switch where request_type = ? limit 1);`, model.AnalysisRequestAnalysis).Scan(&exists)
@@ -60,7 +60,7 @@ func (s *BloodhoundDB) HasAnalysisRequest(ctx context.Context) bool {
 	return exists
 }
 
-func (s *BloodhoundDB) HasCollectedGraphDataDeletionRequest(ctx context.Context) (model.AnalysisRequest, bool) {
+func (s *ApihoundDB) HasCollectedGraphDataDeletionRequest(ctx context.Context) (model.AnalysisRequest, bool) {
 	var record model.AnalysisRequest
 
 	tx := s.db.WithContext(ctx).Raw(`select * from analysis_request_switch where request_type = ? limit 1;`, model.AnalysisRequestDeletion).First(&record)
@@ -78,7 +78,7 @@ func (s *BloodhoundDB) HasCollectedGraphDataDeletionRequest(ctx context.Context)
 // There should only ever be 1 row, if a request is present, subsequent requests no-op
 // If an analysis request is present when a deletion request comes in, that overwrites the analysis to deletion but not vice-versa
 // To request: Use the helper methods `RequestAnalysis` and `RequestCollectedGraphDataDeletion`
-func (s *BloodhoundDB) setAnalysisRequest(ctx context.Context, request model.AnalysisRequest) error {
+func (s *ApihoundDB) setAnalysisRequest(ctx context.Context, request model.AnalysisRequest) error {
 	var (
 		now  = time.Now().UTC()
 		args = []any{
@@ -124,13 +124,13 @@ func (s *BloodhoundDB) setAnalysisRequest(ctx context.Context, request model.Ana
 }
 
 // RequestAnalysis will request an analysis be executed, as long as there isn't an existing analysis request or collected graph data deletion request, then it no-ops
-func (s *BloodhoundDB) RequestAnalysis(ctx context.Context, requestedBy string) error {
+func (s *ApihoundDB) RequestAnalysis(ctx context.Context, requestedBy string) error {
 	slog.InfoContext(ctx, fmt.Sprintf("Analysis requested by %s", requestedBy))
 	return s.setAnalysisRequest(ctx, model.AnalysisRequest{RequestType: model.AnalysisRequestAnalysis, RequestedBy: requestedBy})
 }
 
 // RequestCollectedGraphDataDeletion will request collected graph data be deleted, if an analysis request is present, it will overwrite that.
-func (s *BloodhoundDB) RequestCollectedGraphDataDeletion(ctx context.Context, request model.AnalysisRequest) error {
+func (s *ApihoundDB) RequestCollectedGraphDataDeletion(ctx context.Context, request model.AnalysisRequest) error {
 	slog.InfoContext(ctx, fmt.Sprintf("Collected graph data deletion requested by %s", request.RequestedBy))
 	return s.setAnalysisRequest(ctx, request)
 }

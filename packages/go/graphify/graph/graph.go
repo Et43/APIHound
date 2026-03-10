@@ -28,22 +28,22 @@ import (
 	"strings"
 	"time"
 
-	"github.com/specterops/bloodhound/cmd/api/src/auth"
-	"github.com/specterops/bloodhound/cmd/api/src/config"
-	"github.com/specterops/bloodhound/cmd/api/src/daemons/datapipe"
-	"github.com/specterops/bloodhound/cmd/api/src/database"
-	"github.com/specterops/bloodhound/cmd/api/src/migrations"
-	"github.com/specterops/bloodhound/cmd/api/src/model"
-	"github.com/specterops/bloodhound/cmd/api/src/services/graphify"
-	"github.com/specterops/bloodhound/cmd/api/src/services/graphify/endpoint"
-	"github.com/specterops/bloodhound/cmd/api/src/services/upload"
-	"github.com/specterops/bloodhound/packages/go/bhlog/attr"
-	"github.com/specterops/bloodhound/packages/go/graphschema"
-	"github.com/specterops/bloodhound/packages/go/graphschema/ad"
-	"github.com/specterops/bloodhound/packages/go/graphschema/azure"
-	"github.com/specterops/bloodhound/packages/go/graphschema/common"
-	"github.com/specterops/bloodhound/packages/go/lab/generic"
-	"github.com/specterops/bloodhound/packages/go/stbernard/environment"
+	"github.com/specterops/apihound/cmd/api/src/auth"
+	"github.com/specterops/apihound/cmd/api/src/config"
+	"github.com/specterops/apihound/cmd/api/src/daemons/datapipe"
+	"github.com/specterops/apihound/cmd/api/src/database"
+	"github.com/specterops/apihound/cmd/api/src/migrations"
+	"github.com/specterops/apihound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/services/graphify"
+	"github.com/specterops/apihound/cmd/api/src/services/graphify/endpoint"
+	"github.com/specterops/apihound/cmd/api/src/services/upload"
+	"github.com/specterops/apihound/packages/go/bhlog/attr"
+	"github.com/specterops/apihound/packages/go/graphschema"
+	"github.com/specterops/apihound/packages/go/graphschema/ad"
+	"github.com/specterops/apihound/packages/go/graphschema/azure"
+	"github.com/specterops/apihound/packages/go/graphschema/common"
+	"github.com/specterops/apihound/packages/go/lab/generic"
+	"github.com/specterops/apihound/packages/go/stbernard/environment"
 	"github.com/specterops/dawgs"
 	"github.com/specterops/dawgs/drivers/pg"
 	"github.com/specterops/dawgs/graph"
@@ -163,7 +163,7 @@ func (s *CommunityGraphService) InitializeService(ctx context.Context, connectio
 		return fmt.Errorf("error opening database: %w", err)
 	}
 
-	s.db = database.NewBloodhoundDB(gormDB, auth.NewIdentityResolver())
+	s.db = database.NewApihoundDB(gormDB, auth.NewIdentityResolver())
 
 	if s.db != nil {
 		err := s.db.Wipe(ctx)

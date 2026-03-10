@@ -22,21 +22,21 @@ RUN mkdir /.cache && chmod -R go+w /.cache
 RUN corepack enable
 RUN corepack prepare yarn@stable --activate
 
-# BloodHound Workspace files
-WORKDIR /bloodhound
+# APIHound Workspace files
+WORKDIR /apihound
 COPY package.json ./
 COPY yarn.lock ./
 COPY .yarnrc.yml ./
 COPY .yarn ./.yarn
 
 # Shared Project Files
-WORKDIR /bloodhound/packages/javascript
+WORKDIR /apihound/packages/javascript
 COPY packages/javascript/bh-shared-ui/package.json ./bh-shared-ui/
 COPY packages/javascript/eslint-plugin-sx-props/package.json ./eslint-plugin-sx-props/
 COPY packages/javascript/js-client-library/package.json ./js-client-library/
 
-# BloodHound Project Files
-WORKDIR /bloodhound/cmd/ui
+# APIHound Project Files
+WORKDIR /apihound/cmd/ui
 COPY cmd/ui/package.json ./
 COPY cmd/ui/vite.config.ts ./
 COPY cmd/ui/tsconfig.node.json ./
@@ -46,6 +46,6 @@ COPY cmd/ui/postcss.config.js ./
 COPY cmd/ui/tailwind.config.js ./
 COPY cmd/ui/index.html ./
 
-WORKDIR /bloodhound/cmd/ui
+WORKDIR /apihound/cmd/ui
 
 RUN yarn

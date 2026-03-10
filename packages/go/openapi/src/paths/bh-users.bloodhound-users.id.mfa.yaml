@@ -29,7 +29,7 @@ post:
   summary: Enrolls user in multi-factor authentication
   description: Enrolls user in multi-factor authentication
   tags:
-    - BloodHound Users
+    - APIHound Users
     - Community
     - Enterprise
   requestBody:
@@ -75,7 +75,7 @@ delete:
   summary: Unenroll user from multi-factor authentication
   description: Unenrolls user from multi-factor authentication
   tags:
-    - BloodHound Users
+    - APIHound Users
     - Community
     - Enterprise
   requestBody:

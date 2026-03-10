@@ -21,8 +21,8 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/specterops/bloodhound/packages/go/headers"
-	"github.com/specterops/bloodhound/packages/go/mediatypes"
+	"github.com/specterops/apihound/packages/go/headers"
+	"github.com/specterops/apihound/packages/go/mediatypes"
 	"github.com/specterops/dawgs/graph"
 	"github.com/stretchr/testify/require"
 )

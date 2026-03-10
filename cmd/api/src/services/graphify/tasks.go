@@ -26,12 +26,12 @@ import (
 	"os"
 	"time"
 
-	"github.com/specterops/bloodhound/cmd/api/src/model"
-	"github.com/specterops/bloodhound/cmd/api/src/model/appcfg"
-	"github.com/specterops/bloodhound/packages/go/bhlog/attr"
-	"github.com/specterops/bloodhound/packages/go/bhlog/measure"
-	"github.com/specterops/bloodhound/packages/go/bomenc"
-	"github.com/specterops/bloodhound/packages/go/errorlist"
+	"github.com/specterops/apihound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/model/appcfg"
+	"github.com/specterops/apihound/packages/go/bhlog/attr"
+	"github.com/specterops/apihound/packages/go/bhlog/measure"
+	"github.com/specterops/apihound/packages/go/bomenc"
+	"github.com/specterops/apihound/packages/go/errorlist"
 	"github.com/specterops/dawgs/graph"
 )
 

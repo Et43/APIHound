@@ -24,19 +24,19 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/specterops/bloodhound/cmd/api/src/bootstrap"
-	"github.com/specterops/bloodhound/cmd/api/src/config"
-	"github.com/specterops/bloodhound/cmd/api/src/database"
-	"github.com/specterops/bloodhound/cmd/api/src/services"
-	"github.com/specterops/bloodhound/cmd/api/src/version"
-	"github.com/specterops/bloodhound/packages/go/bhlog"
-	"github.com/specterops/bloodhound/packages/go/bhlog/attr"
-	"github.com/specterops/bloodhound/packages/go/bhlog/level"
+	"github.com/specterops/apihound/cmd/api/src/bootstrap"
+	"github.com/specterops/apihound/cmd/api/src/config"
+	"github.com/specterops/apihound/cmd/api/src/database"
+	"github.com/specterops/apihound/cmd/api/src/services"
+	"github.com/specterops/apihound/cmd/api/src/version"
+	"github.com/specterops/apihound/packages/go/bhlog"
+	"github.com/specterops/apihound/packages/go/bhlog/attr"
+	"github.com/specterops/apihound/packages/go/bhlog/level"
 	"github.com/specterops/dawgs/graph"
 )
 
 func printVersion() {
-	fmt.Printf("Bloodhound API Version: %s\n", version.GetVersion())
+	fmt.Printf("Apihound API Version: %s\n", version.GetVersion())
 	os.Exit(0)
 }
 
@@ -53,7 +53,7 @@ func main() {
 	}
 
 	flag.Usage = func() {
-		fmt.Fprintf(flag.CommandLine.Output(), "BloodHound Community Edition API Server\n\nUsage of %s\n", os.Args[0])
+		fmt.Fprintf(flag.CommandLine.Output(), "APIHound Community Edition API Server\n\nUsage of %s\n", os.Args[0])
 		flag.PrintDefaults()
 	}
 
@@ -111,7 +111,7 @@ func main() {
 	level.SetGlobalLevel(logLevel)
 	slog.Info("Logging configured", slog.String("log_level", logLevel.String()))
 
-	initializer := bootstrap.Initializer[*database.BloodhoundDB, *graph.DatabaseSwitch]{
+	initializer := bootstrap.Initializer[*database.ApihoundDB, *graph.DatabaseSwitch]{
 		Configuration:       cfg,
 		DBConnector:         services.ConnectDatabases,
 		PreMigrationDaemons: services.PreMigrationDaemons,

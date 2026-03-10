@@ -20,7 +20,7 @@ import (
 	"sync"
 
 	"github.com/cespare/xxhash/v2"
-	"github.com/specterops/bloodhound/packages/go/ein"
+	"github.com/specterops/apihound/packages/go/ein"
 )
 
 // CacheEntryDigester generates deterministic hash keys for cache entries based on

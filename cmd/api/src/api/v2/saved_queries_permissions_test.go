@@ -33,16 +33,16 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 
-	"github.com/specterops/bloodhound/cmd/api/src/api"
-	v2 "github.com/specterops/bloodhound/cmd/api/src/api/v2"
-	"github.com/specterops/bloodhound/cmd/api/src/auth"
-	"github.com/specterops/bloodhound/cmd/api/src/database"
-	"github.com/specterops/bloodhound/cmd/api/src/database/mocks"
-	"github.com/specterops/bloodhound/cmd/api/src/model"
-	"github.com/specterops/bloodhound/cmd/api/src/test/must"
-	"github.com/specterops/bloodhound/cmd/api/src/utils/test"
-	"github.com/specterops/bloodhound/packages/go/headers"
-	"github.com/specterops/bloodhound/packages/go/mediatypes"
+	"github.com/specterops/apihound/cmd/api/src/api"
+	v2 "github.com/specterops/apihound/cmd/api/src/api/v2"
+	"github.com/specterops/apihound/cmd/api/src/auth"
+	"github.com/specterops/apihound/cmd/api/src/database"
+	"github.com/specterops/apihound/cmd/api/src/database/mocks"
+	"github.com/specterops/apihound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/test/must"
+	"github.com/specterops/apihound/cmd/api/src/utils/test"
+	"github.com/specterops/apihound/packages/go/headers"
+	"github.com/specterops/apihound/packages/go/mediatypes"
 )
 
 var (

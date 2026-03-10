@@ -24,7 +24,7 @@ import (
 	"testing"
 
 	"github.com/gorilla/mux"
-	"github.com/specterops/bloodhound/cmd/api/src/api"
+	"github.com/specterops/apihound/cmd/api/src/api"
 )
 
 type ExpectedResponse struct {

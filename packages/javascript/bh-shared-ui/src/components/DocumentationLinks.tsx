@@ -21,7 +21,7 @@ const sharpHoundCELink = (
         target='_blank'
         rel='noopener noreferrer'
         data-testid='download-collectors-sharphound-ce-link'
-        href={'https://bloodhound.specterops.io/collect-data/ce-collection/sharphound'}>
+        href={'https://apihound.specterops.io/collect-data/ce-collection/sharphound'}>
         SharpHound Community
     </Link>
 );
@@ -31,7 +31,7 @@ const azureHoundCELink = (
         target='_blank'
         rel='noopener noreferrer'
         data-testid='download-collectors-azurehound-ce-link'
-        href={'https://bloodhound.specterops.io/collect-data/ce-collection/azurehound'}>
+        href={'https://apihound.specterops.io/collect-data/ce-collection/azurehound'}>
         AzureHound Community
     </Link>
 );
@@ -41,7 +41,7 @@ const samlConfigDocLink = (
         target='_blank'
         rel='noopener noreferrer'
         data-testid='saml-config-doc-link'
-        href={'https://bloodhound.specterops.io/manage-bloodhound/auth/saml'}>
+        href={'https://apihound.specterops.io/manage-apihound/auth/saml'}>
         here
     </Link>
 );
@@ -51,7 +51,7 @@ const ManageUsersDocLink = (
         target='_blank'
         rel='noopener noreferrer'
         data-testid='manage-users-doc-link'
-        href={'https://bloodhound.specterops.io/manage-bloodhound/auth/users-and-roles'}>
+        href={'https://apihound.specterops.io/manage-apihound/auth/users-and-roles'}>
         adding users, changing their roles, or understanding role capabilities
     </Link>
 );
@@ -61,7 +61,7 @@ const fileIngestLink = (
         target='_blank'
         rel='noopener noreferrer'
         data-testid='file-upload-gettingstarted-link'
-        href={'https://bloodhound.specterops.io/get-started/quickstart/community-edition-quickstart'}>
+        href={'https://apihound.specterops.io/get-started/quickstart/community-edition-quickstart'}>
         Getting Started
     </Link>
 );
@@ -71,8 +71,8 @@ const apiUsageLink = (
         target='_blank'
         rel='noopener noreferrer'
         data-testid='file-upload-gettingstarted-link'
-        href={'https://bloodhound.specterops.io/integrations/bloodhound-api/working-with-api'}>
-        Working with the BloodHound API
+        href={'https://apihound.specterops.io/integrations/apihound-api/working-with-api'}>
+        Working with the APIHound API
     </Link>
 );
 

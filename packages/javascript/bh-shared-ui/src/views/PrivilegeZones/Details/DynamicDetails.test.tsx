@@ -131,7 +131,7 @@ describe('DynamicDetails', () => {
         expect(screen.getByText('Emery_Swift86@gmail.com')).toBeInTheDocument();
         expect(screen.getByText('2024/11/25')).toBeInTheDocument();
         expect(screen.getByText('Cypher')).toBeInTheDocument();
-        // Auto Certification should not render on BHCE
+        // Auto Certification should not render on APIHound
         expect(screen.queryByText(/Automatic Certification:/i)).not.toBeInTheDocument();
     });
 
@@ -167,7 +167,7 @@ describe('DynamicDetails', () => {
         expect(screen.getByText('Emery_Swift86@gmail.com')).toBeInTheDocument();
         expect(screen.getByText('2024/11/25')).toBeInTheDocument();
         expect(screen.getByText('Object ID')).toBeInTheDocument();
-        // Auto Certification should not render on BHCE
+        // Auto Certification should not render on APIHound
         expect(screen.queryByText(/Automatic Certification:/i)).not.toBeInTheDocument();
     });
 });

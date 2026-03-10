@@ -1,9 +1,9 @@
-# BloodHound Community Edition Development
+# APIHound Community Edition Development
 
-Welcome to BloodHound Community Edition! This README should help point you in the right direction if you're looking to begin development with BloodHound.
+Welcome to APIHound Community Edition! This README should help point you in the right direction if you're looking to begin development with APIHound.
 It is intended to be a simple place to look to get your dev environment set up.
 
-More detailed information regarding [contributing](https://github.com/SpecterOps/BloodHound/wiki/Contributing), [code structure](https://github.com/SpecterOps/BloodHound/wiki/Code), and [development](https://github.com/SpecterOps/BloodHound/wiki/Development) can be found in our [GitHub wiki](https://github.com/SpecterOps/BloodHound/wiki).
+More detailed information regarding [contributing](https://github.com/SpecterOps/APIHound/wiki/Contributing), [code structure](https://github.com/SpecterOps/APIHound/wiki/Code), and [development](https://github.com/SpecterOps/APIHound/wiki/Development) can be found in our [GitHub wiki](https://github.com/SpecterOps/APIHound/wiki).
 
 ## Dev Environment Prerequisites
 
@@ -30,7 +30,7 @@ Please make sure you have all dev requisites and docker is running!
 - Run `just init`
   - this should only ever be run once; the only reason to run it again is if you wipe the repo and start fresh or if you want to wipe your config files and start over
 - Run `just bh-dev`
-- To access the UI, navigate to `http://bloodhound.localhost`.
+- To access the UI, navigate to `http://apihound.localhost`.
 
 ## Quick Tips
 
@@ -51,11 +51,11 @@ bootstrapped, and you want to change how the default admin is created, you will 
 volumes and rebuild the docker containers.
 
 ## Package Names
-Packages in the BHCE repo will follow one of two conventions:
+Packages in the APIHound repo will follow one of two conventions:
 
 - If the package lives within `cmd/api/src`:
-  - `github.com/specterops/bloodhound/cmd/api/src/<path-to>/<package>`
+  - `github.com/specterops/apihound/cmd/api/src/<path-to>/<package>`
   - is covered by the `go.mod` file in the `src` directory
 - If the package lives within `packages/go`:
-  - `github.com/specterops/bloodhound/<package>`
+  - `github.com/specterops/apihound/<package>`
   - requires its own `go.mod`

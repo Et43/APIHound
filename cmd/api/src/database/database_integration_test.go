@@ -27,16 +27,16 @@ import (
 	"testing"
 
 	"github.com/peterldowns/pgtestdb"
-	"github.com/specterops/bloodhound/cmd/api/src/auth"
-	"github.com/specterops/bloodhound/cmd/api/src/database"
-	"github.com/specterops/bloodhound/cmd/api/src/test/integration/utils"
+	"github.com/specterops/apihound/cmd/api/src/auth"
+	"github.com/specterops/apihound/cmd/api/src/database"
+	"github.com/specterops/apihound/cmd/api/src/test/integration/utils"
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
 )
 
 type IntegrationTestSuite struct {
 	Context    context.Context
-	BHDatabase *database.BloodhoundDB
+	BHDatabase *database.ApihoundDB
 	DB         *gorm.DB
 }
 
@@ -44,7 +44,7 @@ type IntegrationTestSuite struct {
 // all necessary dependencies for integration tests, including a connected
 // graph database instance and a configured graph service. The base GORM db
 // can be used for scenarios where tests require additional data
-// that cannot be inserted via public database.BloodhoundDB methods
+// that cannot be inserted via public database.ApihoundDB methods
 // (ex: insert a built-in OpenGraph Extension).
 func setupIntegrationTestSuite(t *testing.T) IntegrationTestSuite {
 	t.Helper()
@@ -59,7 +59,7 @@ func setupIntegrationTestSuite(t *testing.T) IntegrationTestSuite {
 	gormDB, err := database.OpenDatabase(connConf.URL())
 	require.NoError(t, err)
 
-	db := database.NewBloodhoundDB(gormDB, auth.NewIdentityResolver())
+	db := database.NewApihoundDB(gormDB, auth.NewIdentityResolver())
 
 	err = db.Migrate(ctx)
 	require.NoError(t, err)
@@ -137,7 +137,7 @@ func TestTransaction(t *testing.T) {
 		originalEnabled := flag.Enabled
 
 		// Update flag in a transaction
-		err = testSuite.BHDatabase.Transaction(testSuite.Context, func(tx *database.BloodhoundDB) error {
+		err = testSuite.BHDatabase.Transaction(testSuite.Context, func(tx *database.ApihoundDB) error {
 			flag.Enabled = !originalEnabled
 			return tx.SetFlag(testSuite.Context, flag)
 		})
@@ -160,7 +160,7 @@ func TestTransaction(t *testing.T) {
 
 		// Update flag then return error - should rollback
 		expectedErr := fmt.Errorf("intentional error to trigger rollback")
-		err = testSuite.BHDatabase.Transaction(testSuite.Context, func(tx *database.BloodhoundDB) error {
+		err = testSuite.BHDatabase.Transaction(testSuite.Context, func(tx *database.ApihoundDB) error {
 			flag.Enabled = !originalEnabled
 			if err := tx.SetFlag(testSuite.Context, flag); err != nil {
 				return err
@@ -180,7 +180,7 @@ func TestTransaction(t *testing.T) {
 		defer teardownIntegrationTestSuite(t, &testSuite)
 
 		// Verify we can call multiple different methods in a transaction
-		err := testSuite.BHDatabase.Transaction(testSuite.Context, func(tx *database.BloodhoundDB) error {
+		err := testSuite.BHDatabase.Transaction(testSuite.Context, func(tx *database.ApihoundDB) error {
 			// Call GetAllFlags - read operation
 			flags, err := tx.GetAllFlags(testSuite.Context)
 			if err != nil {
@@ -205,7 +205,7 @@ func TestTransaction(t *testing.T) {
 		originalEnabled := flag.Enabled
 
 		// Update flag in a transaction with serializable isolation
-		err = testSuite.BHDatabase.Transaction(testSuite.Context, func(tx *database.BloodhoundDB) error {
+		err = testSuite.BHDatabase.Transaction(testSuite.Context, func(tx *database.ApihoundDB) error {
 			flag.Enabled = !originalEnabled
 			return tx.SetFlag(testSuite.Context, flag)
 		}, &sql.TxOptions{Isolation: sql.LevelSerializable})
@@ -222,7 +222,7 @@ func TestTransaction(t *testing.T) {
 		defer teardownIntegrationTestSuite(t, &testSuite)
 
 		// Read-only transaction should work for read operations
-		err := testSuite.BHDatabase.Transaction(testSuite.Context, func(tx *database.BloodhoundDB) error {
+		err := testSuite.BHDatabase.Transaction(testSuite.Context, func(tx *database.ApihoundDB) error {
 			_, err := tx.GetAllFlags(testSuite.Context)
 			return err
 		}, &sql.TxOptions{ReadOnly: true})
@@ -238,7 +238,7 @@ func TestTransaction(t *testing.T) {
 		require.NoError(t, err)
 
 		// Attempting to write in a read-only transaction should fail
-		err = testSuite.BHDatabase.Transaction(testSuite.Context, func(tx *database.BloodhoundDB) error {
+		err = testSuite.BHDatabase.Transaction(testSuite.Context, func(tx *database.ApihoundDB) error {
 			flag.Enabled = !flag.Enabled
 			return tx.SetFlag(testSuite.Context, flag)
 		}, &sql.TxOptions{ReadOnly: true})

@@ -29,7 +29,7 @@
             "substitutePath": [
                 {
                     "from": "${workspaceFolder}",
-                    "to": "/bloodhound"
+                    "to": "/apihound"
                 }
             ]
         },
@@ -38,7 +38,7 @@
             "type": "go",
             "request": "launch",
             "mode": "debug",
-            "program": "github.com/specterops/bloodhound/cmd/api/src",
+            "program": "github.com/specterops/apihound/cmd/api/src",
             "cwd": "${workspaceFolder}",
             "args": [
                 "-configfile",
@@ -74,7 +74,7 @@
             "cwd": "${workspaceFolder}",
             "args": ["bh-graphify", "-path=${workspaceFolder}/cmd/api/src/test/fixtures/fixtures/v6/ingest", "-outpath=${workspaceFolder}/tmp/"],
             "env": {
-                "SB_PG_CONNECTION":"user=bloodhound password=bloodhoundcommunityedition dbname=bloodhound host=localhost port=65432"
+                "SB_PG_CONNECTION":"user=apihound password=apihoundcommunityedition dbname=apihound host=localhost port=65432"
             }
         }
     ]

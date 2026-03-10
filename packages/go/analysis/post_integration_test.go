@@ -22,13 +22,13 @@ import (
 	"context"
 	"testing"
 
-	"github.com/specterops/bloodhound/cmd/api/src/test/integration"
-	"github.com/specterops/bloodhound/packages/go/analysis"
-	azureAnalysis "github.com/specterops/bloodhound/packages/go/analysis/azure"
-	"github.com/specterops/bloodhound/packages/go/graphschema"
-	"github.com/specterops/bloodhound/packages/go/graphschema/ad"
-	"github.com/specterops/bloodhound/packages/go/graphschema/azure"
-	"github.com/specterops/bloodhound/packages/go/graphschema/common"
+	"github.com/specterops/apihound/cmd/api/src/test/integration"
+	"github.com/specterops/apihound/packages/go/analysis"
+	azureAnalysis "github.com/specterops/apihound/packages/go/analysis/azure"
+	"github.com/specterops/apihound/packages/go/graphschema"
+	"github.com/specterops/apihound/packages/go/graphschema/ad"
+	"github.com/specterops/apihound/packages/go/graphschema/azure"
+	"github.com/specterops/apihound/packages/go/graphschema/common"
 	"github.com/specterops/dawgs/graph"
 	"github.com/specterops/dawgs/query"
 	"github.com/stretchr/testify/require"
@@ -38,7 +38,7 @@ import (
 // There exists an AD user and an Azure user that represent the same principal (the same user identity)
 //
 // This connection is made by correlating properties that are inserted when data from Active Directory or Azure is ingested
-// into the system. These properties are referenced in the function in bhce/packages/go/analysis/hybrid/hybrid.go - hasOnPremUser(...)
+// into the system. These properties are referenced in the function in apihound/packages/go/analysis/hybrid/hybrid.go - hasOnPremUser(...)
 // and then mapped to AD users for creation of the SyncedToEntraUser and SyncedToADUser edges.
 //
 // Hybrid post-processing is driven by https://learn.microsoft.com/en-us/azure/architecture/reference-architectures/identity/azure-ad - current
@@ -67,12 +67,12 @@ func TestDeleteTransitEdges(t *testing.T) {
 	)
 
 	// In order to validate that DeleteTransitEdges and the updated PostProcessedRelationships for both AD and Azure are correct, we need to simulate
-	// the completion of post-processing in: bhce/cmd/api/src/analysis/azure/post.go
+	// the completion of post-processing in: apihound/cmd/api/src/analysis/azure/post.go
 	//
-	// The specific function that is responsible for creating the edges below can be found in bhce/packages/go/analysis/hybrid/hybrid.go - PostHybrid(...)
+	// The specific function that is responsible for creating the edges below can be found in apihound/packages/go/analysis/hybrid/hybrid.go - PostHybrid(...)
 	//
 	// Here, we are choosing to create these edges such that the data describes what we would expect to see after a successful execution of the logic
-	// in bhce/cmd/api/src/analysis/azure/post.go.
+	// in apihound/cmd/api/src/analysis/azure/post.go.
 	testCtx.NewRelationship(adUser, azureUser, azure.SyncedToEntraUser)
 	testCtx.NewRelationship(azureUser, adUser, ad.SyncedToADUser)
 

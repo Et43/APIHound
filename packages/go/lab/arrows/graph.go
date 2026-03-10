@@ -44,7 +44,7 @@ type Node struct {
 	Caption string `json:"caption"`
 
 	// Labels are the node types. This is equivalent to what we call
-	// Kinds in BloodHound.
+	// Kinds in APIHound.
 	Labels []string `json:"labels"`
 
 	// Properties is the key:value map used for storing extra information
@@ -63,7 +63,7 @@ type Edge struct {
 	ToID string `json:"toId"`
 
 	// Type is the 'label' we apply to the Edge. This is synonymous to
-	// the edge Kind in BloodHound.
+	// the edge Kind in APIHound.
 	Type string `json:"type"`
 
 	// Properties is the key:value map used for storing extra information

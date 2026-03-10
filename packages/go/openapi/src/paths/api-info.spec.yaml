@@ -19,7 +19,7 @@ parameters:
 get:
   operationId: GetApiSpec
   summary: Get API Spec
-  description: Returns an Open API 3.0 compatible BloodHound API spec
+  description: Returns an Open API 3.0 compatible APIHound API spec
   tags:
     - API Info
     - Community

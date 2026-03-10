@@ -114,7 +114,7 @@ describe('Rule Form', () => {
         expect(descriptionInput).toBeInTheDocument();
         expect(descriptionInput).toHaveValue('');
 
-        // Auto Certification dropdown should not render on BHCE
+        // Auto Certification dropdown should not render on APIHound
         const form = screen.getByTestId('rule-form');
         expect(within(form).queryByText(/Automatic Certification/i)).not.toBeInTheDocument();
 
@@ -179,7 +179,7 @@ describe('Rule Form', () => {
             expect(descriptionInput).toHaveValue('bar');
         });
 
-        // Auto Certification dropdown should not render on BHCE
+        // Auto Certification dropdown should not render on APIHound
         expect(screen.queryByText(/Automatic Certification/i)).not.toBeInTheDocument();
 
         expect(screen.getByText('Rule Type')).toBeInTheDocument();

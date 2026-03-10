@@ -70,7 +70,7 @@ export const Inner: React.FC = () => {
 
     useKeybindings({
         KeyD: () => {
-            window.open('https://bloodhound.specterops.io/home', '_blank');
+            window.open('https://apihound.specterops.io/home', '_blank');
         },
     });
 

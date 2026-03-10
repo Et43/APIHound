@@ -28,8 +28,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/specterops/bloodhound/packages/go/bhlog/attr"
-	"github.com/specterops/bloodhound/packages/go/stbernard/cmdrunner"
+	"github.com/specterops/apihound/packages/go/bhlog/attr"
+	"github.com/specterops/apihound/packages/go/stbernard/cmdrunner"
 )
 
 func generateLicenseHeader(commentPrefix string) string {

@@ -16,10 +16,10 @@
 
 import { BasePath, BaseSVG, BaseSVGProps } from './utils';
 
-export const BHCELogo: React.FC<BaseSVGProps> = (props) => {
+export const APIHoundLogo: React.FC<BaseSVGProps> = (props) => {
     return (
         <BaseSVG
-            name='bhce-logo'
+            name='apihound-logo'
             version='1.1'
             xmlns='http://www.w3.org/2000/svg'
             viewBox='0 0 310 250'

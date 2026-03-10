@@ -343,7 +343,7 @@ const MOCK_USER = [
                     },
                 },
             ],
-            first_name: 'BloodHound',
+            first_name: 'APIHound',
             last_name: 'Dev',
             email_address: 'spam@example.com',
             principal_name: 'admin',

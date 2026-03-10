@@ -18,11 +18,11 @@ package graphify
 import (
 	"context"
 
-	"github.com/specterops/bloodhound/cmd/api/src/config"
-	"github.com/specterops/bloodhound/cmd/api/src/model"
-	"github.com/specterops/bloodhound/cmd/api/src/model/appcfg"
-	"github.com/specterops/bloodhound/cmd/api/src/services/graphify/endpoint"
-	"github.com/specterops/bloodhound/cmd/api/src/services/upload"
+	"github.com/specterops/apihound/cmd/api/src/config"
+	"github.com/specterops/apihound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/model/appcfg"
+	"github.com/specterops/apihound/cmd/api/src/services/graphify/endpoint"
+	"github.com/specterops/apihound/cmd/api/src/services/upload"
 	"github.com/specterops/dawgs/graph"
 )
 

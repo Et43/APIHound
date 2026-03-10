@@ -22,8 +22,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/specterops/bloodhound/cmd/api/src/model"
-	"github.com/specterops/bloodhound/cmd/api/src/model/appcfg"
+	"github.com/specterops/apihound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/model/appcfg"
 	"gorm.io/gorm"
 )
 
@@ -45,7 +45,7 @@ type SSOProviderData interface {
 
 // CreateSSOProvider creates an entry in the sso_providers table
 // A slug will be created for the SSO Provider using the name argument as a base. The name will be lower cased and all spaces are replaced with `-`
-func (s *BloodhoundDB) CreateSSOProvider(ctx context.Context, name string, authProvider model.SessionAuthProvider, config model.SSOProviderConfig) (model.SSOProvider, error) {
+func (s *ApihoundDB) CreateSSOProvider(ctx context.Context, name string, authProvider model.SessionAuthProvider, config model.SSOProviderConfig) (model.SSOProvider, error) {
 	// If we have a disabled autoprovision, wipe the auto provision config
 	if !config.AutoProvision.Enabled {
 		config.AutoProvision = model.SSOProviderAutoProvisionConfig{}
@@ -83,7 +83,7 @@ func (s *BloodhoundDB) CreateSSOProvider(ctx context.Context, name string, authP
 }
 
 // DeleteSSOProvider deletes a sso_provider entry with a matching id
-func (s *BloodhoundDB) DeleteSSOProvider(ctx context.Context, id int) error {
+func (s *ApihoundDB) DeleteSSOProvider(ctx context.Context, id int) error {
 	var (
 		ssoProvider = model.SSOProvider{}
 		auditEntry  = model.AuditEntry{
@@ -111,7 +111,7 @@ func (s *BloodhoundDB) DeleteSSOProvider(ctx context.Context, id int) error {
 	return err
 }
 
-func (s *BloodhoundDB) GetAllSSOProviders(ctx context.Context, order string, sqlFilter model.SQLFilter) ([]model.SSOProvider, error) {
+func (s *ApihoundDB) GetAllSSOProviders(ctx context.Context, order string, sqlFilter model.SQLFilter) ([]model.SSOProvider, error) {
 	var providers []model.SSOProvider
 
 	query := s.db.WithContext(ctx).Model(&model.SSOProvider{})
@@ -143,7 +143,7 @@ func (s *BloodhoundDB) GetAllSSOProviders(ctx context.Context, order string, sql
 	return providers, CheckError(result)
 }
 
-func (s *BloodhoundDB) GetSSOProviderBySlug(ctx context.Context, slug string) (model.SSOProvider, error) {
+func (s *ApihoundDB) GetSSOProviderBySlug(ctx context.Context, slug string) (model.SSOProvider, error) {
 	var provider model.SSOProvider
 	result := s.db.WithContext(ctx).Preload("OIDCProvider").Preload("SAMLProvider").Where("slug = ?", slug).Find(&provider)
 
@@ -151,7 +151,7 @@ func (s *BloodhoundDB) GetSSOProviderBySlug(ctx context.Context, slug string) (m
 }
 
 // GetSSOProviderUsers returns all the users associated with a given sso provider
-func (s *BloodhoundDB) GetSSOProviderUsers(ctx context.Context, id int) (model.Users, error) {
+func (s *ApihoundDB) GetSSOProviderUsers(ctx context.Context, id int) (model.Users, error) {
 	var (
 		users model.Users
 	)
@@ -159,7 +159,7 @@ func (s *BloodhoundDB) GetSSOProviderUsers(ctx context.Context, id int) (model.U
 	return users, CheckError(s.db.WithContext(ctx).Table("users").Where("sso_provider_id = ?", id).Find(&users))
 }
 
-func (s *BloodhoundDB) GetSSOProviderById(ctx context.Context, id int32) (model.SSOProvider, error) {
+func (s *ApihoundDB) GetSSOProviderById(ctx context.Context, id int32) (model.SSOProvider, error) {
 	var provider model.SSOProvider
 	result := s.db.WithContext(ctx).Preload("OIDCProvider").Preload("SAMLProvider").Table(ssoProviderTableName).Where("id = ?", id).First(&provider)
 
@@ -167,7 +167,7 @@ func (s *BloodhoundDB) GetSSOProviderById(ctx context.Context, id int32) (model.
 }
 
 // TerminateUserSessionsBySSOProvider terminates all sessions associated with a specific sso provider
-func (s *BloodhoundDB) TerminateUserSessionsBySSOProvider(ctx context.Context, ssoProvider model.SSOProvider) error {
+func (s *ApihoundDB) TerminateUserSessionsBySSOProvider(ctx context.Context, ssoProvider model.SSOProvider) error {
 	// TODO should be migrated to the SSO provider id instead of the child
 	var childId int32
 	switch ssoProvider.Type {
@@ -189,7 +189,7 @@ func (s *BloodhoundDB) TerminateUserSessionsBySSOProvider(ctx context.Context, s
 }
 
 // UpdateSSOProvider updates an entry in the sso_providers table
-func (s *BloodhoundDB) UpdateSSOProvider(ctx context.Context, ssoProvider model.SSOProvider) (model.SSOProvider, error) {
+func (s *ApihoundDB) UpdateSSOProvider(ctx context.Context, ssoProvider model.SSOProvider) (model.SSOProvider, error) {
 	// Update the slug
 	ssoProvider.Slug = strings.ToLower(strings.ReplaceAll(ssoProvider.Name, " ", "-"))
 

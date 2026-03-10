@@ -23,7 +23,7 @@ import (
 	"strings"
 
 	"github.com/santhosh-tekuri/jsonschema/v6"
-	"github.com/specterops/bloodhound/cmd/api/src/model/ingest"
+	"github.com/specterops/apihound/cmd/api/src/model/ingest"
 )
 
 // Error Definitions ------------------------------------------------------------------------------

@@ -1362,9 +1362,9 @@ export function CommonKindPropertiesToDisplay(value: CommonKindProperties): stri
         case CommonKindProperties.UserTags:
             return 'Node User Tags';
         case CommonKindProperties.LastSeen:
-            return 'Last Seen by BloodHound';
+            return 'Last Seen by APIHound';
         case CommonKindProperties.LastCollected:
-            return 'Last Collected by BloodHound';
+            return 'Last Collected by APIHound';
         case CommonKindProperties.WhenCreated:
             return 'Created';
         case CommonKindProperties.Enabled:

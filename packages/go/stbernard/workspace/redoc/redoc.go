@@ -21,16 +21,16 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/specterops/bloodhound/packages/go/stbernard/cmdrunner"
-	"github.com/specterops/bloodhound/packages/go/stbernard/environment"
+	"github.com/specterops/apihound/packages/go/stbernard/cmdrunner"
+	"github.com/specterops/apihound/packages/go/stbernard/environment"
 )
 
 func GenerateOpenAPIDoc(projectPath string, submodules []string, env environment.Environment) error {
 
-	// Either we are in the `bhce` submodule or we must find it
+	// Either we are in the `apihound` submodule or we must find it
 	var basePath = projectPath
 	for _, submodule := range submodules {
-		if filepath.Base(submodule) == "bhce" {
+		if filepath.Base(submodule) == "apihound" {
 			basePath = submodule
 			break
 		}

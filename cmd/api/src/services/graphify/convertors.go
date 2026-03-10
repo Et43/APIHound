@@ -22,16 +22,16 @@ import (
 	"strings"
 	"time"
 
-	"github.com/specterops/bloodhound/packages/go/ein"
-	"github.com/specterops/bloodhound/packages/go/graphschema/ad"
-	"github.com/specterops/bloodhound/packages/go/graphschema/common"
+	"github.com/specterops/apihound/packages/go/ein"
+	"github.com/specterops/apihound/packages/go/graphschema/ad"
+	"github.com/specterops/apihound/packages/go/graphschema/common"
 	"github.com/specterops/dawgs/graph"
 )
 
 const environmentIDKey = "environment_id"
 
 func ConvertGenericNode(entity ein.GenericNode, converted *ConvertedData) error {
-	objectID := strings.ToUpper(entity.ID) // BloodHound convention: object IDs are uppercased
+	objectID := strings.ToUpper(entity.ID) // APIHound convention: object IDs are uppercased
 
 	node := ein.IngestibleNode{
 		ObjectID:    objectID,
@@ -60,7 +60,7 @@ func ConvertGenericNode(entity ein.GenericNode, converted *ConvertedData) error 
 		node.PropertyMap[common.PrimaryKind.String()] = node.Labels[0]
 	}
 
-	// BloodHound convention: environment IDs are uppercased
+	// APIHound convention: environment IDs are uppercased
 	if envID, ok := node.PropertyMap[environmentIDKey]; ok {
 		if envIDStr, ok := envID.(string); ok {
 			node.PropertyMap[environmentIDKey] = strings.ToUpper(envIDStr)

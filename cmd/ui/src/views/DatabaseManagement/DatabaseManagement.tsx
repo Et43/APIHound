@@ -278,7 +278,7 @@ const DatabaseManagement: FC = () => {
             data-testid='database-management'
             pageDescription={
                 <Typography variant='body2' paragraph>
-                    Manage your BloodHound data. Select from the options below which data should be deleted.
+                    Manage your APIHound data. Select from the options below which data should be deleted.
                 </Typography>
             }>
             <Box>

@@ -22,42 +22,42 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/specterops/bloodhound/cmd/api/src/api"
-	"github.com/specterops/bloodhound/cmd/api/src/api/registration"
-	"github.com/specterops/bloodhound/cmd/api/src/api/router"
-	"github.com/specterops/bloodhound/cmd/api/src/auth"
-	"github.com/specterops/bloodhound/cmd/api/src/bootstrap"
-	"github.com/specterops/bloodhound/cmd/api/src/config"
-	"github.com/specterops/bloodhound/cmd/api/src/daemons"
-	"github.com/specterops/bloodhound/cmd/api/src/daemons/api/bhapi"
-	"github.com/specterops/bloodhound/cmd/api/src/daemons/api/toolapi"
-	"github.com/specterops/bloodhound/cmd/api/src/daemons/changelog"
-	"github.com/specterops/bloodhound/cmd/api/src/daemons/datapipe"
-	"github.com/specterops/bloodhound/cmd/api/src/daemons/gc"
-	"github.com/specterops/bloodhound/cmd/api/src/database"
-	"github.com/specterops/bloodhound/cmd/api/src/migrations"
-	"github.com/specterops/bloodhound/cmd/api/src/model/appcfg"
-	"github.com/specterops/bloodhound/cmd/api/src/queries"
-	"github.com/specterops/bloodhound/cmd/api/src/services/dogtags"
-	"github.com/specterops/bloodhound/cmd/api/src/services/opengraphschema"
-	"github.com/specterops/bloodhound/cmd/api/src/services/upload"
-	"github.com/specterops/bloodhound/packages/go/cache"
-	schema "github.com/specterops/bloodhound/packages/go/graphschema"
+	"github.com/specterops/apihound/cmd/api/src/api"
+	"github.com/specterops/apihound/cmd/api/src/api/registration"
+	"github.com/specterops/apihound/cmd/api/src/api/router"
+	"github.com/specterops/apihound/cmd/api/src/auth"
+	"github.com/specterops/apihound/cmd/api/src/bootstrap"
+	"github.com/specterops/apihound/cmd/api/src/config"
+	"github.com/specterops/apihound/cmd/api/src/daemons"
+	"github.com/specterops/apihound/cmd/api/src/daemons/api/bhapi"
+	"github.com/specterops/apihound/cmd/api/src/daemons/api/toolapi"
+	"github.com/specterops/apihound/cmd/api/src/daemons/changelog"
+	"github.com/specterops/apihound/cmd/api/src/daemons/datapipe"
+	"github.com/specterops/apihound/cmd/api/src/daemons/gc"
+	"github.com/specterops/apihound/cmd/api/src/database"
+	"github.com/specterops/apihound/cmd/api/src/migrations"
+	"github.com/specterops/apihound/cmd/api/src/model/appcfg"
+	"github.com/specterops/apihound/cmd/api/src/queries"
+	"github.com/specterops/apihound/cmd/api/src/services/dogtags"
+	"github.com/specterops/apihound/cmd/api/src/services/opengraphschema"
+	"github.com/specterops/apihound/cmd/api/src/services/upload"
+	"github.com/specterops/apihound/packages/go/cache"
+	schema "github.com/specterops/apihound/packages/go/graphschema"
 	"github.com/specterops/dawgs/graph"
 )
 
 // ConnectPostgres initializes a connection to PG, and returns errors if any
-func ConnectPostgres(cfg config.Configuration) (*database.BloodhoundDB, error) {
+func ConnectPostgres(cfg config.Configuration) (*database.ApihoundDB, error) {
 	if db, err := database.OpenDatabase(cfg.Database.PostgreSQLConnectionString()); err != nil {
 		return nil, fmt.Errorf("error while attempting to create database connection: %w", err)
 	} else {
-		return database.NewBloodhoundDB(db, auth.NewIdentityResolver()), nil
+		return database.NewApihoundDB(db, auth.NewIdentityResolver()), nil
 	}
 }
 
 // ConnectDatabases initializes connections to PG and connection, and returns errors if any
-func ConnectDatabases(ctx context.Context, cfg config.Configuration) (bootstrap.DatabaseConnections[*database.BloodhoundDB, *graph.DatabaseSwitch], error) {
-	connections := bootstrap.DatabaseConnections[*database.BloodhoundDB, *graph.DatabaseSwitch]{}
+func ConnectDatabases(ctx context.Context, cfg config.Configuration) (bootstrap.DatabaseConnections[*database.ApihoundDB, *graph.DatabaseSwitch], error) {
+	connections := bootstrap.DatabaseConnections[*database.ApihoundDB, *graph.DatabaseSwitch]{}
 
 	if db, err := ConnectPostgres(cfg); err != nil {
 		return connections, err
@@ -72,13 +72,13 @@ func ConnectDatabases(ctx context.Context, cfg config.Configuration) (bootstrap.
 }
 
 // PreMigrationDaemons Word of caution: These daemons will be launched prior to any migration starting
-func PreMigrationDaemons(ctx context.Context, cfg config.Configuration, connections bootstrap.DatabaseConnections[*database.BloodhoundDB, *graph.DatabaseSwitch]) ([]daemons.Daemon, error) {
+func PreMigrationDaemons(ctx context.Context, cfg config.Configuration, connections bootstrap.DatabaseConnections[*database.ApihoundDB, *graph.DatabaseSwitch]) ([]daemons.Daemon, error) {
 	return []daemons.Daemon{
 		toolapi.NewDaemon(ctx, connections, cfg, schema.DefaultGraphSchema()),
 	}, nil
 }
 
-func Entrypoint(ctx context.Context, cfg config.Configuration, connections bootstrap.DatabaseConnections[*database.BloodhoundDB, *graph.DatabaseSwitch]) ([]daemons.Daemon, error) {
+func Entrypoint(ctx context.Context, cfg config.Configuration, connections bootstrap.DatabaseConnections[*database.ApihoundDB, *graph.DatabaseSwitch]) ([]daemons.Daemon, error) {
 
 	dogtagsService := dogtags.NewDefaultService()
 

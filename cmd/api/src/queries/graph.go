@@ -36,19 +36,19 @@ import (
 	"github.com/specterops/dawgs/cypher/models/walk"
 
 	"github.com/gorilla/mux"
-	"github.com/specterops/bloodhound/cmd/api/src/api/bloodhoundgraph"
-	"github.com/specterops/bloodhound/cmd/api/src/config"
-	"github.com/specterops/bloodhound/cmd/api/src/model"
-	"github.com/specterops/bloodhound/cmd/api/src/services/agi"
-	"github.com/specterops/bloodhound/cmd/api/src/utils"
-	"github.com/specterops/bloodhound/packages/go/analysis"
-	"github.com/specterops/bloodhound/packages/go/bhlog/attr"
-	"github.com/specterops/bloodhound/packages/go/bhlog/measure"
-	"github.com/specterops/bloodhound/packages/go/cache"
-	"github.com/specterops/bloodhound/packages/go/graphschema"
-	"github.com/specterops/bloodhound/packages/go/graphschema/ad"
-	"github.com/specterops/bloodhound/packages/go/graphschema/azure"
-	"github.com/specterops/bloodhound/packages/go/graphschema/common"
+	"github.com/specterops/apihound/cmd/api/src/api/apihoundgraph"
+	"github.com/specterops/apihound/cmd/api/src/config"
+	"github.com/specterops/apihound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/services/agi"
+	"github.com/specterops/apihound/cmd/api/src/utils"
+	"github.com/specterops/apihound/packages/go/analysis"
+	"github.com/specterops/apihound/packages/go/bhlog/attr"
+	"github.com/specterops/apihound/packages/go/bhlog/measure"
+	"github.com/specterops/apihound/packages/go/cache"
+	"github.com/specterops/apihound/packages/go/graphschema"
+	"github.com/specterops/apihound/packages/go/graphschema/ad"
+	"github.com/specterops/apihound/packages/go/graphschema/azure"
+	"github.com/specterops/apihound/packages/go/graphschema/common"
 	"github.com/specterops/dawgs/cypher/analyzer"
 	"github.com/specterops/dawgs/cypher/frontend"
 	"github.com/specterops/dawgs/cypher/models/cypher/format"
@@ -205,7 +205,7 @@ func (s *GraphQuery) GetAssetGroupComboNode(ctx context.Context, primaryNodeKind
 				if groupMembershipPaths, err := analysis.ExpandGroupMembershipPaths(tx, groups); err != nil {
 					return err
 				} else {
-					graphData = bloodhoundgraph.PathSetToBloodHoundGraph(primaryNodeKinds, nil, groupMembershipPaths)
+					graphData = apihoundgraph.PathSetToAPIHoundGraph(primaryNodeKinds, nil, groupMembershipPaths)
 
 					for key := range graphData {
 						// Skip the edges/relations and only evaluate the nodes.
@@ -215,16 +215,16 @@ func (s *GraphQuery) GetAssetGroupComboNode(ctx context.Context, primaryNodeKind
 						if id, err := strconv.Atoi(key); err != nil || strings.Contains(key, "rel") {
 							continue
 						} else {
-							assetGroupNode := bloodhoundgraph.SetAssetGroupPropertiesForNode(primaryNodeKinds, groupMembershipPaths.AllNodes().Get(graph.ID(id)))
-							graphData[key] = bloodhoundgraph.NodeToBloodHoundGraph(primaryNodeKinds, nil, assetGroupNode)
+							assetGroupNode := apihoundgraph.SetAssetGroupPropertiesForNode(primaryNodeKinds, groupMembershipPaths.AllNodes().Get(graph.ID(id)))
+							graphData[key] = apihoundgraph.NodeToAPIHoundGraph(primaryNodeKinds, nil, assetGroupNode)
 						}
 					}
 				}
 			}
 
 			for _, node := range assetGroupNodes {
-				node = bloodhoundgraph.SetAssetGroupPropertiesForNode(primaryNodeKinds, node)
-				graphData[node.ID.String()] = bloodhoundgraph.NodeToBloodHoundGraph(primaryNodeKinds, nil, node)
+				node = apihoundgraph.SetAssetGroupPropertiesForNode(primaryNodeKinds, node)
+				graphData[node.ID.String()] = apihoundgraph.NodeToAPIHoundGraph(primaryNodeKinds, nil, node)
 			}
 		}
 
@@ -1090,7 +1090,7 @@ func (s *GraphQuery) runPathQuery(ctx context.Context, validPrimaryKinds graphsc
 	if err != nil {
 		return nil, 0, err
 	} else {
-		return bloodhoundgraph.PathSetToBloodHoundGraph(validPrimaryKinds, customNodeKinds, result), result.Len(), nil
+		return apihoundgraph.PathSetToAPIHoundGraph(validPrimaryKinds, customNodeKinds, result), result.Len(), nil
 	}
 }
 

@@ -1,4 +1,4 @@
-Source: bloodhound
+Source: apihound
 Section: misc
 Priority: optional
 Maintainer: SpecterOps <info@specterops.io>
@@ -9,20 +9,20 @@ Build-Depends:
  dh-golang,
  wget,
  yarnpkg,
-Homepage: https://github.com/SpecterOps/BloodHound
-XS-Go-Import-Path: github.com/SpecterOps/BloodHound
+Homepage: https://github.com/specterops/apihound
+XS-Go-Import-Path: github.com/specterops/apihound
 
-Package: bloodhound
+Package: apihound
 Architecture: amd64 arm64
 Depends: postgresql-17, curl, jq, sed
-Recommends: bloodhound-sharphound, bloodhound-azurehound
-Description: Six Degrees of Domain Admin, BloodHound CE
- This package contains BloodHound Community Edition.
+Recommends: apihound-sharphound, apihound-azurehound
+Description: Six Degrees of Domain Admin, APIHound CE
+ This package contains APIHound Community Edition.
  .
- BloodHound uses graph theory to reveal the hidden and often unintended
+ APIHound uses graph theory to reveal the hidden and often unintended
  relationships within an Active Directory, Entra and Azure environment.
- Attackers can use BloodHound to easily identify highly complex Attack
+ Attackers can use APIHound to easily identify highly complex Attack
  Paths that would otherwise be impossible to identify quickly, and
- defenders can use BloodHound to identify and eliminate those same
- Attack Paths. BloodHound helps blue and red teams better understand
+ defenders can use APIHound to identify and eliminate those same
+ Attack Paths. APIHound helps blue and red teams better understand
  privileged relationships in an Active Directory, Entra, and Azure environments.

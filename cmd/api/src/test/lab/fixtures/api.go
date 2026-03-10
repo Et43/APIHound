@@ -26,12 +26,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/specterops/bloodhound/cmd/api/src/bootstrap"
-	"github.com/specterops/bloodhound/cmd/api/src/config"
-	"github.com/specterops/bloodhound/cmd/api/src/daemons"
-	"github.com/specterops/bloodhound/cmd/api/src/database"
-	"github.com/specterops/bloodhound/cmd/api/src/services"
-	"github.com/specterops/bloodhound/packages/go/lab"
+	"github.com/specterops/apihound/cmd/api/src/bootstrap"
+	"github.com/specterops/apihound/cmd/api/src/config"
+	"github.com/specterops/apihound/cmd/api/src/daemons"
+	"github.com/specterops/apihound/cmd/api/src/database"
+	"github.com/specterops/apihound/cmd/api/src/services"
+	"github.com/specterops/apihound/packages/go/lab"
 	"github.com/specterops/dawgs/graph"
 )
 
@@ -58,10 +58,10 @@ func NewCustomApiFixture(cfgFixture *lab.Fixture[config.Configuration]) *lab.Fix
 			go func() {
 				defer wg.Done()
 
-				initializer := bootstrap.Initializer[*database.BloodhoundDB, *graph.DatabaseSwitch]{
+				initializer := bootstrap.Initializer[*database.ApihoundDB, *graph.DatabaseSwitch]{
 					Configuration: cfg,
 					DBConnector:   services.ConnectDatabases,
-					Entrypoint: func(ctx context.Context, cfg config.Configuration, databaseConnections bootstrap.DatabaseConnections[*database.BloodhoundDB, *graph.DatabaseSwitch]) ([]daemons.Daemon, error) {
+					Entrypoint: func(ctx context.Context, cfg config.Configuration, databaseConnections bootstrap.DatabaseConnections[*database.ApihoundDB, *graph.DatabaseSwitch]) ([]daemons.Daemon, error) {
 						if err := databaseConnections.RDMS.Wipe(ctx); err != nil {
 							return nil, err
 						}

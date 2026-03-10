@@ -54,7 +54,7 @@ post:
                   properties:
                     enabled:
                       type: boolean
-                      description: boolean that, if enabled, allows SSO providers to auto provision bloodhound users on initial login
+                      description: boolean that, if enabled, allows SSO providers to auto provision apihound users on initial login
                     default_role_id:
                       type: integer
                       format: int32

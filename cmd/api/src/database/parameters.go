@@ -19,23 +19,23 @@ package database
 import (
 	"context"
 
-	"github.com/specterops/bloodhound/cmd/api/src/model"
-	"github.com/specterops/bloodhound/cmd/api/src/model/appcfg"
+	"github.com/specterops/apihound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/model/appcfg"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
-func (s *BloodhoundDB) GetAllConfigurationParameters(ctx context.Context) (appcfg.Parameters, error) {
+func (s *ApihoundDB) GetAllConfigurationParameters(ctx context.Context) (appcfg.Parameters, error) {
 	var appConfig appcfg.Parameters
 	return appConfig, CheckError(s.db.WithContext(ctx).Find(&appConfig))
 }
 
-func (s *BloodhoundDB) GetConfigurationParameter(ctx context.Context, parameterKey appcfg.ParameterKey) (appcfg.Parameter, error) {
+func (s *ApihoundDB) GetConfigurationParameter(ctx context.Context, parameterKey appcfg.ParameterKey) (appcfg.Parameter, error) {
 	var parameter appcfg.Parameter
 	return parameter, CheckError(s.db.WithContext(ctx).First(&parameter, "key = ?", parameterKey))
 }
 
-func (s *BloodhoundDB) SetConfigurationParameter(ctx context.Context, parameter appcfg.Parameter) error {
+func (s *ApihoundDB) SetConfigurationParameter(ctx context.Context, parameter appcfg.Parameter) error {
 	auditEntry := model.AuditEntry{
 		Action: model.AuditLogActionUpdateParameter,
 		Model:  &parameter, // Pointer is required to ensure success log contains updated fields after transaction

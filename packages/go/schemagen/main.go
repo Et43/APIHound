@@ -22,10 +22,10 @@ import (
 	"path/filepath"
 
 	"cuelang.org/go/cue/errors"
-	"github.com/specterops/bloodhound/packages/go/bhlog/attr"
-	"github.com/specterops/bloodhound/packages/go/schemagen/generator"
-	"github.com/specterops/bloodhound/packages/go/schemagen/model"
-	"github.com/specterops/bloodhound/packages/go/schemagen/tsgen"
+	"github.com/specterops/apihound/packages/go/bhlog/attr"
+	"github.com/specterops/apihound/packages/go/schemagen/generator"
+	"github.com/specterops/apihound/packages/go/schemagen/model"
+	"github.com/specterops/apihound/packages/go/schemagen/tsgen"
 )
 
 type Schema struct {

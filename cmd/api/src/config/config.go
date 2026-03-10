@@ -28,9 +28,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/specterops/bloodhound/cmd/api/src/serde"
-	"github.com/specterops/bloodhound/packages/go/bhlog/attr"
-	"github.com/specterops/bloodhound/packages/go/crypto"
+	"github.com/specterops/apihound/cmd/api/src/serde"
+	"github.com/specterops/apihound/packages/go/bhlog/attr"
+	"github.com/specterops/apihound/packages/go/crypto"
 )
 
 const (

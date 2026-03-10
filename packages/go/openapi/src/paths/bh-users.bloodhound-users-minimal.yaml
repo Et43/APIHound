@@ -18,9 +18,9 @@ parameters:
 get:
   operationId: ListUsersMinimal
   summary: List Users Minimal
-  description: Returns all BloodHound user details without any sensitive data.
+  description: Returns all APIHound user details without any sensitive data.
   tags:
-    - BloodHound Users
+    - APIHound Users
     - Community
     - Enterprise
   parameters:

@@ -19,21 +19,21 @@ package database
 import (
 	"context"
 
-	"github.com/specterops/bloodhound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/model"
 	"gorm.io/gorm"
 )
 
-func (s *BloodhoundDB) UpdateIngestJob(ctx context.Context, job model.IngestJob) error {
+func (s *ApihoundDB) UpdateIngestJob(ctx context.Context, job model.IngestJob) error {
 	result := s.db.WithContext(ctx).Save(&job)
 	return CheckError(result)
 }
 
-func (s *BloodhoundDB) CreateIngestJob(ctx context.Context, job model.IngestJob) (model.IngestJob, error) {
+func (s *ApihoundDB) CreateIngestJob(ctx context.Context, job model.IngestJob) (model.IngestJob, error) {
 	result := s.db.WithContext(ctx).Create(&job)
 	return job, CheckError(result)
 }
 
-func (s *BloodhoundDB) GetIngestJob(ctx context.Context, id int64) (model.IngestJob, error) {
+func (s *ApihoundDB) GetIngestJob(ctx context.Context, id int64) (model.IngestJob, error) {
 	var job model.IngestJob
 	if result := s.db.Preload("User").WithContext(ctx).First(&job, id); result.Error != nil {
 		return job, CheckError(result)
@@ -42,19 +42,19 @@ func (s *BloodhoundDB) GetIngestJob(ctx context.Context, id int64) (model.Ingest
 	}
 }
 
-func (s *BloodhoundDB) GetIngestJobsWithStatus(ctx context.Context, status model.JobStatus) ([]model.IngestJob, error) {
+func (s *ApihoundDB) GetIngestJobsWithStatus(ctx context.Context, status model.JobStatus) ([]model.IngestJob, error) {
 	var jobs model.IngestJobs
 	result := s.db.WithContext(ctx).Where("status = ?", status).Find(&jobs)
 
 	return jobs, CheckError(result)
 }
 
-func (s *BloodhoundDB) CancelAllIngestJobs(ctx context.Context) error {
+func (s *ApihoundDB) CancelAllIngestJobs(ctx context.Context) error {
 	runningStates := []model.JobStatus{model.JobStatusAnalyzing, model.JobStatusRunning, model.JobStatusIngesting}
 	return CheckError(s.db.Model(model.IngestJob{}).WithContext(ctx).Where("status in ?", runningStates).Update("status", model.JobStatusCanceled))
 }
 
-func (s *BloodhoundDB) GetAllIngestJobs(ctx context.Context, skip int, limit int, order string, filter model.SQLFilter) ([]model.IngestJob, int, error) {
+func (s *ApihoundDB) GetAllIngestJobs(ctx context.Context, skip int, limit int, order string, filter model.SQLFilter) ([]model.IngestJob, int, error) {
 	var (
 		jobs   []model.IngestJob
 		result *gorm.DB
@@ -93,12 +93,12 @@ func (s *BloodhoundDB) GetAllIngestJobs(ctx context.Context, skip int, limit int
 	}
 }
 
-func (s *BloodhoundDB) DeleteAllIngestJobs(ctx context.Context) error {
+func (s *ApihoundDB) DeleteAllIngestJobs(ctx context.Context) error {
 	return CheckError(
 		s.db.WithContext(ctx).Exec("DELETE FROM ingest_jobs"),
 	)
 }
 
-func (s *BloodhoundDB) DeleteAllIngestTasks(ctx context.Context) error {
+func (s *ApihoundDB) DeleteAllIngestTasks(ctx context.Context) error {
 	return CheckError(s.db.WithContext(ctx).Exec("DELETE FROM ingest_tasks"))
 }

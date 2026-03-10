@@ -98,7 +98,7 @@ export const initializeBHEClient = () => {
                     }
                 } else if (
                     error?.response?.status === 403 &&
-                    !error?.response?.config.url.match('/api/v2/bloodhound-users/[a-z0-9-]+/secret')
+                    !error?.response?.config.url.match('/api/v2/apihound-users/[a-z0-9-]+/secret')
                 ) {
                     store.dispatch(addSnackbar('Permission denied!', 'permissionDenied'));
                 }

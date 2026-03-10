@@ -29,7 +29,7 @@ get:
   summary: Returns MFA activation status for a user
   description: Returns multi-factor authentication status for a user
   tags:
-    - BloodHound Users
+    - APIHound Users
     - Community
     - Enterprise
   responses:
@@ -63,7 +63,7 @@ post:
   summary: Activates MFA for an enrolled user
   description: Activates multi-factor authentication for an enrolled user
   tags:
-    - BloodHound Users
+    - APIHound Users
     - Community
     - Enterprise
   requestBody:

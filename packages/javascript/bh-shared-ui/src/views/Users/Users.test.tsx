@@ -18,7 +18,7 @@ import userEvent from '@testing-library/user-event';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 import Users from '.';
-import { bloodHoundUsersHandlers, testAuthenticatedUser, testBloodHoundUsers, testSSOProviders } from '../../mocks';
+import { bloodHoundUsersHandlers, testAuthenticatedUser, testAPIHoundUsers, testSSOProviders } from '../../mocks';
 import { render, screen, within } from '../../test-utils';
 
 const server = setupServer(...bloodHoundUsersHandlers);
@@ -34,15 +34,15 @@ describe('Users', () => {
         expect(screen.getByText('Manage Users')).toBeInTheDocument();
 
         // wait for the table data to load
-        await screen.findByText(testBloodHoundUsers[0].principal_name);
+        await screen.findByText(testAPIHoundUsers[0].principal_name);
 
-        // this table row contains the data for "Marshall Law" aka testBloodHoundUsers[1]
+        // this table row contains the data for "Marshall Law" aka testAPIHoundUsers[1]
         const testUserRow = screen.getAllByRole('row')[2];
 
-        expect(within(testUserRow).getByText(testBloodHoundUsers[1].principal_name)).toBeInTheDocument();
-        expect(within(testUserRow).getByText(testBloodHoundUsers[1].email_address)).toBeInTheDocument();
+        expect(within(testUserRow).getByText(testAPIHoundUsers[1].principal_name)).toBeInTheDocument();
+        expect(within(testUserRow).getByText(testAPIHoundUsers[1].email_address)).toBeInTheDocument();
         expect(
-            within(testUserRow).getByText(`${testBloodHoundUsers[1].first_name} ${testBloodHoundUsers[1].last_name}`)
+            within(testUserRow).getByText(`${testAPIHoundUsers[1].first_name} ${testAPIHoundUsers[1].last_name}`)
         ).toBeInTheDocument();
         expect(within(testUserRow).getByText('2024-01-01 04:00 PST (GMT-0800)')).toBeInTheDocument();
         expect(within(testUserRow).getByText('User')).toBeInTheDocument();
@@ -74,7 +74,7 @@ describe('Users', () => {
 
         expect(screen.getByTestId('manage-users_button-create-user')).toBeDisabled();
 
-        const nameElement = screen.queryByText(testBloodHoundUsers[0].principal_name);
+        const nameElement = screen.queryByText(testAPIHoundUsers[0].principal_name);
         expect(nameElement).toBeNull();
 
         const rows = screen.getAllByRole('row');

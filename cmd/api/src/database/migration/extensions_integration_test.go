@@ -28,16 +28,16 @@ import (
 	"github.com/peterldowns/pgtestdb"
 	"gorm.io/gorm"
 
-	"github.com/specterops/bloodhound/cmd/api/src/auth"
-	"github.com/specterops/bloodhound/cmd/api/src/database"
-	"github.com/specterops/bloodhound/cmd/api/src/model"
-	"github.com/specterops/bloodhound/cmd/api/src/test/integration/utils"
+	"github.com/specterops/apihound/cmd/api/src/auth"
+	"github.com/specterops/apihound/cmd/api/src/database"
+	"github.com/specterops/apihound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/test/integration/utils"
 	"github.com/stretchr/testify/require"
 )
 
 type IntegrationTestSuite struct {
 	Context    context.Context
-	BHDatabase *database.BloodhoundDB
+	BHDatabase *database.ApihoundDB
 	DB         *gorm.DB
 }
 
@@ -48,7 +48,7 @@ func setupIntegrationTestSuite(t *testing.T) IntegrationTestSuite {
 		ctx      = context.Background()
 		connConf = pgtestdb.Custom(t, getPostgresConfig(t), pgtestdb.NoopMigrator{})
 		gormDB   *gorm.DB
-		db       *database.BloodhoundDB
+		db       *database.ApihoundDB
 		err      error
 	)
 
@@ -57,7 +57,7 @@ func setupIntegrationTestSuite(t *testing.T) IntegrationTestSuite {
 	gormDB, err = database.OpenDatabase(connConf.URL())
 	require.NoError(t, err)
 
-	db = database.NewBloodhoundDB(gormDB, auth.NewIdentityResolver())
+	db = database.NewApihoundDB(gormDB, auth.NewIdentityResolver())
 
 	err = db.Migrate(ctx)
 	require.NoError(t, err)

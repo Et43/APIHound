@@ -21,8 +21,8 @@ import (
 	"os"
 	"path/filepath"
 
-	license "github.com/specterops/bloodhound/packages/go/stbernard/command/license/internal"
-	"github.com/specterops/bloodhound/packages/go/stbernard/environment"
+	license "github.com/specterops/apihound/packages/go/stbernard/command/license/internal"
+	"github.com/specterops/apihound/packages/go/stbernard/environment"
 )
 
 const (

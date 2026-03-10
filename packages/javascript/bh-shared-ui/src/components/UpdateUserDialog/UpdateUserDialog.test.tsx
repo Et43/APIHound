@@ -114,7 +114,7 @@ const server = setupServer(
             })
         );
     }),
-    rest.get('/api/v2/bloodhound-users/1', (req, res, ctx) => {
+    rest.get('/api/v2/apihound-users/1', (req, res, ctx) => {
         return res(ctx.json({ data: testUser }));
     }),
     rest.get('/api/v2/available-domains', (req, res, ctx) => {

@@ -52,7 +52,7 @@ function CustomLayout(props: Props) {
             className='api-explorer'
             pageDescription={
                 <Typography variant='body2' paragraph>
-                    Review and understand the API endpoints available that power BloodHound. To learn how to use the
+                    Review and understand the API endpoints available that power APIHound. To learn how to use the
                     API, see {DocumentationLinks.apiUsageLink}.
                 </Typography>
             }>

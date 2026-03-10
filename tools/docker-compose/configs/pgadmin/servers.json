@@ -1,15 +1,15 @@
 {
     "Servers": {
         "1": {
-            "Name": "BloodHound",
+            "Name": "APIHound",
             "Group": "Servers",
             "Port": 5432,
-            "Username": "bloodhound",
+            "Username": "apihound",
             "PassFile": "/pgpass",
             "Host": "app-db",
             "SSLMode": "prefer",
-            "MaintenanceDB": "bloodhound",
-            "DBRestriction": "bloodhound"
+            "MaintenanceDB": "apihound",
+            "DBRestriction": "apihound"
         }
     }
 }

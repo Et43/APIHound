@@ -30,7 +30,7 @@ import {
     UserTokenManagementDialog,
 } from '../../components';
 import { useMountEffect, usePermissions, useToggle } from '../../hooks';
-import { useBloodHoundUsers, useSelf } from '../../hooks/useBloodHoundUsers';
+import { useAPIHoundUsers, useSelf } from '../../hooks/useAPIHoundUsers';
 import { useNotifications } from '../../providers';
 import { Permission, apiClient } from '../../utils';
 import UsersTable from './UsersTable';
@@ -75,7 +75,7 @@ const Users: FC<{ showEnvironmentAccessControls?: boolean }> = ({ showEnvironmen
     useMountEffect(effect);
 
     const getSelfQuery = useSelf();
-    const listUsersQuery = useBloodHoundUsers();
+    const listUsersQuery = useAPIHoundUsers();
 
     const hasSelectedSelf = getSelfQuery.data?.id === selectedUserId!;
     const isSelfSSOUser = !!getSelfQuery.data?.sso_provider_id;
@@ -165,7 +165,7 @@ const Users: FC<{ showEnvironmentAccessControls?: boolean }> = ({ showEnvironmen
                 data-testid='manage-users'
                 pageDescription={
                     <Typography variant='body2' paragraph>
-                        BloodHound offers multiple roles with degrees of permissions, providing greater security and
+                        APIHound offers multiple roles with degrees of permissions, providing greater security and
                         control of your team.
                         <br />
                         Learn more about {DocumentationLinks.ManageUsersDocLink}.

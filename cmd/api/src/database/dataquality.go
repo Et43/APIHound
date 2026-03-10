@@ -20,16 +20,16 @@ import (
 	"context"
 	"time"
 
-	"github.com/specterops/bloodhound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/model"
 	"gorm.io/gorm"
 )
 
-func (s *BloodhoundDB) CreateADDataQualityStats(ctx context.Context, stats model.ADDataQualityStats) (model.ADDataQualityStats, error) {
+func (s *ApihoundDB) CreateADDataQualityStats(ctx context.Context, stats model.ADDataQualityStats) (model.ADDataQualityStats, error) {
 	result := s.db.WithContext(ctx).Create(&stats)
 	return stats, CheckError(result)
 }
 
-func (s *BloodhoundDB) GetADDataQualityStats(ctx context.Context, domainSid string, start time.Time, end time.Time, order string, limit int, skip int) (model.ADDataQualityStats, int, error) {
+func (s *ApihoundDB) GetADDataQualityStats(ctx context.Context, domainSid string, start time.Time, end time.Time, order string, limit int, skip int) (model.ADDataQualityStats, int, error) {
 	const (
 		defaultWhere = "domain_sid = ? and (created_at between ? and ?)"
 	)
@@ -61,7 +61,7 @@ func (s *BloodhoundDB) GetADDataQualityStats(ctx context.Context, domainSid stri
 // summing the maximum asset counts per environment per day. Due to
 // session and group completeness being percentages, it will return
 // the single maximum value of all environments per day.
-func (s *BloodhoundDB) GetAggregateADDataQualityStats(ctx context.Context, domainSIDs []string, start time.Time, end time.Time) (model.ADDataQualityStats, error) {
+func (s *ApihoundDB) GetAggregateADDataQualityStats(ctx context.Context, domainSIDs []string, start time.Time, end time.Time) (model.ADDataQualityStats, error) {
 	var (
 		adDataQualityStats model.ADDataQualityStats
 		params             = map[string]any{
@@ -125,12 +125,12 @@ ORDER BY created_at;`
 	return adDataQualityStats, CheckError(result)
 }
 
-func (s *BloodhoundDB) CreateADDataQualityAggregation(ctx context.Context, aggregation model.ADDataQualityAggregation) (model.ADDataQualityAggregation, error) {
+func (s *ApihoundDB) CreateADDataQualityAggregation(ctx context.Context, aggregation model.ADDataQualityAggregation) (model.ADDataQualityAggregation, error) {
 	result := s.db.WithContext(ctx).Create(&aggregation)
 	return aggregation, CheckError(result)
 }
 
-func (s *BloodhoundDB) GetADDataQualityAggregations(ctx context.Context, start time.Time, end time.Time, order string, limit int, skip int) (model.ADDataQualityAggregations, int, error) {
+func (s *ApihoundDB) GetADDataQualityAggregations(ctx context.Context, start time.Time, end time.Time, order string, limit int, skip int) (model.ADDataQualityAggregations, int, error) {
 	const (
 		defaultWhere = "created_at between ? and ?"
 	)
@@ -158,12 +158,12 @@ func (s *BloodhoundDB) GetADDataQualityAggregations(ctx context.Context, start t
 	return adDataQualityAggregations, int(count), nil
 }
 
-func (s *BloodhoundDB) CreateAzureDataQualityStats(ctx context.Context, stats model.AzureDataQualityStats) (model.AzureDataQualityStats, error) {
+func (s *ApihoundDB) CreateAzureDataQualityStats(ctx context.Context, stats model.AzureDataQualityStats) (model.AzureDataQualityStats, error) {
 	result := s.db.WithContext(ctx).Create(&stats)
 	return stats, CheckError(result)
 }
 
-func (s *BloodhoundDB) GetAzureDataQualityStats(ctx context.Context, tenantId string, start time.Time, end time.Time, order string, limit int, skip int) (model.AzureDataQualityStats, int, error) {
+func (s *ApihoundDB) GetAzureDataQualityStats(ctx context.Context, tenantId string, start time.Time, end time.Time, order string, limit int, skip int) (model.AzureDataQualityStats, int, error) {
 	const (
 		defaultWhere = "tenant_id = ? and (created_at between ? and ?)"
 	)
@@ -191,12 +191,12 @@ func (s *BloodhoundDB) GetAzureDataQualityStats(ctx context.Context, tenantId st
 	return azureDataQualityStats, int(count), nil
 }
 
-func (s *BloodhoundDB) CreateAzureDataQualityAggregation(ctx context.Context, aggregation model.AzureDataQualityAggregation) (model.AzureDataQualityAggregation, error) {
+func (s *ApihoundDB) CreateAzureDataQualityAggregation(ctx context.Context, aggregation model.AzureDataQualityAggregation) (model.AzureDataQualityAggregation, error) {
 	result := s.db.WithContext(ctx).Create(&aggregation)
 	return aggregation, CheckError(result)
 }
 
-func (s *BloodhoundDB) GetAzureDataQualityAggregations(ctx context.Context, start time.Time, end time.Time, order string, limit int, skip int) (model.AzureDataQualityAggregations, int, error) {
+func (s *ApihoundDB) GetAzureDataQualityAggregations(ctx context.Context, start time.Time, end time.Time, order string, limit int, skip int) (model.AzureDataQualityAggregations, int, error) {
 	const (
 		defaultWhere = "created_at between ? and ?"
 	)
@@ -224,7 +224,7 @@ func (s *BloodhoundDB) GetAzureDataQualityAggregations(ctx context.Context, star
 	return azureDataQualityAggregations, int(count), nil
 }
 
-func (s *BloodhoundDB) DeleteAllDataQuality(ctx context.Context) error {
+func (s *ApihoundDB) DeleteAllDataQuality(ctx context.Context) error {
 	return CheckError(
 		s.db.WithContext(ctx).Exec("DELETE FROM ad_data_quality_aggregations; DELETE FROM ad_data_quality_stats; DELETE FROM azure_data_quality_aggregations; DELETE FROM azure_data_quality_stats;"),
 	)

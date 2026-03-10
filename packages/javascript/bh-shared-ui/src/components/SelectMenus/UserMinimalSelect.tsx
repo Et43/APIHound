@@ -32,7 +32,7 @@ type Props = {
     onSelect: (value: string) => void;
 };
 
-// Named using the Minimal keyword as it uses a specific endpoint /bloodhound-users-minimal that gets active users
+// Named using the Minimal keyword as it uses a specific endpoint /apihound-users-minimal that gets active users
 export const UserMinimalSelect: FC<Props> = ({ user = '', onSelect }) => {
     const { data: users } = useUsersMinimal();
 

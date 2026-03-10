@@ -21,7 +21,7 @@ import (
 
 	"github.com/specterops/dawgs/drivers/neo4j"
 
-	"github.com/specterops/bloodhound/cmd/api/src/serde"
+	"github.com/specterops/apihound/cmd/api/src/serde"
 )
 
 func NewDefaultAdminConfiguration() (DefaultAdminConfiguration, error) {

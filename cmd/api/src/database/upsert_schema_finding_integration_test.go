@@ -22,26 +22,26 @@ import (
 	"context"
 	"testing"
 
-	"github.com/specterops/bloodhound/cmd/api/src/database"
-	"github.com/specterops/bloodhound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/database"
+	"github.com/specterops/apihound/cmd/api/src/model"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-func TestBloodhoundDB_UpsertFinding(t *testing.T) {
+func TestApihoundDB_UpsertFinding(t *testing.T) {
 	type args struct {
 		sourceKindName, relationshipKindName, environmentKind, name, displayName string
 	}
 	tests := []struct {
 		name          string
-		setupData     func(t *testing.T, db *database.BloodhoundDB) int32 // Returns extensionId
+		setupData     func(t *testing.T, db *database.ApihoundDB) int32 // Returns extensionId
 		args          args
-		assert        func(t *testing.T, db *database.BloodhoundDB, extensionId int32)
+		assert        func(t *testing.T, db *database.ApihoundDB, extensionId int32)
 		expectedError string
 	}{
 		{
 			name: "Success: Update existing finding - delete and re-create",
-			setupData: func(t *testing.T, db *database.BloodhoundDB) int32 {
+			setupData: func(t *testing.T, db *database.ApihoundDB) int32 {
 				t.Helper()
 				ext, err := db.CreateGraphSchemaExtension(context.Background(), "TestExt", "Test", "v1.0.0", "test_namespace_1")
 				require.NoError(t, err)
@@ -63,7 +63,7 @@ func TestBloodhoundDB_UpsertFinding(t *testing.T) {
 				name:        "Finding Name",
 				displayName: "Updated Display Name",
 			},
-			assert: func(t *testing.T, db *database.BloodhoundDB, extensionId int32) {
+			assert: func(t *testing.T, db *database.ApihoundDB, extensionId int32) {
 				t.Helper()
 
 				finding, err := db.GetSchemaFindingByName(context.Background(), "Finding Name")
@@ -76,7 +76,7 @@ func TestBloodhoundDB_UpsertFinding(t *testing.T) {
 		},
 		{
 			name: "Success: Create finding when none exists",
-			setupData: func(t *testing.T, db *database.BloodhoundDB) int32 {
+			setupData: func(t *testing.T, db *database.ApihoundDB) int32 {
 				t.Helper()
 				ext, err := db.CreateGraphSchemaExtension(context.Background(), "TestExt2", "Test2", "v1.0.0", "test_namespace_2")
 				require.NoError(t, err)
@@ -94,7 +94,7 @@ func TestBloodhoundDB_UpsertFinding(t *testing.T) {
 				name:                 "Finding",
 				displayName:          "Finding Display Name",
 			},
-			assert: func(t *testing.T, db *database.BloodhoundDB, extensionId int32) {
+			assert: func(t *testing.T, db *database.ApihoundDB, extensionId int32) {
 				t.Helper()
 
 				finding, err := db.GetSchemaFindingByName(context.Background(), "Finding")
@@ -116,7 +116,7 @@ func TestBloodhoundDB_UpsertFinding(t *testing.T) {
 
 			var findingResponse model.SchemaFinding
 			// Wrap the call in a transaction
-			err := testSuite.BHDatabase.Transaction(context.Background(), func(tx *database.BloodhoundDB) error {
+			err := testSuite.BHDatabase.Transaction(context.Background(), func(tx *database.ApihoundDB) error {
 				finding, err := tx.UpsertRelationshipFinding(
 					context.Background(),
 					extensionId,

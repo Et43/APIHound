@@ -20,7 +20,7 @@ import (
 	"encoding/json"
 	"errors"
 
-	"github.com/specterops/bloodhound/packages/go/mediatypes"
+	"github.com/specterops/apihound/packages/go/mediatypes"
 )
 
 var AllowedZipFileUploadTypes = []string{

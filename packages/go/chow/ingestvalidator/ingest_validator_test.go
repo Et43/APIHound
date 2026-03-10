@@ -20,8 +20,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/specterops/bloodhound/cmd/api/src/model/ingest"
-	validator "github.com/specterops/bloodhound/packages/go/chow/ingestvalidator"
+	"github.com/specterops/apihound/cmd/api/src/model/ingest"
+	validator "github.com/specterops/apihound/packages/go/chow/ingestvalidator"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

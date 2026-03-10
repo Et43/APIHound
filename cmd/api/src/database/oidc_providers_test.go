@@ -23,12 +23,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/specterops/bloodhound/cmd/api/src/model"
-	"github.com/specterops/bloodhound/cmd/api/src/test/integration"
+	"github.com/specterops/apihound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/test/integration"
 	"github.com/stretchr/testify/require"
 )
 
-func TestBloodhoundDB_CreateUpdateOIDCProvider(t *testing.T) {
+func TestApihoundDB_CreateUpdateOIDCProvider(t *testing.T) {
 	var (
 		testCtx = context.Background()
 		dbInst  = integration.SetupDB(t)
@@ -43,11 +43,11 @@ func TestBloodhoundDB_CreateUpdateOIDCProvider(t *testing.T) {
 
 	defer dbInst.Close(testCtx)
 
-	provider, err := dbInst.CreateOIDCProvider(testCtx, "test", "https://test.localhost.com/auth", "bloodhound", model.SSOProviderConfig{})
+	provider, err := dbInst.CreateOIDCProvider(testCtx, "test", "https://test.localhost.com/auth", "apihound", model.SSOProviderConfig{})
 	require.NoError(t, err)
 
 	require.Equal(t, "https://test.localhost.com/auth", provider.Issuer)
-	require.Equal(t, "bloodhound", provider.ClientID)
+	require.Equal(t, "apihound", provider.ClientID)
 	require.EqualValues(t, 1, provider.ID)
 
 	_, count, err := dbInst.ListAuditLogs(testCtx, time.Now().Add(time.Minute), time.Now().Add(-time.Minute), 0, 10, "", model.SQLFilter{})

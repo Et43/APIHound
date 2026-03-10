@@ -21,8 +21,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/specterops/bloodhound/cmd/api/src/database/types/null"
-	"github.com/specterops/bloodhound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/database/types/null"
+	"github.com/specterops/apihound/cmd/api/src/model"
 	"gorm.io/gorm"
 )
 
@@ -42,7 +42,7 @@ type SAMLProviderData interface {
 // CreateSAMLIdentityProvider creates a new saml_providers row using the data in the input struct
 // This also creates the corresponding sso_provider entry
 // INSERT INTO saml_identity_providers (...) VALUES (...)
-func (s *BloodhoundDB) CreateSAMLIdentityProvider(ctx context.Context, samlProvider model.SAMLProvider, config model.SSOProviderConfig) (model.SAMLProvider, error) {
+func (s *ApihoundDB) CreateSAMLIdentityProvider(ctx context.Context, samlProvider model.SAMLProvider, config model.SSOProviderConfig) (model.SAMLProvider, error) {
 	// Set the current version for root_uri_version
 	samlProvider.RootURIVersion = model.SAMLRootURIVersion2
 
@@ -52,7 +52,7 @@ func (s *BloodhoundDB) CreateSAMLIdentityProvider(ctx context.Context, samlProvi
 	}
 
 	err := s.AuditableTransaction(ctx, auditEntry, func(tx *gorm.DB) error {
-		bhdb := NewBloodhoundDB(tx, s.idResolver)
+		bhdb := NewApihoundDB(tx, s.idResolver)
 
 		// Create the associated SSO provider
 		if ssoProvider, err := bhdb.CreateSSOProvider(ctx, samlProvider.Name, model.SessionAuthProviderSAML, config); err != nil {
@@ -68,7 +68,7 @@ func (s *BloodhoundDB) CreateSAMLIdentityProvider(ctx context.Context, samlProvi
 
 // GetAllSAMLProviders returns all SAML providers
 // SELECT * FROM saml_providers
-func (s *BloodhoundDB) GetAllSAMLProviders(ctx context.Context) (model.SAMLProviders, error) {
+func (s *ApihoundDB) GetAllSAMLProviders(ctx context.Context) (model.SAMLProviders, error) {
 	var (
 		samlProviders model.SAMLProviders
 		result        = s.db.WithContext(ctx).Find(&samlProviders)
@@ -79,7 +79,7 @@ func (s *BloodhoundDB) GetAllSAMLProviders(ctx context.Context) (model.SAMLProvi
 
 // GetSAMLProvider returns a SAML provider corresponding to the ID provided
 // SELECT * FOM saml_providers WHERE id = ..
-func (s *BloodhoundDB) GetSAMLProvider(ctx context.Context, id int32) (model.SAMLProvider, error) {
+func (s *ApihoundDB) GetSAMLProvider(ctx context.Context, id int32) (model.SAMLProvider, error) {
 	var (
 		samlProvider model.SAMLProvider
 		result       = s.db.WithContext(ctx).First(&samlProvider, id)
@@ -90,21 +90,21 @@ func (s *BloodhoundDB) GetSAMLProvider(ctx context.Context, id int32) (model.SAM
 
 // GetSAMLProviderUsers returns all users that are bound to the SAML provider ID provided
 // SELECT * FROM users WHERE saml_provider_id = ..
-func (s *BloodhoundDB) GetSAMLProviderUsers(ctx context.Context, id int32) (model.Users, error) {
+func (s *ApihoundDB) GetSAMLProviderUsers(ctx context.Context, id int32) (model.Users, error) {
 	var users model.Users
 	return users, CheckError(s.preload(model.UserAssociations()).WithContext(ctx).Where("sso_provider_id = ?", id).Find(&users))
 }
 
 // CreateSAMLProvider updates a saml_providers row using the data in the input struct
 // UPDATE saml_identity_providers SET (...) VALUES (...) WHERE id = ...
-func (s *BloodhoundDB) UpdateSAMLIdentityProvider(ctx context.Context, ssoProvider model.SSOProvider) (model.SAMLProvider, error) {
+func (s *ApihoundDB) UpdateSAMLIdentityProvider(ctx context.Context, ssoProvider model.SSOProvider) (model.SAMLProvider, error) {
 	auditEntry := model.AuditEntry{
 		Action: model.AuditLogActionUpdateSAMLIdentityProvider,
 		Model:  ssoProvider.SAMLProvider, // Pointer is required to ensure success log contains updated fields after transaction
 	}
 
 	err := s.AuditableTransaction(ctx, auditEntry, func(tx *gorm.DB) error {
-		bhdb := NewBloodhoundDB(tx, s.idResolver)
+		bhdb := NewApihoundDB(tx, s.idResolver)
 
 		if _, err := bhdb.UpdateSSOProvider(ctx, ssoProvider); err != nil {
 			return err

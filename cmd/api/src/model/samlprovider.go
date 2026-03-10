@@ -24,8 +24,8 @@ import (
 	"path"
 
 	"github.com/crewjam/saml"
-	"github.com/specterops/bloodhound/cmd/api/src/database/types/null"
-	"github.com/specterops/bloodhound/cmd/api/src/serde"
+	"github.com/specterops/apihound/cmd/api/src/database/types/null"
+	"github.com/specterops/apihound/cmd/api/src/serde"
 )
 
 const (
@@ -75,7 +75,7 @@ type SAMLProvider struct {
 	// For example: ["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress", "urn:oid:0.9.2342.19200300.100.1.3"]
 	PrincipalAttributeMappings []string `json:"principal_attribute_mappings" gorm:"type:text[];column:ous"`
 
-	// The below values generated values that point a client to SAML related resources hosted on the BloodHound instance
+	// The below values generated values that point a client to SAML related resources hosted on the APIHound instance
 	// and should not be persisted to the database due to the fact that the URLs rely on the Host header that the user is
 	// using to communicate to the API
 	ServiceProviderIssuerURI     serde.URL `json:"sp_issuer_uri" gorm:"-"`

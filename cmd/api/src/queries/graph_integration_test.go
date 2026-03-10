@@ -25,19 +25,19 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/specterops/bloodhound/cmd/api/src/config"
-	"github.com/specterops/bloodhound/cmd/api/src/model"
-	schema "github.com/specterops/bloodhound/packages/go/graphschema"
-	"github.com/specterops/bloodhound/packages/go/lab/generic"
+	"github.com/specterops/apihound/cmd/api/src/config"
+	"github.com/specterops/apihound/cmd/api/src/model"
+	schema "github.com/specterops/apihound/packages/go/graphschema"
+	"github.com/specterops/apihound/packages/go/lab/generic"
 
-	"github.com/specterops/bloodhound/cmd/api/src/api/bloodhoundgraph"
-	"github.com/specterops/bloodhound/cmd/api/src/queries"
-	"github.com/specterops/bloodhound/cmd/api/src/test/integration"
-	adAnalysis "github.com/specterops/bloodhound/packages/go/analysis/ad"
-	"github.com/specterops/bloodhound/packages/go/cache"
-	"github.com/specterops/bloodhound/packages/go/graphschema/ad"
-	"github.com/specterops/bloodhound/packages/go/graphschema/azure"
-	"github.com/specterops/bloodhound/packages/go/graphschema/common"
+	"github.com/specterops/apihound/cmd/api/src/api/apihoundgraph"
+	"github.com/specterops/apihound/cmd/api/src/queries"
+	"github.com/specterops/apihound/cmd/api/src/test/integration"
+	adAnalysis "github.com/specterops/apihound/packages/go/analysis/ad"
+	"github.com/specterops/apihound/packages/go/cache"
+	"github.com/specterops/apihound/packages/go/graphschema/ad"
+	"github.com/specterops/apihound/packages/go/graphschema/azure"
+	"github.com/specterops/apihound/packages/go/graphschema/common"
 	"github.com/specterops/dawgs/graph"
 	"github.com/specterops/dawgs/query"
 	"github.com/stretchr/testify/require"
@@ -441,8 +441,8 @@ func TestGetAssetGroupComboNode(t *testing.T) {
 		groupBObjectID := harness.AssetGroupComboNodeHarness.GroupB.ID.String()
 		groupAObjectID := harness.AssetGroupComboNodeHarness.GroupA.ID.String()
 
-		groupACategory := comboNode[groupAObjectID].(bloodhoundgraph.BloodHoundGraphNode).Data["category"]
-		groupBCategory := comboNode[groupBObjectID].(bloodhoundgraph.BloodHoundGraphNode).Data["category"]
+		groupACategory := comboNode[groupAObjectID].(apihoundgraph.APIHoundGraphNode).Data["category"]
+		groupBCategory := comboNode[groupBObjectID].(apihoundgraph.APIHoundGraphNode).Data["category"]
 
 		// ensure that nodes from within T0 as well as from other domains all have the category tagged
 		require.Equal(t, "Asset Groups", groupACategory)

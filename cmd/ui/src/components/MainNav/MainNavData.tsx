@@ -38,7 +38,7 @@ export const useMainNavLogoData = (): MainNavData['logo'] => {
     return {
         project: {
             route: routes.ROUTE_EXPLORE,
-            icon: <AppIcon.BHCELogoFull height='40' width='155' className='rounded' />,
+            icon: <AppIcon.APIHoundLogoFull height='40' width='155' className='rounded' />,
         },
         specterOps: {
             image: {
@@ -103,7 +103,7 @@ export const useMainNavSecondaryListData = (): MainNavData['secondaryList'] => {
     };
 
     const handleGoToSupport = () => {
-        window.open('https://bloodhound.specterops.io', '_blank');
+        window.open('https://apihound.specterops.io', '_blank');
     };
 
     useKeybindings({

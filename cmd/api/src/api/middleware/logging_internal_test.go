@@ -21,8 +21,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/specterops/bloodhound/cmd/api/src/test/must"
-	"github.com/specterops/bloodhound/packages/go/headers"
+	"github.com/specterops/apihound/cmd/api/src/test/must"
+	"github.com/specterops/apihound/packages/go/headers"
 	"github.com/stretchr/testify/require"
 )
 

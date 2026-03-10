@@ -20,7 +20,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/specterops/bloodhound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/model"
 	"gorm.io/gorm"
 )
 
@@ -34,7 +34,7 @@ type EnvironmentTargetedAccessControlData interface {
 }
 
 // GetEnvironmentTargetedAccessControlForUser given a user's id, this will return all access control list rows for the user
-func (s *BloodhoundDB) GetEnvironmentTargetedAccessControlForUser(ctx context.Context, user model.User) ([]model.EnvironmentTargetedAccessControl, error) {
+func (s *ApihoundDB) GetEnvironmentTargetedAccessControlForUser(ctx context.Context, user model.User) ([]model.EnvironmentTargetedAccessControl, error) {
 	var accessControlList []model.EnvironmentTargetedAccessControl
 
 	result := s.db.WithContext(ctx).Table(ETACTable).Where("user_id = ?", user.ID.String()).Find(&accessControlList)
@@ -42,7 +42,7 @@ func (s *BloodhoundDB) GetEnvironmentTargetedAccessControlForUser(ctx context.Co
 }
 
 // DeleteEnvironmentTargetedAccessControlForUser will remove all rows associated with a user in the environment_targeted_access_control table
-func (s *BloodhoundDB) DeleteEnvironmentTargetedAccessControlForUser(ctx context.Context, user model.User) error {
+func (s *ApihoundDB) DeleteEnvironmentTargetedAccessControlForUser(ctx context.Context, user model.User) error {
 	// Prevent an audit log by exiting early if a user does not have an ETAC list applied
 	if originalUser, err := s.GetUser(ctx, user.ID); err != nil {
 		return err

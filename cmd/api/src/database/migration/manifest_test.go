@@ -20,8 +20,8 @@ import (
 	"embed"
 	"testing"
 
-	"github.com/specterops/bloodhound/cmd/api/src/database/migration"
-	"github.com/specterops/bloodhound/cmd/api/src/version"
+	"github.com/specterops/apihound/cmd/api/src/database/migration"
+	"github.com/specterops/apihound/cmd/api/src/version"
 	"github.com/stretchr/testify/assert"
 )
 

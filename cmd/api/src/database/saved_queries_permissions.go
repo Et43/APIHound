@@ -23,7 +23,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
-	"github.com/specterops/bloodhound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/model"
 )
 
 // SavedQueriesPermissionsData methods representing the database interactions pertaining to the saved_queries_permissions model
@@ -42,14 +42,14 @@ type SavedQueriesPermissionsData interface {
 type SavedQueryScopeMap map[model.SavedQueryScope]bool
 
 // GetSavedQueryPermissions - returns permission data if the user owns the query or the query is public
-func (s *BloodhoundDB) GetSavedQueryPermissions(ctx context.Context, queryID int64) ([]model.SavedQueriesPermissions, error) {
+func (s *ApihoundDB) GetSavedQueryPermissions(ctx context.Context, queryID int64) ([]model.SavedQueriesPermissions, error) {
 	var rows []model.SavedQueriesPermissions
 	result := s.db.WithContext(ctx).Select("*").Table("saved_queries_permissions sqp").Where("sqp.query_id = ?", queryID).Find(&rows)
 	return rows, CheckError(result)
 }
 
 // CreateSavedQueryPermissionToPublic creates a new entry to the SavedQueriesPermissions table granting public read permissions to all users
-func (s *BloodhoundDB) CreateSavedQueryPermissionToPublic(ctx context.Context, queryID int64) (model.SavedQueriesPermissions, error) {
+func (s *ApihoundDB) CreateSavedQueryPermissionToPublic(ctx context.Context, queryID int64) (model.SavedQueriesPermissions, error) {
 	permission := model.SavedQueriesPermissions{
 		QueryID: queryID,
 		Public:  true,
@@ -70,7 +70,7 @@ func (s *BloodhoundDB) CreateSavedQueryPermissionToPublic(ctx context.Context, q
 
 // CreateSavedQueryPermissionsToUsers - attempts to save the given saved query permissions in batches of 100 in a transaction.
 // This will remove previously shared with users and replace it with the incoming user ids.
-func (s *BloodhoundDB) CreateSavedQueryPermissionsToUsers(ctx context.Context, queryID int64, userIDs ...uuid.UUID) ([]model.SavedQueriesPermissions, error) {
+func (s *ApihoundDB) CreateSavedQueryPermissionsToUsers(ctx context.Context, queryID int64, userIDs ...uuid.UUID) ([]model.SavedQueriesPermissions, error) {
 	var newPermissions []model.SavedQueriesPermissions
 	for _, sharedUserID := range userIDs {
 		newPermissions = append(newPermissions, model.SavedQueriesPermissions{
@@ -93,7 +93,7 @@ func (s *BloodhoundDB) CreateSavedQueryPermissionsToUsers(ctx context.Context, q
 
 // DeleteSavedQueryPermissionsForUsers batch deletes permissions associated with a query id and a list of users
 // If no user ids are supplied, all records for query id are deleted
-func (s *BloodhoundDB) DeleteSavedQueryPermissionsForUsers(ctx context.Context, queryID int64, userIDs ...uuid.UUID) error {
+func (s *ApihoundDB) DeleteSavedQueryPermissionsForUsers(ctx context.Context, queryID int64, userIDs ...uuid.UUID) error {
 	result := s.db.WithContext(ctx).Table("saved_queries_permissions").Where("query_id = ?", queryID)
 	if len(userIDs) > 0 {
 		result = result.Where("shared_to_user_id IN ?", userIDs)
@@ -103,7 +103,7 @@ func (s *BloodhoundDB) DeleteSavedQueryPermissionsForUsers(ctx context.Context, 
 }
 
 // GetScopeForSavedQuery will return a map of the possible scopes given a query id and a user id
-func (s *BloodhoundDB) GetScopeForSavedQuery(ctx context.Context, queryID int64, userID uuid.UUID) (SavedQueryScopeMap, error) {
+func (s *ApihoundDB) GetScopeForSavedQuery(ctx context.Context, queryID int64, userID uuid.UUID) (SavedQueryScopeMap, error) {
 	var (
 		err    error
 		scopes = SavedQueryScopeMap{
@@ -132,7 +132,7 @@ func (s *BloodhoundDB) GetScopeForSavedQuery(ctx context.Context, queryID int64,
 }
 
 // IsSavedQueryPublic returns true or false whether a provided saved query is public
-func (s *BloodhoundDB) IsSavedQueryPublic(ctx context.Context, queryID int64) (bool, error) {
+func (s *ApihoundDB) IsSavedQueryPublic(ctx context.Context, queryID int64) (bool, error) {
 	rows := int64(0)
 	result := s.db.WithContext(ctx).Table("saved_queries_permissions").Where("public = true AND query_id = ?", queryID).Count(&rows)
 
@@ -140,14 +140,14 @@ func (s *BloodhoundDB) IsSavedQueryPublic(ctx context.Context, queryID int64) (b
 }
 
 // IsSavedQuerySharedToUser returns true or false whether a provided saved query is shared with a provided user
-func (s *BloodhoundDB) IsSavedQuerySharedToUser(ctx context.Context, queryID int64, userID uuid.UUID) (bool, error) {
+func (s *ApihoundDB) IsSavedQuerySharedToUser(ctx context.Context, queryID int64, userID uuid.UUID) (bool, error) {
 	rows := int64(0)
 	result := s.db.WithContext(ctx).Table("saved_queries_permissions").Where("query_id = ? AND shared_to_user_id = ?", queryID, userID).Count(&rows)
 
 	return rows > 0, CheckError(result)
 }
 
-func (s *BloodhoundDB) IsSavedQuerySharedToUserOrPublic(ctx context.Context, queryID int64, userID uuid.UUID) (bool, error) {
+func (s *ApihoundDB) IsSavedQuerySharedToUserOrPublic(ctx context.Context, queryID int64, userID uuid.UUID) (bool, error) {
 	rows := int64(0)
 	result := s.db.WithContext(ctx).Table("saved_queries_permissions").Where("query_id = ? AND (shared_to_user_id = ? or public = true)", queryID, userID).Count(&rows)
 	return rows > 0, CheckError(result)

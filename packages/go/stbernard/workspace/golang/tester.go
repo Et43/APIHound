@@ -29,9 +29,9 @@ import (
 	"strings"
 
 	"github.com/gofrs/uuid"
-	"github.com/specterops/bloodhound/packages/go/slicesext"
-	"github.com/specterops/bloodhound/packages/go/stbernard/cmdrunner"
-	"github.com/specterops/bloodhound/packages/go/stbernard/environment"
+	"github.com/specterops/apihound/packages/go/slicesext"
+	"github.com/specterops/apihound/packages/go/stbernard/cmdrunner"
+	"github.com/specterops/apihound/packages/go/stbernard/environment"
 	"golang.org/x/mod/modfile"
 )
 

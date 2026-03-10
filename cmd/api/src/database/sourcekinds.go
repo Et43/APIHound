@@ -21,7 +21,7 @@ import (
 	"fmt"
 
 	"github.com/lib/pq"
-	"github.com/specterops/bloodhound/cmd/api/src/utils"
+	"github.com/specterops/apihound/cmd/api/src/utils"
 	"github.com/specterops/dawgs/graph"
 )
 
@@ -40,7 +40,7 @@ type SourceKindsData interface {
 //
 // Since this function inserts into the kinds table, the business logic calling this func
 // must also call the DAWGS RefreshKinds function to ensure the kinds are reloaded into the in memory kind map.
-func (s *BloodhoundDB) RegisterSourceKind(ctx context.Context) func(sourceKind graph.Kind) error {
+func (s *ApihoundDB) RegisterSourceKind(ctx context.Context) func(sourceKind graph.Kind) error {
 	return func(sourceKind graph.Kind) error {
 		if sourceKind == nil || sourceKind == graph.EmptyKind {
 			return nil
@@ -69,7 +69,7 @@ type SourceKind struct {
 	Active bool       `json:"active"`
 }
 
-func (s *BloodhoundDB) GetSourceKinds(ctx context.Context) ([]SourceKind, error) {
+func (s *ApihoundDB) GetSourceKinds(ctx context.Context) ([]SourceKind, error) {
 	const query = `
 		SELECT sk.id, k.name, sk.active
 		FROM source_kinds sk
@@ -102,7 +102,7 @@ func (s *BloodhoundDB) GetSourceKinds(ctx context.Context) ([]SourceKind, error)
 	return out, nil
 }
 
-func (s *BloodhoundDB) GetSourceKindByName(ctx context.Context, name string) (SourceKind, error) {
+func (s *ApihoundDB) GetSourceKindByName(ctx context.Context, name string) (SourceKind, error) {
 	const query = `
 		SELECT sk.id, k.name, sk.active
 		FROM source_kinds sk
@@ -137,7 +137,7 @@ func (s *BloodhoundDB) GetSourceKindByName(ctx context.Context, name string) (So
 }
 
 // GetSourceKindByID - retrieves source_kind by source_kind table id
-func (s *BloodhoundDB) GetSourceKindByID(ctx context.Context, id int) (SourceKind, error) {
+func (s *ApihoundDB) GetSourceKindByID(ctx context.Context, id int) (SourceKind, error) {
 	const query = `
 		SELECT sk.id, k.name, sk.active
 		FROM source_kinds sk
@@ -170,7 +170,7 @@ func (s *BloodhoundDB) GetSourceKindByID(ctx context.Context, id int) (SourceKin
 	return kind, nil
 }
 
-func (s *BloodhoundDB) GetSourceKindsByIDs(ctx context.Context, ids ...int32) ([]SourceKind, error) {
+func (s *ApihoundDB) GetSourceKindsByIDs(ctx context.Context, ids ...int32) ([]SourceKind, error) {
 	if len(ids) == 0 {
 		return []SourceKind{}, nil
 	}
@@ -215,7 +215,7 @@ func (s *BloodhoundDB) GetSourceKindsByIDs(ctx context.Context, ids ...int32) ([
 	return sourceKinds, nil
 }
 
-func (s *BloodhoundDB) DeactivateSourceKindsByName(ctx context.Context, kinds graph.Kinds) error {
+func (s *ApihoundDB) DeactivateSourceKindsByName(ctx context.Context, kinds graph.Kinds) error {
 	if len(kinds) == 0 {
 		return nil
 	}

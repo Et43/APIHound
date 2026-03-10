@@ -31,9 +31,9 @@ export interface AssetGroupMemberParams {
     limit?: number;
 }
 
-export const BloodHoundString = 'BloodHound' as const;
+export const APIHoundString = 'APIHound' as const;
 
-type BloodHound = typeof BloodHoundString;
+type APIHound = typeof APIHoundString;
 
 type ISO_DATE_STRING = string;
 
@@ -48,12 +48,12 @@ export type TimestampFields = {
 
 interface Created {
     created_at: ISO_DATE_STRING;
-    created_by: string | BloodHound;
+    created_by: string | APIHound;
 }
 
 interface Updated {
     updated_at: ISO_DATE_STRING;
-    updated_by: string | BloodHound;
+    updated_by: string | APIHound;
 }
 
 interface Deleted {
@@ -591,9 +591,9 @@ export type FileIngestCompletedTask = TimestampFields & {
 };
 
 export const WindowsAuth = 'windows' as const;
-export const BloodHoundAuth = 'bloodhound' as const;
+export const APIHoundAuth = 'apihound' as const;
 
-export type AuthenticationMethod = typeof BloodHoundAuth | typeof WindowsAuth;
+export type AuthenticationMethod = typeof APIHoundAuth | typeof WindowsAuth;
 
 export type FindingAssetsResponse = {
     long_description: string;

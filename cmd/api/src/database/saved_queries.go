@@ -24,7 +24,7 @@ import (
 	"github.com/gofrs/uuid"
 	"gorm.io/gorm"
 
-	"github.com/specterops/bloodhound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/model"
 )
 
 type SavedQueriesData interface {
@@ -41,13 +41,13 @@ type SavedQueriesData interface {
 	GetSavedQueriesOwnedBy(ctx context.Context, userID uuid.UUID) (model.SavedQueries, error)
 }
 
-func (s *BloodhoundDB) GetSavedQuery(ctx context.Context, savedQueryID int64) (model.SavedQuery, error) {
+func (s *ApihoundDB) GetSavedQuery(ctx context.Context, savedQueryID int64) (model.SavedQuery, error) {
 	savedQuery := model.SavedQuery{}
 	result := s.db.WithContext(ctx).First(&savedQuery, savedQueryID)
 	return savedQuery, CheckError(result)
 }
 
-func (s *BloodhoundDB) ListSavedQueries(ctx context.Context, scope string, userID uuid.UUID, order string, filter model.SQLFilter, skip, limit int) ([]model.ScopedSavedQuery, int, error) {
+func (s *ApihoundDB) ListSavedQueries(ctx context.Context, scope string, userID uuid.UUID, order string, filter model.SQLFilter, skip, limit int) ([]model.ScopedSavedQuery, int, error) {
 	var (
 		queries []model.ScopedSavedQuery
 		// cant chain scope + cursor after declaration so must declare twice
@@ -97,7 +97,7 @@ func (s *BloodhoundDB) ListSavedQueries(ctx context.Context, scope string, userI
 	return queries, int(count), CheckError(result)
 }
 
-func (s *BloodhoundDB) CreateSavedQuery(ctx context.Context, userID uuid.UUID, name string, query string, description string) (model.SavedQuery, error) {
+func (s *ApihoundDB) CreateSavedQuery(ctx context.Context, userID uuid.UUID, name string, query string, description string) (model.SavedQuery, error) {
 	savedQuery := model.SavedQuery{
 		UserID:      userID.String(),
 		Name:        name,
@@ -108,15 +108,15 @@ func (s *BloodhoundDB) CreateSavedQuery(ctx context.Context, userID uuid.UUID, n
 	return savedQuery, CheckError(s.db.WithContext(ctx).Create(&savedQuery))
 }
 
-func (s *BloodhoundDB) UpdateSavedQuery(ctx context.Context, savedQuery model.SavedQuery) (model.SavedQuery, error) {
+func (s *ApihoundDB) UpdateSavedQuery(ctx context.Context, savedQuery model.SavedQuery) (model.SavedQuery, error) {
 	return savedQuery, CheckError(s.db.WithContext(ctx).Save(&savedQuery))
 }
 
-func (s *BloodhoundDB) DeleteSavedQuery(ctx context.Context, savedQueryID int64) error {
+func (s *ApihoundDB) DeleteSavedQuery(ctx context.Context, savedQueryID int64) error {
 	return CheckError(s.db.WithContext(ctx).Delete(&model.SavedQuery{}, savedQueryID))
 }
 
-func (s *BloodhoundDB) SavedQueryBelongsToUser(ctx context.Context, userID uuid.UUID, savedQueryID int64) (bool, error) {
+func (s *ApihoundDB) SavedQueryBelongsToUser(ctx context.Context, userID uuid.UUID, savedQueryID int64) (bool, error) {
 	var savedQuery model.SavedQuery
 	if result := s.db.WithContext(ctx).First(&savedQuery, savedQueryID); result.Error != nil {
 		return false, CheckError(result)
@@ -125,7 +125,7 @@ func (s *BloodhoundDB) SavedQueryBelongsToUser(ctx context.Context, userID uuid.
 }
 
 // GetSharedSavedQueries returns all the saved queries that the given userID has access to, including global queries
-func (s *BloodhoundDB) GetSharedSavedQueries(ctx context.Context, userID uuid.UUID) (model.SavedQueries, error) {
+func (s *ApihoundDB) GetSharedSavedQueries(ctx context.Context, userID uuid.UUID) (model.SavedQueries, error) {
 	savedQueries := model.SavedQueries{}
 
 	result := s.db.WithContext(ctx).Select("saved_queries.*").Joins("JOIN saved_queries_permissions sqp ON sqp.query_id = saved_queries.id").Where("sqp.shared_to_user_id = ? ", userID).Find(&savedQueries)
@@ -134,7 +134,7 @@ func (s *BloodhoundDB) GetSharedSavedQueries(ctx context.Context, userID uuid.UU
 }
 
 // GetPublicSavedQueries returns all the queries that were shared publicly
-func (s *BloodhoundDB) GetPublicSavedQueries(ctx context.Context) (model.SavedQueries, error) {
+func (s *ApihoundDB) GetPublicSavedQueries(ctx context.Context) (model.SavedQueries, error) {
 	savedQueries := model.SavedQueries{}
 
 	result := s.db.WithContext(ctx).Select("saved_queries.*").Joins("JOIN saved_queries_permissions sqp ON sqp.query_id = saved_queries.id").Where("sqp.public = true").Find(&savedQueries)
@@ -143,20 +143,20 @@ func (s *BloodhoundDB) GetPublicSavedQueries(ctx context.Context) (model.SavedQu
 }
 
 // GetAllSavedQueriesByUser - Returns queries that are public, owned by, or shared to the user.
-func (s *BloodhoundDB) GetAllSavedQueriesByUser(ctx context.Context, userID uuid.UUID) (model.SavedQueries, error) {
+func (s *ApihoundDB) GetAllSavedQueriesByUser(ctx context.Context, userID uuid.UUID) (model.SavedQueries, error) {
 	savedQueries := model.SavedQueries{}
 	results := s.db.WithContext(ctx).Select("DISTINCT saved_queries.*").Joins("LEFT JOIN saved_queries_permissions sqp ON sqp.query_id = saved_queries.id").Where("sqp.public = true OR saved_queries.user_id = ? OR sqp.shared_to_user_id = ?", userID, userID).Find(&savedQueries)
 	return savedQueries, CheckError(results)
 }
 
-func (s *BloodhoundDB) GetSavedQueriesOwnedBy(ctx context.Context, userID uuid.UUID) (model.SavedQueries, error) {
+func (s *ApihoundDB) GetSavedQueriesOwnedBy(ctx context.Context, userID uuid.UUID) (model.SavedQueries, error) {
 	savedQueries := model.SavedQueries{}
 	result := s.db.WithContext(ctx).Where("user_id = ?", userID).Find(&savedQueries)
 	return savedQueries, CheckError(result)
 }
 
 // CreateSavedQueries - inserts saved queries records in batches
-func (s *BloodhoundDB) CreateSavedQueries(ctx context.Context, savedQueries model.SavedQueries) error {
+func (s *ApihoundDB) CreateSavedQueries(ctx context.Context, savedQueries model.SavedQueries) error {
 	return s.db.Transaction(func(tx *gorm.DB) error {
 		result := tx.WithContext(ctx).CreateInBatches(&savedQueries, 100)
 		return CheckError(result)

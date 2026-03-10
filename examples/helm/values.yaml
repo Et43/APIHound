@@ -14,7 +14,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-namespace: bloodhound
+namespace: apihound
 
 appdb:
   name: postgres
@@ -24,14 +24,14 @@ appdb:
     name: postgres
     image: docker.io/library/postgres:16
     env:
-      POSTGRES_USER: "bloodhound"
-      POSTGRES_PASSWORD: "bloodhoundcommunityedition"
-      POSTGRES_DB: "bloodhound"
+      POSTGRES_USER: "apihound"
+      POSTGRES_PASSWORD: "apihoundcommunityedition"
+      POSTGRES_DB: "apihound"
     ports:
       containerPort: 5432
   livenessProbe:
-    user: bloodhound
-    database: bloodhound
+    user: apihound
+    database: apihound
     port: "5432"
     initialDelaySeconds: 30
     periodSeconds: 10
@@ -46,7 +46,7 @@ appdb:
   volumes:
     pvcEnabled: false
     persistentVolumeClaim:
-      claimName: bloodhound-postgres-pvc
+      claimName: apihound-postgres-pvc
       size: "1Gi"  # Configurable storage size
 
 graphdb:
@@ -58,7 +58,7 @@ graphdb:
     image: docker.io/library/neo4j:4.4.42
     env:
       NEO4J_AUTH_USER: "neo4j"
-      NEO4J_AUTH_PASS: "bloodhoundcommunityedition"
+      NEO4J_AUTH_PASS: "apihoundcommunityedition"
       NEO4J_dbms_allow__upgrade: "true"
     ports:
       - containerPort: 7687
@@ -95,13 +95,13 @@ graphdb:
     customCert: false
     certSecret: graphdb-tls
 
-bloodhound:
-  name: bloodhound
+apihound:
+  name: apihound
   replicas: 1
-  appName: bloodhound
+  appName: apihound
   container:
-    name: bloodhound
-    image: docker.io/specterops/bloodhound
+    name: apihound
+    image: docker.io/specterops/apihound
     version: latest
     env:
       bhe_disable_cypher_complexity_limit: "false"
@@ -118,12 +118,12 @@ bloodhound:
     targetPort: 8080
   ingress:
     enabled: true
-    host: bloodhound.example.com
+    host: apihound.example.com
     path: /
   tls:
     enabled: true
     customCert: false
-    certSecret: bloodhound-tls
+    certSecret: apihound-tls
   configMap:
     enabled: true
-    name: bloodhound-config
+    name: apihound-config

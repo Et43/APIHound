@@ -50,7 +50,7 @@ describe('AnalyzeNowConfiguration', () => {
 
     it('renders analyze now section', async () => {
         render(
-            <AnalyzeNowConfiguration description='This will re-run analysis in the BloodHound environment, recreating all Attack Paths that exist as a result of complex configurations.' />
+            <AnalyzeNowConfiguration description='This will re-run analysis in the APIHound environment, recreating all Attack Paths that exist as a result of complex configurations.' />
         );
 
         const title = screen.getByText(/Run Analysis Now/i);
@@ -73,7 +73,7 @@ describe('AnalyzeNowConfiguration', () => {
             })
         );
         render(
-            <AnalyzeNowConfiguration description='This will re-run analysis in the BloodHound environment, recreating all Attack Paths that exist as a result of complex configurations.' />
+            <AnalyzeNowConfiguration description='This will re-run analysis in the APIHound environment, recreating all Attack Paths that exist as a result of complex configurations.' />
         );
 
         const button = await waitFor(() => screen.getByRole('button', { name: /Analyzing/i }));
@@ -91,7 +91,7 @@ describe('AnalyzeNowConfiguration', () => {
             })
         );
         render(
-            <AnalyzeNowConfiguration description='This will re-run analysis in the BloodHound environment, recreating all Attack Paths that exist as a result of complex configurations.' />
+            <AnalyzeNowConfiguration description='This will re-run analysis in the APIHound environment, recreating all Attack Paths that exist as a result of complex configurations.' />
         );
 
         const user = userEvent.setup();
@@ -121,7 +121,7 @@ describe('AnalyzeNowConfiguration', () => {
         );
         console.error = vi.fn();
         render(
-            <AnalyzeNowConfiguration description='This will re-run analysis in the BloodHound environment, recreating all Attack Paths that exist as a result of complex configurations.' />
+            <AnalyzeNowConfiguration description='This will re-run analysis in the APIHound environment, recreating all Attack Paths that exist as a result of complex configurations.' />
         );
 
         const user = userEvent.setup();
@@ -152,7 +152,7 @@ describe('AnalyzeNowConfiguration', () => {
         );
         console.error = vi.fn();
         render(
-            <AnalyzeNowConfiguration description='This will re-run analysis in the BloodHound environment, recreating all Attack Paths that exist as a result of complex configurations.' />
+            <AnalyzeNowConfiguration description='This will re-run analysis in the APIHound environment, recreating all Attack Paths that exist as a result of complex configurations.' />
         );
 
         const user = userEvent.setup();

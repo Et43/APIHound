@@ -160,7 +160,7 @@ const MainNavVersionNumber: FC<{ allowHover: boolean }> = ({ allowHover }) => {
                     className={cn('opacity-0 hidden duration-300 ease-in-out', {
                         'group-hover:opacity-100 group-hover:block': allowHover,
                     })}>
-                    BloodHound:&nbsp;{apiVersion}
+                    APIHound:&nbsp;{apiVersion}
                 </span>
             </div>
         </div>

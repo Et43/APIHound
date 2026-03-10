@@ -21,7 +21,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/specterops/bloodhound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/model"
 	"gorm.io/gorm"
 )
 
@@ -36,7 +36,7 @@ type OIDCProviderData interface {
 }
 
 // CreateOIDCProvider creates a new entry for an OIDC provider as well as the associated SSO provider
-func (s *BloodhoundDB) CreateOIDCProvider(ctx context.Context, name, issuer, clientID string, config model.SSOProviderConfig) (model.OIDCProvider, error) {
+func (s *ApihoundDB) CreateOIDCProvider(ctx context.Context, name, issuer, clientID string, config model.SSOProviderConfig) (model.OIDCProvider, error) {
 	var (
 		oidcProvider = model.OIDCProvider{
 			ClientID: clientID,
@@ -52,7 +52,7 @@ func (s *BloodhoundDB) CreateOIDCProvider(ctx context.Context, name, issuer, cli
 	// Create both the sso_providers and oidc_providers rows in a single transaction
 	// If one of these requests errors, both changes will be rolled back
 	err := s.AuditableTransaction(ctx, auditEntry, func(tx *gorm.DB) error {
-		bhdb := NewBloodhoundDB(tx, s.idResolver)
+		bhdb := NewApihoundDB(tx, s.idResolver)
 
 		if ssoProvider, err := bhdb.CreateSSOProvider(ctx, name, model.SessionAuthProviderOIDC, config); err != nil {
 			return err
@@ -66,7 +66,7 @@ func (s *BloodhoundDB) CreateOIDCProvider(ctx context.Context, name, issuer, cli
 }
 
 // UpdateOIDCProvider updates an OIDC provider as well as the associated SSO provider
-func (s *BloodhoundDB) UpdateOIDCProvider(ctx context.Context, ssoProvider model.SSOProvider) (model.OIDCProvider, error) {
+func (s *ApihoundDB) UpdateOIDCProvider(ctx context.Context, ssoProvider model.SSOProvider) (model.OIDCProvider, error) {
 	auditEntry := model.AuditEntry{
 		Action: model.AuditLogActionUpdateOIDCIdentityProvider,
 		Model:  ssoProvider.OIDCProvider, // Pointer is required to ensure success log contains updated fields after transaction
@@ -75,7 +75,7 @@ func (s *BloodhoundDB) UpdateOIDCProvider(ctx context.Context, ssoProvider model
 	// update both the sso_providers, oidc_providers, and user_sessions rows in a single transaction
 	// If one of these requests errors, all changes will be rolled back
 	err := s.AuditableTransaction(ctx, auditEntry, func(tx *gorm.DB) error {
-		bhdb := NewBloodhoundDB(tx, s.idResolver)
+		bhdb := NewApihoundDB(tx, s.idResolver)
 
 		if _, err := bhdb.UpdateSSOProvider(ctx, ssoProvider); err != nil {
 			return err

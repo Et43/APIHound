@@ -21,9 +21,9 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/specterops/bloodhound/cmd/api/src/bootstrap"
-	"github.com/specterops/bloodhound/cmd/api/src/migrations"
-	"github.com/specterops/bloodhound/packages/go/lab"
+	"github.com/specterops/apihound/cmd/api/src/bootstrap"
+	"github.com/specterops/apihound/cmd/api/src/migrations"
+	"github.com/specterops/apihound/packages/go/lab"
 	"github.com/specterops/dawgs/graph"
 )
 

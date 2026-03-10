@@ -19,9 +19,9 @@ parameters:
 get:
   operationId: ListUsers
   summary: List Users
-  description: Gets all BloodHound user details.
+  description: Gets all APIHound user details.
   tags:
-    - BloodHound Users
+    - APIHound Users
     - Community
     - Enterprise
   parameters:
@@ -86,9 +86,9 @@ get:
 post:
   operationId: CreateUser
   summary: Create a New User
-  description: Create a new BloodHound user.
+  description: Create a new APIHound user.
   tags:
-    - BloodHound Users
+    - APIHound Users
     - Community
     - Enterprise
   requestBody:

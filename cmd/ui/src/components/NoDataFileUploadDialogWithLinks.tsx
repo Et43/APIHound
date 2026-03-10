@@ -45,7 +45,7 @@ export const NoDataFileUploadDialogWithLinks: React.FC<NoDataFileUploadDialogWit
                         If you&apos;re just exploring, you can use the{' '}
                         <a
                             className={linkStyles}
-                            href='https://bloodhound.specterops.io/get-started/quickstart/ce-ingest-sample-data'
+                            href='https://apihound.specterops.io/get-started/quickstart/ce-ingest-sample-data'
                             target='_blank'
                             rel='noreferrer noopener'>
                             sample dataset
@@ -63,7 +63,7 @@ export const NoDataFileUploadDialogWithLinks: React.FC<NoDataFileUploadDialogWit
                         If you&apos;re having any difficulty, we have a{' '}
                         <a
                             className={linkStyles}
-                            href='https://bloodhound.specterops.io/collect-data/ce-collection/overview'
+                            href='https://apihound.specterops.io/collect-data/ce-collection/overview'
                             target='_blank'
                             rel='noreferrer noopener'>
                             Getting Started Guide

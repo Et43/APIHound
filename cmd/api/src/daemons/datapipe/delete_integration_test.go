@@ -24,11 +24,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/specterops/bloodhound/cmd/api/src/daemons/datapipe"
-	"github.com/specterops/bloodhound/cmd/api/src/model"
-	"github.com/specterops/bloodhound/cmd/api/src/services/graphify"
-	"github.com/specterops/bloodhound/cmd/api/src/services/graphify/endpoint"
-	"github.com/specterops/bloodhound/packages/go/lab/generic"
+	"github.com/specterops/apihound/cmd/api/src/daemons/datapipe"
+	"github.com/specterops/apihound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/services/graphify"
+	"github.com/specterops/apihound/cmd/api/src/services/graphify/endpoint"
+	"github.com/specterops/apihound/packages/go/lab/generic"
 	"github.com/specterops/dawgs/graph"
 	"github.com/stretchr/testify/require"
 )

@@ -20,13 +20,13 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/specterops/bloodhound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/model"
 	"github.com/specterops/dawgs/graph"
 )
 
 // UpsertSchemaEnvironmentWithPrincipalKinds creates or updates an environment with its principal kinds.
 // If an environment with the same environment kind exists, it will be replaced.
-func (s *BloodhoundDB) UpsertSchemaEnvironmentWithPrincipalKinds(ctx context.Context, schemaExtensionId int32, environmentKind string, sourceKind string, principalKinds []string) error {
+func (s *ApihoundDB) UpsertSchemaEnvironmentWithPrincipalKinds(ctx context.Context, schemaExtensionId int32, environmentKind string, sourceKind string, principalKinds []string) error {
 	environment := model.SchemaEnvironment{
 		SchemaExtensionId: schemaExtensionId,
 	}
@@ -62,7 +62,7 @@ func (s *BloodhoundDB) UpsertSchemaEnvironmentWithPrincipalKinds(ctx context.Con
 }
 
 // validateAndTranslateEnvironmentKind validates that the environment kind exists in the kinds table.
-func (s *BloodhoundDB) validateAndTranslateEnvironmentKind(ctx context.Context, environmentKindName string) (int32, error) {
+func (s *ApihoundDB) validateAndTranslateEnvironmentKind(ctx context.Context, environmentKindName string) (int32, error) {
 	if envKind, err := s.GetKindByName(ctx, environmentKindName); err != nil && !errors.Is(err, ErrNotFound) {
 		return 0, fmt.Errorf("error retrieving environment kind '%s': %w", environmentKindName, err)
 	} else if errors.Is(err, ErrNotFound) {
@@ -74,7 +74,7 @@ func (s *BloodhoundDB) validateAndTranslateEnvironmentKind(ctx context.Context, 
 
 // validateAndTranslateSourceKind validates that the source kind exists in the source_kinds table.
 // If not found, it registers the source kind and returns its ID so it can be added to the Environment object.
-func (s *BloodhoundDB) validateAndTranslateSourceKind(ctx context.Context, sourceKindName string) (int32, error) {
+func (s *ApihoundDB) validateAndTranslateSourceKind(ctx context.Context, sourceKindName string) (int32, error) {
 	if sourceKind, err := s.GetSourceKindByName(ctx, sourceKindName); err != nil && !errors.Is(err, ErrNotFound) {
 		return 0, fmt.Errorf("error retrieving source kind '%s': %w", sourceKindName, err)
 	} else if err == nil {
@@ -96,7 +96,7 @@ func (s *BloodhoundDB) validateAndTranslateSourceKind(ctx context.Context, sourc
 
 // validateAndTranslatePrincipalKinds ensures all principalKinds exist in the kinds table.
 // It also translates them to IDs so they can be upserted into the database.
-func (s *BloodhoundDB) validateAndTranslatePrincipalKinds(ctx context.Context, principalKindNames []string) ([]model.SchemaEnvironmentPrincipalKind, error) {
+func (s *ApihoundDB) validateAndTranslatePrincipalKinds(ctx context.Context, principalKindNames []string) ([]model.SchemaEnvironmentPrincipalKind, error) {
 	principalKinds := make([]model.SchemaEnvironmentPrincipalKind, len(principalKindNames))
 
 	for i, kindName := range principalKindNames {
@@ -118,7 +118,7 @@ func (s *BloodhoundDB) validateAndTranslatePrincipalKinds(ctx context.Context, p
 // If an environment with the given environment_kind_id exists, it deletes it first before creating the new one.
 // The unique constraint on environment_kind_id of the Schema Environment table ensures no
 // duplicates exist, enabling this upsert logic.
-func (s *BloodhoundDB) replaceSchemaEnvironment(ctx context.Context, graphSchema model.SchemaEnvironment) (int32, error) {
+func (s *ApihoundDB) replaceSchemaEnvironment(ctx context.Context, graphSchema model.SchemaEnvironment) (int32, error) {
 	if existing, err := s.GetEnvironmentByEnvironmentKindId(ctx, graphSchema.EnvironmentKindId); err != nil && !errors.Is(err, ErrNotFound) {
 		return 0, fmt.Errorf("error retrieving schema environment: %w", err)
 	} else if !errors.Is(err, ErrNotFound) {
@@ -137,7 +137,7 @@ func (s *BloodhoundDB) replaceSchemaEnvironment(ctx context.Context, graphSchema
 }
 
 // replacePrincipalKinds deletes all existing principal kinds for an environment and creates new ones.
-func (s *BloodhoundDB) replacePrincipalKinds(ctx context.Context, environmentID int32, principalKinds []model.SchemaEnvironmentPrincipalKind) error {
+func (s *ApihoundDB) replacePrincipalKinds(ctx context.Context, environmentID int32, principalKinds []model.SchemaEnvironmentPrincipalKind) error {
 	if existingKinds, err := s.GetPrincipalKindsByEnvironmentId(ctx, environmentID); err != nil && !errors.Is(err, ErrNotFound) {
 		return fmt.Errorf("error retrieving existing principal kinds for environment %d: %w", environmentID, err)
 	} else if !errors.Is(err, ErrNotFound) {

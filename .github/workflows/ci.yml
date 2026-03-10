@@ -26,17 +26,17 @@ on:
       - synchronize
 
 jobs:
-  bloodhound-container-image:
-    name: Build BloodHound Container Image
+  apihound-container-image:
+    name: Build APIHound Container Image
     uses: ./.github/workflows/reusable.build-container-image.yml
     with:
-      container_image_repository_name: docker.io/specterops/bloodhound
-      build_target: bloodhound
+      container_image_repository_name: docker.io/specterops/apihound
+      build_target: apihound
       image_sbom: false
       image_provenance: false
       build_context: .
       build_outputs: type=image,push=false
-      dockerfile: dockerfiles/bloodhound.Dockerfile
+      dockerfile: dockerfiles/apihound.Dockerfile
       image_cache_from: type=gha
       image_cache_to: type=gha,mode=max
       build_args: |

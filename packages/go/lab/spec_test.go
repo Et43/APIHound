@@ -20,7 +20,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/specterops/bloodhound/packages/go/lab"
+	"github.com/specterops/apihound/packages/go/lab"
 	"github.com/stretchr/testify/require"
 )
 

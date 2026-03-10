@@ -36,7 +36,7 @@ on:
           The name of the repository where the container image will be stored in the container registry.
           This repository name uniquely identifies the image within the registry.
 
-          Example: 'docker.io/specterops/bloodhound'.
+          Example: 'docker.io/specterops/apihound'.
       dockerfile:
         type: string
         description: |-
@@ -195,12 +195,12 @@ jobs:
       # TODO: don't pull actions but instead reference them from the source repo
       # May need to adjust repo actions permissions to allow access from other org repos
       # https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/enabling-features-for-your-repository/managing-github-actions-settings-for-a-repository#allowing-access-to-components-in-a-private-repository
-      - if: ${{ github.repository != 'SpecterOps/BloodHound' }}
+      - if: ${{ github.repository != 'SpecterOps/APIHound' }}
         name: Checkout Reusable Workflows and Composite Actions
         uses: actions/checkout@v4
         with:
           clean: false
-          repository: SpecterOps/BloodHound
+          repository: SpecterOps/APIHound
           ref: main
           token: ${{ secrets.gh_access_token }}
           sparse-checkout-cone-mode: false
@@ -236,7 +236,7 @@ jobs:
           cache_to: ${{ inputs.image_cache_to }}
           dockerfile: ${{ inputs.dockerfile }}
           image_labels: |
-            org.opencontainers.image.authors=https://github.com/orgs/SpecterOps/teams/bloodhound-engineering
+            org.opencontainers.image.authors=https://github.com/orgs/SpecterOps/teams/apihound-engineering
             org.opencontainers.image.licenses=Apache License, Version 2.0
             org.opencontainers.image.vendor=SpecterOps
           image_provenance: ${{ inputs.image_provenance }}

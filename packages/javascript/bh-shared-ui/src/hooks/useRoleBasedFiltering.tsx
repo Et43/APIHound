@@ -15,7 +15,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { isETACRole } from '../utils/roles';
-import { useSelf } from './useBloodHoundUsers';
+import { useSelf } from './useAPIHoundUsers';
 import { useListDisplayRoles } from './useListDisplayRoles/useListDisplayRoles';
 
 // Matches against the current logged in user's role and checks whether user has access to all environments and is an ETAC enabled role

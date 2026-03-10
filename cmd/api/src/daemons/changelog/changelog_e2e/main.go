@@ -26,10 +26,10 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/specterops/bloodhound/cmd/api/src/auth"
-	"github.com/specterops/bloodhound/cmd/api/src/daemons/changelog"
-	"github.com/specterops/bloodhound/cmd/api/src/database"
-	"github.com/specterops/bloodhound/packages/go/bhlog/attr"
+	"github.com/specterops/apihound/cmd/api/src/auth"
+	"github.com/specterops/apihound/cmd/api/src/daemons/changelog"
+	"github.com/specterops/apihound/cmd/api/src/database"
+	"github.com/specterops/apihound/packages/go/bhlog/attr"
 	"github.com/specterops/dawgs"
 	"github.com/specterops/dawgs/drivers/pg"
 	"github.com/specterops/dawgs/graph"
@@ -93,7 +93,7 @@ func newHarness() *Harness {
 		os.Exit(1)
 	}
 
-	db := database.NewBloodhoundDB(gormDB, auth.NewIdentityResolver())
+	db := database.NewApihoundDB(gormDB, auth.NewIdentityResolver())
 
 	// Attempt to truncate but don't care about the error
 	dawgsDB.Run(
@@ -138,7 +138,7 @@ func waitForShutdown(cancel func(), wg *sync.WaitGroup) {
 }
 
 // main() is a playground for rapidly testing changelog functionality end-end
-// without having to go through the broader Bloodhound application.
+// without having to go through the broader Apihound application.
 func main() {
 	harness := newHarness()
 	defer harness.Close()

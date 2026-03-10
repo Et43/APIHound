@@ -49,7 +49,7 @@ const DataQuality = React.lazy(() => import('src/views/DataQuality'));
 const Users = React.lazy(() => import('bh-shared-ui/Users'));
 const EarlyAccessFeatures = React.lazy(() => import('src/views/EarlyAccessFeatures'));
 const FileIngest = React.lazy(() => import('bh-shared-ui/FileIngest'));
-const BloodHoundConfiguration = React.lazy(() => import('src/views/BloodHoundConfiguration'));
+const APIHoundConfiguration = React.lazy(() => import('src/views/APIHoundConfiguration'));
 const SSOConfiguration = React.lazy(() => import('bh-shared-ui/SSOConfiguration'));
 const OpenGraphManagement = React.lazy(() => import('bh-shared-ui/OpenGraphManagement'));
 
@@ -103,9 +103,9 @@ const sections: AdministrationSection[] = [
         title: 'Configuration',
         items: [
             {
-                label: 'BloodHound Configuration',
+                label: 'APIHound Configuration',
                 path: ROUTE_ADMINISTRATION_BLOODHOUND_CONFIGURATION,
-                component: BloodHoundConfiguration,
+                component: APIHoundConfiguration,
                 adminOnly: true,
             },
             {

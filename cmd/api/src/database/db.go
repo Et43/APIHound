@@ -27,14 +27,14 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
-	"github.com/specterops/bloodhound/cmd/api/src/auth"
-	"github.com/specterops/bloodhound/cmd/api/src/database/migration"
-	"github.com/specterops/bloodhound/cmd/api/src/model"
-	"github.com/specterops/bloodhound/cmd/api/src/model/appcfg"
-	"github.com/specterops/bloodhound/cmd/api/src/services/agi"
-	"github.com/specterops/bloodhound/cmd/api/src/services/dataquality"
-	"github.com/specterops/bloodhound/cmd/api/src/services/upload"
-	"github.com/specterops/bloodhound/packages/go/bhlog/attr"
+	"github.com/specterops/apihound/cmd/api/src/auth"
+	"github.com/specterops/apihound/cmd/api/src/database/migration"
+	"github.com/specterops/apihound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/model/appcfg"
+	"github.com/specterops/apihound/cmd/api/src/services/agi"
+	"github.com/specterops/apihound/cmd/api/src/services/dataquality"
+	"github.com/specterops/apihound/cmd/api/src/services/upload"
+	"github.com/specterops/apihound/packages/go/bhlog/attr"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -191,12 +191,12 @@ type Database interface {
 	Kind
 }
 
-type BloodhoundDB struct {
+type ApihoundDB struct {
 	db         *gorm.DB
 	idResolver auth.IdentityResolver // TODO: this really needs to be elsewhere. something something separation of concerns
 }
 
-func (s *BloodhoundDB) Close(ctx context.Context) {
+func (s *ApihoundDB) Close(ctx context.Context) {
 	if sqlDBRef, err := s.db.WithContext(ctx).DB(); err != nil {
 		slog.ErrorContext(ctx, fmt.Sprintf("Failed to fetch SQL DB reference from GORM: %v", err))
 	} else if err := sqlDBRef.Close(); err != nil {
@@ -204,7 +204,7 @@ func (s *BloodhoundDB) Close(ctx context.Context) {
 	}
 }
 
-func (s *BloodhoundDB) preload(associations []string) *gorm.DB {
+func (s *ApihoundDB) preload(associations []string) *gorm.DB {
 	cursor := s.db
 	for _, association := range associations {
 		cursor = cursor.Preload(association)
@@ -213,7 +213,7 @@ func (s *BloodhoundDB) preload(associations []string) *gorm.DB {
 	return cursor
 }
 
-func (s *BloodhoundDB) Scope(scopeFuncs ...ScopeFunc) *gorm.DB {
+func (s *ApihoundDB) Scope(scopeFuncs ...ScopeFunc) *gorm.DB {
 	scopes := make([]func(*gorm.DB) *gorm.DB, len(scopeFuncs))
 	for idx, scopeFunc := range scopeFuncs {
 		scopes[idx] = scopeFunc
@@ -222,19 +222,19 @@ func (s *BloodhoundDB) Scope(scopeFuncs ...ScopeFunc) *gorm.DB {
 	return s.db.Scopes(scopes...)
 }
 
-func NewBloodhoundDB(db *gorm.DB, idResolver auth.IdentityResolver) *BloodhoundDB {
-	return &BloodhoundDB{db: db, idResolver: idResolver}
+func NewApihoundDB(db *gorm.DB, idResolver auth.IdentityResolver) *ApihoundDB {
+	return &ApihoundDB{db: db, idResolver: idResolver}
 }
 
 // Transaction executes the given function within a database transaction.
-// The function receives a new BloodhoundDB instance backed by the transaction,
+// The function receives a new ApihoundDB instance backed by the transaction,
 // allowing all existing methods to participate in the transaction.
 // If the function returns an error, the transaction is rolled back.
 // If the function returns nil, the transaction is committed.
 // Optional sql.TxOptions can be provided to configure isolation level and read-only mode.
-func (s *BloodhoundDB) Transaction(ctx context.Context, fn func(tx *BloodhoundDB) error, opts ...*sql.TxOptions) error {
+func (s *ApihoundDB) Transaction(ctx context.Context, fn func(tx *ApihoundDB) error, opts ...*sql.TxOptions) error {
 	return s.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		return fn(NewBloodhoundDB(tx, s.idResolver))
+		return fn(NewApihoundDB(tx, s.idResolver))
 	}, opts...)
 }
 
@@ -253,11 +253,11 @@ func OpenDatabase(connection string) (*gorm.DB, error) {
 	}
 }
 
-func (s *BloodhoundDB) RawDelete(value any) error {
+func (s *ApihoundDB) RawDelete(value any) error {
 	return CheckError(s.db.Delete(value))
 }
 
-func (s *BloodhoundDB) Wipe(ctx context.Context) error {
+func (s *ApihoundDB) Wipe(ctx context.Context) error {
 	return s.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		var tables []string
 
@@ -277,7 +277,7 @@ func (s *BloodhoundDB) Wipe(ctx context.Context) error {
 	})
 }
 
-func (s *BloodhoundDB) Migrate(ctx context.Context) error {
+func (s *ApihoundDB) Migrate(ctx context.Context) error {
 	// Run the migrator
 	if err := migration.NewMigrator(s.db.WithContext(ctx)).ExecuteStepwiseMigrations(); err != nil {
 		slog.ErrorContext(ctx, "Error during SQL database migration phase", attr.Error(err))
@@ -287,7 +287,7 @@ func (s *BloodhoundDB) Migrate(ctx context.Context) error {
 	return nil
 }
 
-func (s *BloodhoundDB) PopulateExtensionData(ctx context.Context) error {
+func (s *ApihoundDB) PopulateExtensionData(ctx context.Context) error {
 	if err := migration.NewMigrator(s.db.WithContext(ctx)).ExecuteExtensionDataPopulation(); err != nil {
 		slog.ErrorContext(ctx, "Error during extensions data population phase", attr.Error(err))
 		return err

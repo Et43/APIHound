@@ -23,8 +23,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/specterops/bloodhound/cmd/api/src/model"
-	"github.com/specterops/bloodhound/cmd/api/src/model/appcfg"
+	"github.com/specterops/apihound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/model/appcfg"
 	"gorm.io/gorm"
 )
 
@@ -41,7 +41,7 @@ type CustomNodeKindData interface {
 	DeleteCustomNodeKind(ctx context.Context, kindName string) error
 }
 
-func (s *BloodhoundDB) CreateCustomNodeKinds(ctx context.Context, customNodeKinds model.CustomNodeKinds) (model.CustomNodeKinds, error) {
+func (s *ApihoundDB) CreateCustomNodeKinds(ctx context.Context, customNodeKinds model.CustomNodeKinds) (model.CustomNodeKinds, error) {
 	var (
 		auditEntry = model.AuditEntry{
 			Action: model.AuditLogActionCreateCustomNodeKind,
@@ -64,14 +64,14 @@ func (s *BloodhoundDB) CreateCustomNodeKinds(ctx context.Context, customNodeKind
 	return customNodeKinds, err
 }
 
-func (s *BloodhoundDB) GetCustomNodeKinds(ctx context.Context) ([]model.CustomNodeKind, error) {
+func (s *ApihoundDB) GetCustomNodeKinds(ctx context.Context) ([]model.CustomNodeKind, error) {
 	var customNodeKinds []model.CustomNodeKind
 	result := s.db.WithContext(ctx).Raw(fmt.Sprintf("SELECT id, kind_name, config FROM %s;", customNodeKindTable)).Scan(&customNodeKinds)
 
 	return customNodeKinds, CheckError(result)
 }
 
-func (s *BloodhoundDB) GetCustomNodeKindsMap(ctx context.Context) (model.CustomNodeKindMap, error) {
+func (s *ApihoundDB) GetCustomNodeKindsMap(ctx context.Context) (model.CustomNodeKindMap, error) {
 	if openGraphSearchFeatureFlag, err := s.GetFlagByKey(ctx, appcfg.FeatureOpenGraphSearch); err != nil {
 		return nil, err
 	} else if !openGraphSearchFeatureFlag.Enabled {
@@ -87,7 +87,7 @@ func (s *BloodhoundDB) GetCustomNodeKindsMap(ctx context.Context) (model.CustomN
 	}
 }
 
-func (s *BloodhoundDB) GetCustomNodeKind(ctx context.Context, kindName string) (model.CustomNodeKind, error) {
+func (s *ApihoundDB) GetCustomNodeKind(ctx context.Context, kindName string) (model.CustomNodeKind, error) {
 	var customNodeKind model.CustomNodeKind
 	result := s.db.WithContext(ctx).Raw(fmt.Sprintf("SELECT id, kind_name, config FROM %s WHERE kind_name = ?;", customNodeKindTable), kindName).Scan(&customNodeKind)
 	if result.RowsAffected == 0 {
@@ -97,7 +97,7 @@ func (s *BloodhoundDB) GetCustomNodeKind(ctx context.Context, kindName string) (
 	return customNodeKind, CheckError(result)
 }
 
-func (s *BloodhoundDB) UpdateCustomNodeKind(ctx context.Context, customNodeKind model.CustomNodeKind) (model.CustomNodeKind, error) {
+func (s *ApihoundDB) UpdateCustomNodeKind(ctx context.Context, customNodeKind model.CustomNodeKind) (model.CustomNodeKind, error) {
 	var (
 		auditEntry = model.AuditEntry{
 			Action: model.AuditLogActionUpdateCustomNodeKind,
@@ -106,7 +106,7 @@ func (s *BloodhoundDB) UpdateCustomNodeKind(ctx context.Context, customNodeKind 
 	)
 
 	err := s.AuditableTransaction(ctx, auditEntry, func(tx *gorm.DB) error {
-		bhdb := NewBloodhoundDB(tx, s.idResolver)
+		bhdb := NewApihoundDB(tx, s.idResolver)
 		if result := tx.Raw(fmt.Sprintf("UPDATE %s SET schema_node_kind_id = COALESCE(?, schema_node_kind_id), config = ?, updated_at = NOW() WHERE kind_name = ? RETURNING id;", customNodeKindTable), customNodeKind.SchemaNodeKindId, customNodeKind.Config, customNodeKind.KindName).
 			Scan(&customNodeKind.ID); result.RowsAffected == 0 {
 			return ErrNotFound
@@ -126,7 +126,7 @@ func (s *BloodhoundDB) UpdateCustomNodeKind(ctx context.Context, customNodeKind 
 	return customNodeKind, err
 }
 
-func (s *BloodhoundDB) DeleteCustomNodeKind(ctx context.Context, kindName string) error {
+func (s *ApihoundDB) DeleteCustomNodeKind(ctx context.Context, kindName string) error {
 	var (
 		customNodeKind = model.CustomNodeKind{KindName: kindName}
 

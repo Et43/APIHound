@@ -21,7 +21,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/specterops/bloodhound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/model"
 )
 
 const CustomNodeIconType = "font-awesome"
@@ -33,14 +33,14 @@ const CustomNodeIconType = "font-awesome"
 // decoupling the database and service layers while still providing transactional guarantees. The following
 // functions use models intended for the service layer and call the database public methods directly, rather
 // than using an interface.
-func (s *BloodhoundDB) UpsertOpenGraphExtension(ctx context.Context, graphExtensionInput model.GraphExtensionInput) (bool, error) {
+func (s *ApihoundDB) UpsertOpenGraphExtension(ctx context.Context, graphExtensionInput model.GraphExtensionInput) (bool, error) {
 	var (
 		err              error
 		schemaExists     bool
 		createdExtension model.GraphSchemaExtension
 
 		tx                      = s.db.WithContext(ctx).Begin()
-		bloodhoundDBTransaction = BloodhoundDB{db: tx, idResolver: s.idResolver}
+		apihoundDBTransaction = ApihoundDB{db: tx, idResolver: s.idResolver}
 	)
 	// Check for an immediate error after beginning the transaction
 	if err = tx.Error; err != nil {
@@ -51,26 +51,26 @@ func (s *BloodhoundDB) UpsertOpenGraphExtension(ctx context.Context, graphExtens
 		tx.Rollback() // rollback is a no-op if the tx has already been committed
 	}()
 
-	if schemaExists, err = bloodhoundDBTransaction.cleanupExistingExtension(ctx, graphExtensionInput.ExtensionInput.Name); err != nil {
+	if schemaExists, err = apihoundDBTransaction.cleanupExistingExtension(ctx, graphExtensionInput.ExtensionInput.Name); err != nil {
 		return schemaExists, err
-	} else if createdExtension, err = bloodhoundDBTransaction.CreateGraphSchemaExtension(ctx, graphExtensionInput.ExtensionInput.Name,
+	} else if createdExtension, err = apihoundDBTransaction.CreateGraphSchemaExtension(ctx, graphExtensionInput.ExtensionInput.Name,
 		graphExtensionInput.ExtensionInput.DisplayName, graphExtensionInput.ExtensionInput.Version, graphExtensionInput.ExtensionInput.Namespace); err != nil {
 		return schemaExists, err
-	} else if createdNodeKinds, err := bloodhoundDBTransaction.insertNodeKinds(ctx, createdExtension.ID,
+	} else if createdNodeKinds, err := apihoundDBTransaction.insertNodeKinds(ctx, createdExtension.ID,
 		graphExtensionInput.NodeKindsInput); err != nil {
 		return schemaExists, fmt.Errorf("failed to upsert node kinds: %w", err)
-	} else if err = bloodhoundDBTransaction.upsertCustomIcons(ctx, createdNodeKinds); err != nil {
+	} else if err = apihoundDBTransaction.upsertCustomIcons(ctx, createdNodeKinds); err != nil {
 		return schemaExists, fmt.Errorf("failed to upsert custom node icons: %w", err)
-	} else if err = bloodhoundDBTransaction.insertRelationshipKinds(ctx, createdExtension.ID,
+	} else if err = apihoundDBTransaction.insertRelationshipKinds(ctx, createdExtension.ID,
 		graphExtensionInput.RelationshipKindsInput); err != nil {
 		return schemaExists, fmt.Errorf("failed to upsert edge kinds: %w", err)
-	} else if err = bloodhoundDBTransaction.insertProperties(ctx,
+	} else if err = apihoundDBTransaction.insertProperties(ctx,
 		createdExtension.ID, graphExtensionInput.PropertiesInput); err != nil {
 		return schemaExists, fmt.Errorf("failed to upsert properties: %w", err)
-	} else if err = bloodhoundDBTransaction.upsertGraphEnvironments(ctx, createdExtension.ID,
+	} else if err = apihoundDBTransaction.upsertGraphEnvironments(ctx, createdExtension.ID,
 		graphExtensionInput.EnvironmentsInput); err != nil {
 		return schemaExists, err
-	} else if err = bloodhoundDBTransaction.upsertFindingsAndRemediations(ctx, createdExtension.ID,
+	} else if err = apihoundDBTransaction.upsertFindingsAndRemediations(ctx, createdExtension.ID,
 		graphExtensionInput.RelationshipFindingsInput); err != nil {
 		return schemaExists, err
 	} else if err = tx.Commit().Error; err != nil {
@@ -82,7 +82,7 @@ func (s *BloodhoundDB) UpsertOpenGraphExtension(ctx context.Context, graphExtens
 
 // cleanupExistingExtension - checks to see if an extension exists for the given name, if so it will delete it.
 // Returns whether the extension existed or not and the first error if encountered.
-func (s *BloodhoundDB) cleanupExistingExtension(ctx context.Context, extensionName string) (bool, error) {
+func (s *ApihoundDB) cleanupExistingExtension(ctx context.Context, extensionName string) (bool, error) {
 	var (
 		err                     error
 		existingGraphExtensions model.GraphSchemaExtensions
@@ -105,7 +105,7 @@ func (s *BloodhoundDB) cleanupExistingExtension(ctx context.Context, extensionNa
 }
 
 // insertProperties - inserts a slice of new properties for the provided extension.
-func (s *BloodhoundDB) insertProperties(ctx context.Context, extensionId int32, newGraphSchemaProperties model.PropertiesInput) error {
+func (s *ApihoundDB) insertProperties(ctx context.Context, extensionId int32, newGraphSchemaProperties model.PropertiesInput) error {
 	var (
 		err error
 	)
@@ -121,7 +121,7 @@ func (s *BloodhoundDB) insertProperties(ctx context.Context, extensionId int32, 
 }
 
 // insertRelationshipKinds - inserts a slice of new relationship kinds for the provided extension.
-func (s *BloodhoundDB) insertRelationshipKinds(ctx context.Context, extensionId int32, newRelationshipKinds model.RelationshipsInput) error {
+func (s *ApihoundDB) insertRelationshipKinds(ctx context.Context, extensionId int32, newRelationshipKinds model.RelationshipsInput) error {
 	var err error
 
 	for _, relationshipKind := range newRelationshipKinds {
@@ -135,7 +135,7 @@ func (s *BloodhoundDB) insertRelationshipKinds(ctx context.Context, extensionId 
 }
 
 // insertNodeKinds - inserts a slice of new node kinds for the provided extension.
-func (s *BloodhoundDB) insertNodeKinds(ctx context.Context, extensionId int32, newGraphSchemaNodeKinds model.NodesInput) (model.GraphSchemaNodeKinds, error) {
+func (s *ApihoundDB) insertNodeKinds(ctx context.Context, extensionId int32, newGraphSchemaNodeKinds model.NodesInput) (model.GraphSchemaNodeKinds, error) {
 	createdNodeKinds := make(model.GraphSchemaNodeKinds, 0, len(newGraphSchemaNodeKinds))
 
 	for _, nodeKind := range newGraphSchemaNodeKinds {
@@ -150,7 +150,7 @@ func (s *BloodhoundDB) insertNodeKinds(ctx context.Context, extensionId int32, n
 }
 
 // upsertCustomIcons - upserts any new custom icon definitions for the provided node kinds.
-func (s *BloodhoundDB) upsertCustomIcons(ctx context.Context, nodeKinds model.GraphSchemaNodeKinds) error {
+func (s *ApihoundDB) upsertCustomIcons(ctx context.Context, nodeKinds model.GraphSchemaNodeKinds) error {
 	var customNodeKindsToCreate model.CustomNodeKinds
 	var customNodeKindsToUpdate model.CustomNodeKinds
 	if existingIconsMap, err := getExistingIconsMap(ctx, s); err != nil {
@@ -186,7 +186,7 @@ func (s *BloodhoundDB) upsertCustomIcons(ctx context.Context, nodeKinds model.Gr
 }
 
 // upsertGraphEnvironments - inserts a slice of new environments for the provided extension.
-func (s *BloodhoundDB) upsertGraphEnvironments(ctx context.Context, extensionID int32, environments model.EnvironmentsInput) error {
+func (s *ApihoundDB) upsertGraphEnvironments(ctx context.Context, extensionID int32, environments model.EnvironmentsInput) error {
 	for _, env := range environments {
 		if err := s.UpsertSchemaEnvironmentWithPrincipalKinds(ctx, extensionID, env.EnvironmentKindName, env.SourceKindName, env.PrincipalKinds); err != nil {
 			return fmt.Errorf("failed to upsert environment with principal kinds: %w", err)
@@ -196,7 +196,7 @@ func (s *BloodhoundDB) upsertGraphEnvironments(ctx context.Context, extensionID 
 }
 
 // upsertFindingsAndRemediations - inserts a slice of new findings/remediations for the provided extension.
-func (s *BloodhoundDB) upsertFindingsAndRemediations(ctx context.Context, extensionId int32, findings model.RelationshipFindingsInput) error {
+func (s *ApihoundDB) upsertFindingsAndRemediations(ctx context.Context, extensionId int32, findings model.RelationshipFindingsInput) error {
 	for _, finding := range findings {
 		if schemaFinding, err := s.UpsertRelationshipFinding(ctx, extensionId, finding.RelationshipKindName,
 			finding.EnvironmentKindName, finding.Name, finding.DisplayName); err != nil {
@@ -212,7 +212,7 @@ func (s *BloodhoundDB) upsertFindingsAndRemediations(ctx context.Context, extens
 }
 
 // getExistingIconsMap creates a map of existing icons for quick lookups.
-func getExistingIconsMap(ctx context.Context, db *BloodhoundDB) (map[string]model.CustomNodeKind, error) {
+func getExistingIconsMap(ctx context.Context, db *ApihoundDB) (map[string]model.CustomNodeKind, error) {
 	existingIconMap := make(map[string]model.CustomNodeKind)
 	if existingIcons, err := db.GetCustomNodeKinds(ctx); err != nil {
 		return existingIconMap, fmt.Errorf("failed to get custom node kinds from database: %w", err)

@@ -18,7 +18,7 @@ package static
 import (
 	"embed"
 
-	"github.com/specterops/bloodhound/cmd/api/src/api"
+	"github.com/specterops/apihound/cmd/api/src/api"
 )
 
 const (

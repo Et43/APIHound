@@ -25,18 +25,18 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/specterops/bloodhound/cmd/api/src/api"
-	"github.com/specterops/bloodhound/cmd/api/src/api/bloodhoundgraph"
-	"github.com/specterops/bloodhound/cmd/api/src/auth"
-	"github.com/specterops/bloodhound/cmd/api/src/ctx"
-	"github.com/specterops/bloodhound/cmd/api/src/model"
-	"github.com/specterops/bloodhound/cmd/api/src/model/appcfg"
-	"github.com/specterops/bloodhound/cmd/api/src/queries"
-	"github.com/specterops/bloodhound/packages/go/bhlog/attr"
-	"github.com/specterops/bloodhound/packages/go/graphschema/ad"
-	"github.com/specterops/bloodhound/packages/go/graphschema/azure"
-	"github.com/specterops/bloodhound/packages/go/params"
-	"github.com/specterops/bloodhound/packages/go/slicesext"
+	"github.com/specterops/apihound/cmd/api/src/api"
+	"github.com/specterops/apihound/cmd/api/src/api/apihoundgraph"
+	"github.com/specterops/apihound/cmd/api/src/auth"
+	"github.com/specterops/apihound/cmd/api/src/ctx"
+	"github.com/specterops/apihound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/model/appcfg"
+	"github.com/specterops/apihound/cmd/api/src/queries"
+	"github.com/specterops/apihound/packages/go/bhlog/attr"
+	"github.com/specterops/apihound/packages/go/graphschema/ad"
+	"github.com/specterops/apihound/packages/go/graphschema/azure"
+	"github.com/specterops/apihound/packages/go/params"
+	"github.com/specterops/apihound/packages/go/slicesext"
 	"github.com/specterops/dawgs/graph"
 	"github.com/specterops/dawgs/query"
 )
@@ -62,7 +62,7 @@ func (s Resources) GetPathfindingResult(response http.ResponseWriter, request *h
 	} else if validPrimaryKinds, err := s.DB.GetDisplayNodeGraphKinds(request.Context()); err != nil {
 		api.HandleDatabaseError(request, response, err)
 	} else {
-		api.WriteBasicResponse(request.Context(), bloodhoundgraph.PathSetToBloodHoundGraph(validPrimaryKinds, customNodeKinds, paths), http.StatusOK, response)
+		api.WriteBasicResponse(request.Context(), apihoundgraph.PathSetToAPIHoundGraph(validPrimaryKinds, customNodeKinds, paths), http.StatusOK, response)
 	}
 }
 
@@ -255,7 +255,7 @@ const (
 func (s *Resources) GetSearchResult(response http.ResponseWriter, request *http.Request) {
 	var (
 		params        = request.URL.Query()
-		filteredGraph map[string]bloodhoundgraph.BloodHoundGraphNode
+		filteredGraph map[string]apihoundgraph.APIHoundGraphNode
 	)
 	user, isUser := auth.GetUserFromAuthCtx(ctx.FromRequest(request).AuthCtx)
 	if !isUser {
@@ -294,9 +294,9 @@ func (s *Resources) GetSearchResult(response http.ResponseWriter, request *http.
 				slog.Error("Unable to fetch custom nodes from database; will fall back to defaults")
 			}
 
-			bhGraph := make(map[string]bloodhoundgraph.BloodHoundGraphNode)
+			bhGraph := make(map[string]apihoundgraph.APIHoundGraphNode)
 			for _, node := range nodes {
-				bhGraph[node.ID.String()] = bloodhoundgraph.NodeToBloodHoundGraph(validPrimaryKinds, customNodeKinds, node)
+				bhGraph[node.ID.String()] = apihoundgraph.NodeToAPIHoundGraph(validPrimaryKinds, customNodeKinds, node)
 			}
 
 			// ETAC DogTags filtering
@@ -319,15 +319,15 @@ func (s *Resources) GetSearchResult(response http.ResponseWriter, request *http.
 // filterSearchResultMap applies ETAC(Environment-based Access Control) filtering to pathfinding.
 // Nodes that the user doesn't have access to are marked as hidden.
 // The function checks each node's environment (domain sid/tenant id) against the user's access list.
-func filterSearchResultMap(graphMap map[string]bloodhoundgraph.BloodHoundGraphNode, accessList []string) (map[string]bloodhoundgraph.BloodHoundGraphNode, error) {
+func filterSearchResultMap(graphMap map[string]apihoundgraph.APIHoundGraphNode, accessList []string) (map[string]apihoundgraph.APIHoundGraphNode, error) {
 	environmentKeys := []string{"domainsid", "tenantid"}
-	filteredNodes := make(map[string]bloodhoundgraph.BloodHoundGraphNode, len(graphMap))
+	filteredNodes := make(map[string]apihoundgraph.APIHoundGraphNode, len(graphMap))
 
 	for id, node := range graphMap {
 		hasAccess := false
 
 		// check if the user has access to a node's environment
-		if node.BloodHoundGraphItem != nil && node.Data != nil {
+		if node.APIHoundGraphItem != nil && node.Data != nil {
 			for _, key := range environmentKeys {
 				if val, ok := node.Data[key].(string); ok && slices.Contains(accessList, val) {
 					hasAccess = true
@@ -342,19 +342,19 @@ func filterSearchResultMap(graphMap map[string]bloodhoundgraph.BloodHoundGraphNo
 		} else {
 			// user does not have access. create hidden placeholder node
 			sourceKind := "Unknown"
-			if node.BloodHoundGraphItem != nil && node.Data != nil {
+			if node.APIHoundGraphItem != nil && node.Data != nil {
 				if kinds, ok := node.Data["kinds"].([]string); ok && len(kinds) > 0 {
 					sourceKind = kinds[0]
 				}
 			}
 			// extract the node source kind to display in the hidden label
-			filteredNodes[id] = bloodhoundgraph.BloodHoundGraphNode{
-				BloodHoundGraphItem: &bloodhoundgraph.BloodHoundGraphItem{
+			filteredNodes[id] = apihoundgraph.APIHoundGraphNode{
+				APIHoundGraphItem: &apihoundgraph.APIHoundGraphItem{
 					Data: map[string]any{
 						"hidden": true,
 					},
 				},
-				Label: &bloodhoundgraph.BloodHoundGraphNodeLabel{
+				Label: &apihoundgraph.APIHoundGraphNodeLabel{
 					Text: fmt.Sprintf("** Hidden %s Object **", sourceKind),
 				},
 				Shape: "ellipse",

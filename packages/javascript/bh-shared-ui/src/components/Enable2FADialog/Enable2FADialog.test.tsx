@@ -42,7 +42,7 @@ const server = setupServer(
     rest.get(`/api/v2/self`, (req, res, ctx) => {
         return res(ctx.json({}));
     }),
-    rest.post(`/api/v2/bloodhound-users/${testUser.id}/mfa`, (req, res, ctx) => {
+    rest.post(`/api/v2/apihound-users/${testUser.id}/mfa`, (req, res, ctx) => {
         return res(
             ctx.json({
                 qr_code: '',
@@ -50,7 +50,7 @@ const server = setupServer(
             })
         );
     }),
-    rest.post(`/api/v2/bloodhound-users/${testUser.id}/mfa-activation`, (req, res, ctx) => {
+    rest.post(`/api/v2/apihound-users/${testUser.id}/mfa-activation`, (req, res, ctx) => {
         return res(
             ctx.json({
                 status: 'activated',

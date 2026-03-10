@@ -20,7 +20,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/specterops/bloodhound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/model"
 )
 
 var (

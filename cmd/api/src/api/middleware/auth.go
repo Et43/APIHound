@@ -27,14 +27,14 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
-	"github.com/specterops/bloodhound/cmd/api/src/ctx"
+	"github.com/specterops/apihound/cmd/api/src/ctx"
 
-	"github.com/specterops/bloodhound/cmd/api/src/api"
-	"github.com/specterops/bloodhound/cmd/api/src/auth"
-	"github.com/specterops/bloodhound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/api"
+	"github.com/specterops/apihound/cmd/api/src/auth"
+	"github.com/specterops/apihound/cmd/api/src/model"
 
-	"github.com/specterops/bloodhound/packages/go/bhlog/attr"
-	"github.com/specterops/bloodhound/packages/go/headers"
+	"github.com/specterops/apihound/packages/go/bhlog/attr"
+	"github.com/specterops/apihound/packages/go/headers"
 )
 
 func parseAuthorizationHeader(request *http.Request) (string, string, *api.ErrorWrapper) {
@@ -55,12 +55,12 @@ func parseAuthorizationHeader(request *http.Request) (string, string, *api.Error
 // exist then the middleware sets the auth.Context of the request context to "unauthenticated." If the header exists
 // the scheme of the Authorization header is interpreted next to identify which authorization method to utilize.
 //
-// BloodHound Auth supports the following Authorization schemes:
+// APIHound Auth supports the following Authorization schemes:
 //
 //	`bearer`
 //	   Bearer token scheme that contains the user's authenticated session JWT as its parameter.
 //	`bhesignature`
-//	   Request signing scheme that contains the BloodHound token ID as its parameter. See: `src/api/v2/signature.go`
+//	   Request signing scheme that contains the APIHound token ID as its parameter. See: `src/api/v2/signature.go`
 func AuthMiddleware(authenticator api.Authenticator) mux.MiddlewareFunc {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(response http.ResponseWriter, request *http.Request) {

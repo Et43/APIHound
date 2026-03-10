@@ -18,8 +18,8 @@ package endpoint_test
 import (
 	"testing"
 
-	"github.com/specterops/bloodhound/cmd/api/src/services/graphify/endpoint"
-	"github.com/specterops/bloodhound/packages/go/ein"
+	"github.com/specterops/apihound/cmd/api/src/services/graphify/endpoint"
+	"github.com/specterops/apihound/packages/go/ein"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -44,7 +44,7 @@ post:
             config.auto_provision.enabled:
               type: string
               example: "true"
-              description: boolean that, if enabled, allows SSO providers to auto provision bloodhound users on initial login
+              description: boolean that, if enabled, allows SSO providers to auto provision apihound users on initial login
             config.auto_provision.default_role_id:
               type: string
               example: "3"

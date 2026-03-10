@@ -38,31 +38,31 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/pquerna/otp/totp"
-	"github.com/specterops/bloodhound/cmd/api/src/api"
-	v2 "github.com/specterops/bloodhound/cmd/api/src/api/v2"
-	"github.com/specterops/bloodhound/cmd/api/src/api/v2/apitest"
-	"github.com/specterops/bloodhound/cmd/api/src/api/v2/auth"
-	authz "github.com/specterops/bloodhound/cmd/api/src/auth"
-	"github.com/specterops/bloodhound/cmd/api/src/config"
-	"github.com/specterops/bloodhound/cmd/api/src/ctx"
-	"github.com/specterops/bloodhound/cmd/api/src/database"
-	"github.com/specterops/bloodhound/cmd/api/src/database/mocks"
-	"github.com/specterops/bloodhound/cmd/api/src/database/types"
-	"github.com/specterops/bloodhound/cmd/api/src/database/types/null"
-	"github.com/specterops/bloodhound/cmd/api/src/model"
-	"github.com/specterops/bloodhound/cmd/api/src/model/appcfg"
-	mocks_graph "github.com/specterops/bloodhound/cmd/api/src/queries/mocks"
-	"github.com/specterops/bloodhound/cmd/api/src/services/dogtags"
-	"github.com/specterops/bloodhound/cmd/api/src/test/must"
-	"github.com/specterops/bloodhound/cmd/api/src/utils"
-	"github.com/specterops/bloodhound/cmd/api/src/utils/test"
-	"github.com/specterops/bloodhound/cmd/api/src/utils/validation"
-	"github.com/specterops/bloodhound/packages/go/bhlog"
-	"github.com/specterops/bloodhound/packages/go/graphschema/ad"
-	"github.com/specterops/bloodhound/packages/go/graphschema/azure"
-	"github.com/specterops/bloodhound/packages/go/graphschema/common"
-	"github.com/specterops/bloodhound/packages/go/headers"
-	"github.com/specterops/bloodhound/packages/go/mediatypes"
+	"github.com/specterops/apihound/cmd/api/src/api"
+	v2 "github.com/specterops/apihound/cmd/api/src/api/v2"
+	"github.com/specterops/apihound/cmd/api/src/api/v2/apitest"
+	"github.com/specterops/apihound/cmd/api/src/api/v2/auth"
+	authz "github.com/specterops/apihound/cmd/api/src/auth"
+	"github.com/specterops/apihound/cmd/api/src/config"
+	"github.com/specterops/apihound/cmd/api/src/ctx"
+	"github.com/specterops/apihound/cmd/api/src/database"
+	"github.com/specterops/apihound/cmd/api/src/database/mocks"
+	"github.com/specterops/apihound/cmd/api/src/database/types"
+	"github.com/specterops/apihound/cmd/api/src/database/types/null"
+	"github.com/specterops/apihound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/model/appcfg"
+	mocks_graph "github.com/specterops/apihound/cmd/api/src/queries/mocks"
+	"github.com/specterops/apihound/cmd/api/src/services/dogtags"
+	"github.com/specterops/apihound/cmd/api/src/test/must"
+	"github.com/specterops/apihound/cmd/api/src/utils"
+	"github.com/specterops/apihound/cmd/api/src/utils/test"
+	"github.com/specterops/apihound/cmd/api/src/utils/validation"
+	"github.com/specterops/apihound/packages/go/bhlog"
+	"github.com/specterops/apihound/packages/go/graphschema/ad"
+	"github.com/specterops/apihound/packages/go/graphschema/azure"
+	"github.com/specterops/apihound/packages/go/graphschema/common"
+	"github.com/specterops/apihound/packages/go/headers"
+	"github.com/specterops/apihound/packages/go/mediatypes"
 	"github.com/specterops/dawgs/graph"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -1909,7 +1909,7 @@ func TestManagementResource_UpdateUser_IDMalformed(t *testing.T) {
 	payload, err = json.Marshal(v2.UpdateUserRequest{})
 	require.Nil(t, err)
 
-	endpoint = fmt.Sprintf("/api/v2/bloodhound-users/%v", goodUserID)
+	endpoint = fmt.Sprintf("/api/v2/apihound-users/%v", goodUserID)
 	req, err = http.NewRequestWithContext(ctx, "PATCH", endpoint, bytes.NewReader(payload))
 	require.Nil(t, err)
 
@@ -1973,7 +1973,7 @@ func TestManagementResource_UpdateUser_GetUserError(t *testing.T) {
 	payload, err = json.Marshal(v2.UpdateUserRequest{})
 	require.Nil(t, err)
 
-	endpoint = fmt.Sprintf("/api/v2/bloodhound-users/%v", goodUserID)
+	endpoint = fmt.Sprintf("/api/v2/apihound-users/%v", goodUserID)
 	req, err = http.NewRequestWithContext(ctx, "PATCH", endpoint, bytes.NewReader(payload))
 	require.Nil(t, err)
 
@@ -2038,7 +2038,7 @@ func TestManagementResource_UpdateUser_GetRolesError(t *testing.T) {
 	payload, err = json.Marshal(v2.UpdateUserRequest{})
 	require.Nil(t, err)
 
-	endpoint = fmt.Sprintf("/api/v2/bloodhound-users/%v", goodUserID)
+	endpoint = fmt.Sprintf("/api/v2/apihound-users/%v", goodUserID)
 	req, err = http.NewRequestWithContext(ctx, "PATCH", endpoint, bytes.NewReader(payload))
 	require.Nil(t, err)
 
@@ -2067,7 +2067,7 @@ func TestManagementResource_UpdateUser_DuplicateEmailError(t *testing.T) {
 	payload, err := json.Marshal(v2.UpdateUserRequest{EmailAddress: "different"})
 	require.Nil(t, err)
 
-	endpoint := fmt.Sprintf("/api/v2/bloodhound-users/%v", goodUserID)
+	endpoint := fmt.Sprintf("/api/v2/apihound-users/%v", goodUserID)
 	req, err := http.NewRequestWithContext(reqCtx, "PATCH", endpoint, bytes.NewReader(payload))
 	require.Nil(t, err)
 
@@ -2143,7 +2143,7 @@ func TestManagementResource_UpdateUser_SelfDisable(t *testing.T) {
 	})
 	require.Nil(t, err)
 
-	endpoint = fmt.Sprintf("/api/v2/bloodhound-users/%v", userID)
+	endpoint = fmt.Sprintf("/api/v2/apihound-users/%v", userID)
 	req, err = http.NewRequestWithContext(ctx, "PATCH", endpoint, bytes.NewReader(payload))
 	require.Nil(t, err)
 
@@ -2286,7 +2286,7 @@ func TestManagementResource_UpdateUser_LookupActiveSessionsError(t *testing.T) {
 	})
 	require.Nil(t, err)
 
-	endpoint = fmt.Sprintf("/api/v2/bloodhound-users/%v", userID)
+	endpoint = fmt.Sprintf("/api/v2/apihound-users/%v", userID)
 	req, err = http.NewRequestWithContext(ctx, "PATCH", endpoint, bytes.NewReader(payload))
 	require.Nil(t, err)
 
@@ -2369,7 +2369,7 @@ func TestManagementResource_UpdateUser_DBError(t *testing.T) {
 	payload, err = json.Marshal(v2.UpdateUserRequest{})
 	require.Nil(t, err)
 
-	endpoint = fmt.Sprintf("/api/v2/bloodhound-users/%v", userID)
+	endpoint = fmt.Sprintf("/api/v2/apihound-users/%v", userID)
 	req, err = http.NewRequestWithContext(ctx, "PATCH", endpoint, bytes.NewReader(payload))
 	require.Nil(t, err)
 
@@ -2405,7 +2405,7 @@ func TestManagementResource_GetUser(t *testing.T) {
 			buildRequest: func() *http.Request {
 				return &http.Request{
 					URL: &url.URL{
-						Path: "/api/v2/bloodhound-users/invalid",
+						Path: "/api/v2/apihound-users/invalid",
 					},
 					Method: http.MethodGet,
 				}
@@ -2422,7 +2422,7 @@ func TestManagementResource_GetUser(t *testing.T) {
 			buildRequest: func() *http.Request {
 				return &http.Request{
 					URL: &url.URL{
-						Path: "/api/v2/bloodhound-users/00000000-0000-0000-0000-000000000001",
+						Path: "/api/v2/apihound-users/00000000-0000-0000-0000-000000000001",
 					},
 					Method: http.MethodGet,
 				}
@@ -2446,7 +2446,7 @@ func TestManagementResource_GetUser(t *testing.T) {
 			buildRequest: func() *http.Request {
 				return &http.Request{
 					URL: &url.URL{
-						Path: "/api/v2/bloodhound-users/00000000-0000-0000-0000-000000000001",
+						Path: "/api/v2/apihound-users/00000000-0000-0000-0000-000000000001",
 					},
 					Method: http.MethodGet,
 				}
@@ -2493,7 +2493,7 @@ func TestManagementResource_GetUser(t *testing.T) {
 			resources := auth.NewManagementResource(config.Configuration{}, mocks.mockDatabase, authz.NewAuthorizer(mocks.mockDatabase), api.NewAuthenticator(config.Configuration{}, mocks.mockDatabase, nil), nil, nil)
 
 			router := mux.NewRouter()
-			router.HandleFunc(fmt.Sprintf("/api/v2/bloodhound-users/{%s}", api.URIPathVariableUserID), resources.GetUser).Methods(request.Method)
+			router.HandleFunc(fmt.Sprintf("/api/v2/apihound-users/{%s}", api.URIPathVariableUserID), resources.GetUser).Methods(request.Method)
 			router.ServeHTTP(response, request)
 
 			status, header, body := test.ProcessResponse(t, response)
@@ -2587,7 +2587,7 @@ func TestManagementResource_GetSelf(t *testing.T) {
 
 			response := httptest.NewRecorder()
 
-			resources := auth.NewManagementResource(config.Configuration{}, &database.BloodhoundDB{}, authz.NewAuthorizer(&database.BloodhoundDB{}), api.NewAuthenticator(config.Configuration{}, &database.BloodhoundDB{}, nil), nil, nil)
+			resources := auth.NewManagementResource(config.Configuration{}, &database.ApihoundDB{}, authz.NewAuthorizer(&database.ApihoundDB{}), api.NewAuthenticator(config.Configuration{}, &database.ApihoundDB{}, nil), nil, nil)
 
 			router := mux.NewRouter()
 			router.HandleFunc(request.URL.Path, resources.GetSelf).Methods(request.Method)
@@ -2606,7 +2606,7 @@ func TestManagementResource_DeleteUser_BadUserID(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 
-	endpoint := "/api/v2/bloodhound-users"
+	endpoint := "/api/v2/apihound-users"
 	userID := "badUserID"
 
 	resources, _, _ := apitest.NewAuthManagementResource(mockCtrl)
@@ -2628,7 +2628,7 @@ func TestManagementResource_DeleteUser_BadUserID(t *testing.T) {
 func TestManagementResource_DeleteUser_UserNotFound(t *testing.T) {
 	var (
 		mockCtrl = gomock.NewController(t)
-		endpoint = "/api/v2/bloodhound-users"
+		endpoint = "/api/v2/apihound-users"
 	)
 	defer mockCtrl.Finish()
 
@@ -2655,7 +2655,7 @@ func TestManagementResource_DeleteUser_UserNotFound(t *testing.T) {
 func TestManagementResource_DeleteUser_UserBhCtxNotFound(t *testing.T) {
 	var (
 		mockCtrl = gomock.NewController(t)
-		endpoint = "/api/v2/bloodhound-users"
+		endpoint = "/api/v2/apihound-users"
 	)
 
 	defer mockCtrl.Finish()
@@ -2694,7 +2694,7 @@ func TestManagementResource_DeleteUser_UserCannotSelfDelete(t *testing.T) {
 				ID: 1,
 			},
 		}
-		endpoint = "/api/v2/bloodhound-users"
+		endpoint = "/api/v2/apihound-users"
 	)
 
 	defer mockCtrl.Finish()
@@ -2732,7 +2732,7 @@ func TestManagementResource_DeleteUser_GetUserError(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 
-	endpoint := "/api/v2/bloodhound-users"
+	endpoint := "/api/v2/apihound-users"
 
 	userID, err := uuid.NewV4()
 	require.Nil(t, err)
@@ -2762,7 +2762,7 @@ func TestManagementResource_DeleteUser_DeleteUserError(t *testing.T) {
 				ID: 1,
 			},
 		}
-		endpoint = "/api/v2/bloodhound-users"
+		endpoint = "/api/v2/apihound-users"
 	)
 
 	defer mockCtrl.Finish()
@@ -2806,7 +2806,7 @@ func TestManagementResource_DeleteUser_Success(t *testing.T) {
 				ID: 1,
 			},
 		}
-		endpoint = "/api/v2/bloodhound-users"
+		endpoint = "/api/v2/apihound-users"
 	)
 	defer mockCtrl.Finish()
 
@@ -2917,7 +2917,7 @@ func TestManagementResource_UpdateUser_Success(t *testing.T) {
 	payload, err = json.Marshal(updateUserRequest)
 	require.Nil(t, err)
 
-	endpoint = fmt.Sprintf("/api/v2/bloodhound-users/%v", userID)
+	endpoint = fmt.Sprintf("/api/v2/apihound-users/%v", userID)
 	req, err = http.NewRequestWithContext(ctx, "PATCH", endpoint, bytes.NewReader(payload))
 	require.Nil(t, err)
 
@@ -3151,7 +3151,7 @@ func TestManagementResource_UpdateUser_ETAC(t *testing.T) {
 			// update user
 			updatePayload, err := json.Marshal(tc.updateRequest)
 			require.Nil(t, err)
-			updateEndpoint := fmt.Sprintf("/api/v2/bloodhound-users/%v", goodUserID)
+			updateEndpoint := fmt.Sprintf("/api/v2/apihound-users/%v", goodUserID)
 			req, err = http.NewRequestWithContext(ctx, http.MethodPatch, updateEndpoint, bytes.NewReader(updatePayload))
 			require.Nil(t, err)
 			req = mux.SetURLVars(req, map[string]string{api.URIPathVariableUserID: goodUserID.String()})
@@ -4097,7 +4097,7 @@ func TestManagementResource_EnrollMFA(t *testing.T) {
 			buildRequest: func() *http.Request {
 				request := &http.Request{
 					URL: &url.URL{
-						Path: "/api/v2/bloodhound-users/{%s}/mfa",
+						Path: "/api/v2/apihound-users/{%s}/mfa",
 					},
 					Method: http.MethodPost,
 				}
@@ -4118,7 +4118,7 @@ func TestManagementResource_EnrollMFA(t *testing.T) {
 			buildRequest: func() *http.Request {
 				request := &http.Request{
 					URL: &url.URL{
-						Path: "/api/v2/bloodhound-users/id/mfa",
+						Path: "/api/v2/apihound-users/id/mfa",
 					},
 					Method:   http.MethodPost,
 					PostForm: url.Values{},
@@ -4142,7 +4142,7 @@ func TestManagementResource_EnrollMFA(t *testing.T) {
 				header.Set(headers.ContentType.String(), "invalid")
 				request := &http.Request{
 					URL: &url.URL{
-						Path: "/api/v2/bloodhound-users/00000000-0000-0000-0000-000000000000/mfa",
+						Path: "/api/v2/apihound-users/00000000-0000-0000-0000-000000000000/mfa",
 					},
 					Method:   http.MethodPost,
 					Header:   header,
@@ -4167,7 +4167,7 @@ func TestManagementResource_EnrollMFA(t *testing.T) {
 				header.Set(headers.ContentType.String(), mediatypes.ApplicationJson.String())
 				request := &http.Request{
 					URL: &url.URL{
-						Path: "/api/v2/bloodhound-users/00000000-0000-0000-0000-000000000000/mfa",
+						Path: "/api/v2/apihound-users/00000000-0000-0000-0000-000000000000/mfa",
 					},
 					Method:   http.MethodPost,
 					Header:   header,
@@ -4192,7 +4192,7 @@ func TestManagementResource_EnrollMFA(t *testing.T) {
 				header.Set(headers.ContentType.String(), mediatypes.ApplicationJson.String())
 				request := &http.Request{
 					URL: &url.URL{
-						Path: "/api/v2/bloodhound-users/00000000-0000-0000-0000-000000000000/mfa",
+						Path: "/api/v2/apihound-users/00000000-0000-0000-0000-000000000000/mfa",
 					},
 					Method:   http.MethodPost,
 					Body:     io.NopCloser(bytes.NewReader([]byte(`{"secret":"valid"}`))),
@@ -4220,7 +4220,7 @@ func TestManagementResource_EnrollMFA(t *testing.T) {
 				header.Set(headers.ContentType.String(), mediatypes.ApplicationJson.String())
 				request := &http.Request{
 					URL: &url.URL{
-						Path: "/api/v2/bloodhound-users/00000000-0000-0000-0000-000000000000/mfa",
+						Path: "/api/v2/apihound-users/00000000-0000-0000-0000-000000000000/mfa",
 					},
 					Method: http.MethodPost,
 					Header: header,
@@ -4254,7 +4254,7 @@ func TestManagementResource_EnrollMFA(t *testing.T) {
 				header.Set(headers.ContentType.String(), mediatypes.ApplicationJson.String())
 				request := &http.Request{
 					URL: &url.URL{
-						Path: "/api/v2/bloodhound-users/00000000-0000-0000-0000-000000000000/mfa",
+						Path: "/api/v2/apihound-users/00000000-0000-0000-0000-000000000000/mfa",
 					},
 					Method:   http.MethodPost,
 					Header:   header,
@@ -4292,7 +4292,7 @@ func TestManagementResource_EnrollMFA(t *testing.T) {
 				header.Set(headers.ContentType.String(), mediatypes.ApplicationJson.String())
 				request := &http.Request{
 					URL: &url.URL{
-						Path: "/api/v2/bloodhound-users/00000000-0000-0000-0000-000000000000/mfa",
+						Path: "/api/v2/apihound-users/00000000-0000-0000-0000-000000000000/mfa",
 					},
 					Method:   http.MethodPost,
 					Header:   header,
@@ -4335,7 +4335,7 @@ func TestManagementResource_EnrollMFA(t *testing.T) {
 				}
 				request := &http.Request{
 					URL: &url.URL{
-						Path: "/api/v2/bloodhound-users/00000000-0000-0000-0000-000000000000/mfa",
+						Path: "/api/v2/apihound-users/00000000-0000-0000-0000-000000000000/mfa",
 					},
 					Method: http.MethodPost,
 					Header: header,
@@ -4378,7 +4378,7 @@ func TestManagementResource_EnrollMFA(t *testing.T) {
 				}
 				request := &http.Request{
 					URL: &url.URL{
-						Path: "/api/v2/bloodhound-users/00000000-0000-0000-0000-000000000000/mfa",
+						Path: "/api/v2/apihound-users/00000000-0000-0000-0000-000000000000/mfa",
 					},
 					Method:   http.MethodPost,
 					Header:   header,
@@ -4424,7 +4424,7 @@ func TestManagementResource_EnrollMFA(t *testing.T) {
 				}
 				request := &http.Request{
 					URL: &url.URL{
-						Path: "/api/v2/bloodhound-users/00000000-0000-0000-0000-000000000000/mfa",
+						Path: "/api/v2/apihound-users/00000000-0000-0000-0000-000000000000/mfa",
 					},
 					Method:   http.MethodPost,
 					Header:   header,
@@ -4480,7 +4480,7 @@ func TestManagementResource_EnrollMFA(t *testing.T) {
 			}, mocks.mockDatabase, nil), nil, nil)
 
 			router := mux.NewRouter()
-			router.HandleFunc(fmt.Sprintf("/api/v2/bloodhound-users/{%s}/mfa", api.URIPathVariableUserID), resources.EnrollMFA).Methods(request.Method)
+			router.HandleFunc(fmt.Sprintf("/api/v2/apihound-users/{%s}/mfa", api.URIPathVariableUserID), resources.EnrollMFA).Methods(request.Method)
 			router.ServeHTTP(response, request)
 
 			status, header, body := test.ProcessResponse(t, response)

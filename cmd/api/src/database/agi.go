@@ -23,12 +23,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/specterops/bloodhound/cmd/api/src/database/types"
-	"github.com/specterops/bloodhound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/database/types"
+	"github.com/specterops/apihound/cmd/api/src/model"
 	"gorm.io/gorm"
 )
 
-func (s *BloodhoundDB) CreateAssetGroup(ctx context.Context, name, tag string, systemGroup bool) (model.AssetGroup, error) {
+func (s *ApihoundDB) CreateAssetGroup(ctx context.Context, name, tag string, systemGroup bool) (model.AssetGroup, error) {
 	var (
 		assetGroup = model.AssetGroup{
 			Name:        name,
@@ -59,7 +59,7 @@ func (s *BloodhoundDB) CreateAssetGroup(ctx context.Context, name, tag string, s
 	return assetGroup, err
 }
 
-func (s *BloodhoundDB) UpdateAssetGroup(ctx context.Context, assetGroup model.AssetGroup) error {
+func (s *ApihoundDB) UpdateAssetGroup(ctx context.Context, assetGroup model.AssetGroup) error {
 	var (
 		auditEntry = model.AuditEntry{
 			Action: model.AuditLogActionUpdateAssetGroup,
@@ -72,7 +72,7 @@ func (s *BloodhoundDB) UpdateAssetGroup(ctx context.Context, assetGroup model.As
 	})
 }
 
-func (s *BloodhoundDB) DeleteAssetGroup(ctx context.Context, assetGroup model.AssetGroup) error {
+func (s *ApihoundDB) DeleteAssetGroup(ctx context.Context, assetGroup model.AssetGroup) error {
 	var (
 		auditEntry = model.AuditEntry{
 			Action: model.AuditLogActionDeleteAssetGroup,
@@ -85,7 +85,7 @@ func (s *BloodhoundDB) DeleteAssetGroup(ctx context.Context, assetGroup model.As
 	})
 }
 
-func (s *BloodhoundDB) GetAssetGroup(ctx context.Context, id int32) (model.AssetGroup, error) {
+func (s *ApihoundDB) GetAssetGroup(ctx context.Context, id int32) (model.AssetGroup, error) {
 	var assetGroup model.AssetGroup
 	if result := s.preload(model.AssetGroupAssociations()).WithContext(ctx).First(&assetGroup, id); errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		return assetGroup, ErrNotFound
@@ -102,7 +102,7 @@ func (s *BloodhoundDB) GetAssetGroup(ctx context.Context, id int32) (model.Asset
 	}
 }
 
-func (s *BloodhoundDB) GetAllAssetGroups(ctx context.Context, order string, filter model.SQLFilter) (model.AssetGroups, error) {
+func (s *ApihoundDB) GetAllAssetGroups(ctx context.Context, order string, filter model.SQLFilter) (model.AssetGroups, error) {
 	var (
 		assetGroups model.AssetGroups
 		result      = s.preload(model.AssetGroupAssociations()).WithContext(ctx)
@@ -134,11 +134,11 @@ func (s *BloodhoundDB) GetAllAssetGroups(ctx context.Context, order string, filt
 	return assetGroups, nil
 }
 
-func (s *BloodhoundDB) SweepAssetGroupCollections(ctx context.Context) {
+func (s *ApihoundDB) SweepAssetGroupCollections(ctx context.Context) {
 	s.db.WithContext(ctx).Where("created_at < now() - INTERVAL '30 DAYS'").Delete(&model.AssetGroupCollection{})
 }
 
-func (s *BloodhoundDB) GetAssetGroupCollections(ctx context.Context, assetGroupID int32, order string, filter model.SQLFilter) (model.AssetGroupCollections, error) {
+func (s *ApihoundDB) GetAssetGroupCollections(ctx context.Context, assetGroupID int32, order string, filter model.SQLFilter) (model.AssetGroupCollections, error) {
 	var (
 		collections model.AssetGroupCollections
 		result      *gorm.DB
@@ -156,7 +156,7 @@ func (s *BloodhoundDB) GetAssetGroupCollections(ctx context.Context, assetGroupI
 	return collections, CheckError(result)
 }
 
-func (s *BloodhoundDB) GetLatestAssetGroupCollection(ctx context.Context, assetGroupID int32) (model.AssetGroupCollection, error) {
+func (s *ApihoundDB) GetLatestAssetGroupCollection(ctx context.Context, assetGroupID int32) (model.AssetGroupCollection, error) {
 	var (
 		latestCollection model.AssetGroupCollection
 		result           = s.preload(model.AssetGroupCollectionAssociations()).
@@ -172,7 +172,7 @@ func (s *BloodhoundDB) GetLatestAssetGroupCollection(ctx context.Context, assetG
 	return latestCollection, result.Error
 }
 
-func (s *BloodhoundDB) GetTimeRangedAssetGroupCollections(ctx context.Context, assetGroupID int32, from int64, to int64, order string) (model.AssetGroupCollections, error) {
+func (s *ApihoundDB) GetTimeRangedAssetGroupCollections(ctx context.Context, assetGroupID int32, from int64, to int64, order string) (model.AssetGroupCollections, error) {
 	var (
 		collections model.AssetGroupCollections
 		result      *gorm.DB
@@ -192,12 +192,12 @@ func (s *BloodhoundDB) GetTimeRangedAssetGroupCollections(ctx context.Context, a
 	return collections, CheckError(result)
 }
 
-func (s *BloodhoundDB) GetAssetGroupSelector(ctx context.Context, id int32) (model.AssetGroupSelector, error) {
+func (s *ApihoundDB) GetAssetGroupSelector(ctx context.Context, id int32) (model.AssetGroupSelector, error) {
 	var assetGroupSelector model.AssetGroupSelector
 	return assetGroupSelector, CheckError(s.db.WithContext(ctx).Find(&assetGroupSelector, id))
 }
 
-func (s *BloodhoundDB) DeleteAssetGroupSelector(ctx context.Context, selector model.AssetGroupSelector) error {
+func (s *ApihoundDB) DeleteAssetGroupSelector(ctx context.Context, selector model.AssetGroupSelector) error {
 	var (
 		auditEntry = model.AuditEntry{
 			Action: model.AuditLogActionDeleteAssetGroupSelector,
@@ -210,14 +210,14 @@ func (s *BloodhoundDB) DeleteAssetGroupSelector(ctx context.Context, selector mo
 	})
 }
 
-func (s *BloodhoundDB) DeleteAssetGroupSelectorsForAssetGroups(ctx context.Context, assetGroupIds []int) error {
+func (s *ApihoundDB) DeleteAssetGroupSelectorsForAssetGroups(ctx context.Context, assetGroupIds []int) error {
 	return CheckError(
 		s.db.WithContext(ctx).Where("asset_group_id IN ?", assetGroupIds).
 			Delete(&model.AssetGroupSelector{}),
 	)
 }
 
-func (s *BloodhoundDB) UpdateAssetGroupSelectors(ctx context.Context, assetGroup model.AssetGroup, selectorSpecs []model.AssetGroupSelectorSpec, systemSelector bool) (model.UpdatedAssetGroupSelectors, error) {
+func (s *ApihoundDB) UpdateAssetGroupSelectors(ctx context.Context, assetGroup model.AssetGroup, selectorSpecs []model.AssetGroupSelectorSpec, systemSelector bool) (model.UpdatedAssetGroupSelectors, error) {
 	var updatedSelectors = model.UpdatedAssetGroupSelectors{}
 
 	err := s.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
@@ -259,7 +259,7 @@ func (s *BloodhoundDB) UpdateAssetGroupSelectors(ctx context.Context, assetGroup
 	return updatedSelectors, err
 }
 
-func (s *BloodhoundDB) CreateAssetGroupCollection(ctx context.Context, collection model.AssetGroupCollection, entries model.AssetGroupCollectionEntries) error {
+func (s *ApihoundDB) CreateAssetGroupCollection(ctx context.Context, collection model.AssetGroupCollection, entries model.AssetGroupCollectionEntries) error {
 	const CreateAssetGroupCollectionQuery = `INSERT INTO "asset_group_collection_entries"
     ("asset_group_collection_id","object_id","node_label","properties","created_at","updated_at")
 	(SELECT * FROM unnest($1::bigint[], $2::text[], $3::text[], $4::jsonb[], $5::timestamp[], $5::timestamp[]));`

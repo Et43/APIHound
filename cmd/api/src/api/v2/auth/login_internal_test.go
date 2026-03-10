@@ -26,21 +26,21 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/specterops/bloodhound/cmd/api/src/database/mocks"
+	"github.com/specterops/apihound/cmd/api/src/database/mocks"
 
-	"github.com/specterops/bloodhound/packages/go/headers"
-	"github.com/specterops/bloodhound/packages/go/mediatypes"
+	"github.com/specterops/apihound/packages/go/headers"
+	"github.com/specterops/apihound/packages/go/mediatypes"
 
 	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 
-	"github.com/specterops/bloodhound/cmd/api/src/api"
-	api_mocks "github.com/specterops/bloodhound/cmd/api/src/api/mocks"
-	"github.com/specterops/bloodhound/cmd/api/src/auth"
-	"github.com/specterops/bloodhound/cmd/api/src/config"
-	"github.com/specterops/bloodhound/cmd/api/src/ctx"
-	"github.com/specterops/bloodhound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/api"
+	api_mocks "github.com/specterops/apihound/cmd/api/src/api/mocks"
+	"github.com/specterops/apihound/cmd/api/src/auth"
+	"github.com/specterops/apihound/cmd/api/src/config"
+	"github.com/specterops/apihound/cmd/api/src/ctx"
+	"github.com/specterops/apihound/cmd/api/src/model"
 )
 
 func TestLoginFailure(t *testing.T) {

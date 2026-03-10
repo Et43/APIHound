@@ -1,0 +1,12 @@
+[Unit]
+Description=APIHound CE
+After=network.target postgresql@17-main.service
+
+[Service]
+Type=simple
+User=apihound
+ExecStart=/usr/lib/apihound/bin/bhapi -configfile /etc/apihound/bhapi.json
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

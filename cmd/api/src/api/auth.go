@@ -35,16 +35,16 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/specterops/bloodhound/cmd/api/src/auth"
-	"github.com/specterops/bloodhound/cmd/api/src/config"
-	"github.com/specterops/bloodhound/cmd/api/src/ctx"
-	"github.com/specterops/bloodhound/cmd/api/src/database"
-	"github.com/specterops/bloodhound/cmd/api/src/database/types"
-	"github.com/specterops/bloodhound/cmd/api/src/model"
-	"github.com/specterops/bloodhound/cmd/api/src/model/appcfg"
-	"github.com/specterops/bloodhound/packages/go/bhlog/attr"
-	"github.com/specterops/bloodhound/packages/go/crypto"
-	"github.com/specterops/bloodhound/packages/go/headers"
+	"github.com/specterops/apihound/cmd/api/src/auth"
+	"github.com/specterops/apihound/cmd/api/src/config"
+	"github.com/specterops/apihound/cmd/api/src/ctx"
+	"github.com/specterops/apihound/cmd/api/src/database"
+	"github.com/specterops/apihound/cmd/api/src/database/types"
+	"github.com/specterops/apihound/cmd/api/src/model"
+	"github.com/specterops/apihound/cmd/api/src/model/appcfg"
+	"github.com/specterops/apihound/packages/go/bhlog/attr"
+	"github.com/specterops/apihound/packages/go/crypto"
+	"github.com/specterops/apihound/packages/go/headers"
 )
 
 var (
@@ -548,8 +548,8 @@ func (s AuthenticatorBase) ValidateBearerToken(ctx context.Context, jwtToken str
 		slog.ErrorContext(ctx, "Error initializing auth context from claims", attr.Error(err))
 		return auth.Context{}, err
 	} else if authContext.Owner == nil {
-		// The above logic is currently used to determine if the token is created from BloodHound. If nil, it was created by BloodHound.
-		slog.DebugContext(ctx, "No owner claim found for token, defaulting to BloodHound provided token")
+		// The above logic is currently used to determine if the token is created from APIHound. If nil, it was created by APIHound.
+		slog.DebugContext(ctx, "No owner claim found for token, defaulting to APIHound provided token")
 		if authContext, err = s.ValidateSession(ctx, claims.ID); err != nil {
 			return auth.Context{}, err
 		} else {
@@ -605,8 +605,8 @@ func (s AuthenticatorBase) ValidateSession(ctx context.Context, claimsID string)
 				Permissions: permissions,
 			}
 
-			// EULA Acceptance does not pertain to Bloodhound Community Edition; this flag is used for Bloodhound Enterprise users.
-			// This value is automatically set to true for Bloodhound Community Edition in the patchEULAAcceptance and CreateUser functions.
+			// EULA Acceptance does not pertain to Apihound Community Edition; this flag is used for Apihound Enterprise users.
+			// This value is automatically set to true for Apihound Community Edition in the patchEULAAcceptance and CreateUser functions.
 		} else if !session.User.EULAAccepted {
 			authContext.PermissionOverrides = auth.PermissionOverrides{
 				Enabled: true,

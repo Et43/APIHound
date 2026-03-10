@@ -1,5 +1,5 @@
 {
-  "name": "bloodhound-ce",
+  "name": "apihound-ce",
   "private": true,
   "workspaces": {
     "packages": [
@@ -8,11 +8,11 @@
     ]
   },
   "scripts": {
-    "dev": "yarn workspace bloodhound-ui dev",
-    "debug": "yarn workspace bloodhound-ui debug",
-    "start": "yarn workspace bloodhound-ui start",
-    "preview": "yarn workspace bloodhound-ui preview",
-    "build": "yarn workspace bloodhound-ui build",
+    "dev": "yarn workspace apihound-ui dev",
+    "debug": "yarn workspace apihound-ui debug",
+    "start": "yarn workspace apihound-ui start",
+    "preview": "yarn workspace apihound-ui preview",
+    "build": "yarn workspace apihound-ui build",
     "test": "yarn workspaces foreach -ptv run test run",
     "check-types": "yarn workspaces foreach -ptv run check-types",
     "lint": "yarn workspaces foreach -ptv run lint",

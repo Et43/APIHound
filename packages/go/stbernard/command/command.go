@@ -24,21 +24,21 @@ import (
 	"os"
 	"strings"
 
-	"github.com/specterops/bloodhound/packages/go/bhlog/level"
-	"github.com/specterops/bloodhound/packages/go/stbernard/command/analysis"
-	"github.com/specterops/bloodhound/packages/go/stbernard/command/audit"
-	"github.com/specterops/bloodhound/packages/go/stbernard/command/builder"
-	"github.com/specterops/bloodhound/packages/go/stbernard/command/cover"
-	"github.com/specterops/bloodhound/packages/go/stbernard/command/deps"
-	"github.com/specterops/bloodhound/packages/go/stbernard/command/envdump"
-	"github.com/specterops/bloodhound/packages/go/stbernard/command/generate"
-	"github.com/specterops/bloodhound/packages/go/stbernard/command/goimports"
-	"github.com/specterops/bloodhound/packages/go/stbernard/command/license"
-	"github.com/specterops/bloodhound/packages/go/stbernard/command/modsync"
-	"github.com/specterops/bloodhound/packages/go/stbernard/command/show"
-	"github.com/specterops/bloodhound/packages/go/stbernard/command/tag"
-	"github.com/specterops/bloodhound/packages/go/stbernard/command/tester"
-	"github.com/specterops/bloodhound/packages/go/stbernard/environment"
+	"github.com/specterops/apihound/packages/go/bhlog/level"
+	"github.com/specterops/apihound/packages/go/stbernard/command/analysis"
+	"github.com/specterops/apihound/packages/go/stbernard/command/audit"
+	"github.com/specterops/apihound/packages/go/stbernard/command/builder"
+	"github.com/specterops/apihound/packages/go/stbernard/command/cover"
+	"github.com/specterops/apihound/packages/go/stbernard/command/deps"
+	"github.com/specterops/apihound/packages/go/stbernard/command/envdump"
+	"github.com/specterops/apihound/packages/go/stbernard/command/generate"
+	"github.com/specterops/apihound/packages/go/stbernard/command/goimports"
+	"github.com/specterops/apihound/packages/go/stbernard/command/license"
+	"github.com/specterops/apihound/packages/go/stbernard/command/modsync"
+	"github.com/specterops/apihound/packages/go/stbernard/command/show"
+	"github.com/specterops/apihound/packages/go/stbernard/command/tag"
+	"github.com/specterops/apihound/packages/go/stbernard/command/tester"
+	"github.com/specterops/apihound/packages/go/stbernard/environment"
 )
 
 // CommandRunner is an interface for commands, allowing commands to implement the minimum
@@ -168,7 +168,7 @@ func usageGenerator(flagset *flag.FlagSet, commands []command) usageFunc {
 		}
 
 		w := flag.CommandLine.Output()
-		fmt.Fprint(w, "A BloodHound Swiss Army Knife\n\nUsage:  stbernard [OPTIONS] COMMAND\n\nOptions:\n")
+		fmt.Fprint(w, "A APIHound Swiss Army Knife\n\nUsage:  stbernard [OPTIONS] COMMAND\n\nOptions:\n")
 
 		flagset.VisitAll(func(f *flag.Flag) {
 			padding := strings.Repeat(" ", longestCmdLen-len(f.Name)-1)

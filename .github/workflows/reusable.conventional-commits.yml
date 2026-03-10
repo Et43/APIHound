@@ -52,7 +52,7 @@ jobs:
             Howdy! Thank you for opening this pull request 🙇
 
             It looks like your pull request title needs some adjustment.
-            We require pull request titles to follow the Conventional Commits specification as outlined in our [documentation](https://github.com/SpecterOps/BloodHound/blob/main/rfc/bh-rfc-2.md).
+            We require pull request titles to follow the Conventional Commits specification as outlined in our [documentation](https://github.com/SpecterOps/APIHound/blob/main/rfc/bh-rfc-2.md).
             Please review the required format and update your pull request title accordingly.
             Thank you!
 
@@ -123,7 +123,7 @@ jobs:
 
               local ISSUE_NUMBER="${REFERENCE:1}" # remove "#" from the start of the string
 
-              local URL="https://api.github.com/repos/SpecterOps/BloodHound/issues/${ISSUE_NUMBER}"
+              local URL="https://api.github.com/repos/SpecterOps/APIHound/issues/${ISSUE_NUMBER}"
 
               # curl for issue info with github api
               local ISSUE_RESPONSE=$(curl -L \

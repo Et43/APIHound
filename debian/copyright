@@ -1,7 +1,7 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 
-Upstream-Name: BloodHound
-Source: https://github.com/SpecterOps/BloodHound
+Upstream-Name: APIHound
+Source: https://github.com/specterops/apihound
 
 Files: *
 Copyright: 2023-2025 Specter Ops, Inc.
