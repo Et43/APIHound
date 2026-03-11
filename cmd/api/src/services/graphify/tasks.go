@@ -20,14 +20,17 @@ import (
 	"archive/zip"
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"io/fs"
 	"log/slog"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/specterops/bloodhound/cmd/api/src/model"
 	"github.com/specterops/bloodhound/cmd/api/src/model/appcfg"
+	"github.com/specterops/bloodhound/cmd/api/src/services/apiparser"
 	"github.com/specterops/bloodhound/packages/go/bhlog/attr"
 	"github.com/specterops/bloodhound/packages/go/bhlog/measure"
 	"github.com/specterops/bloodhound/packages/go/bomenc"
@@ -307,40 +310,58 @@ func (s *GraphifyService) ProcessTasks(updateJob UpdateJobFunc) []int64 {
 	return apiOnlyJobIDs
 }
 
-// processAPITasks handles API environment ingest tasks. For now these files are
-// acknowledged, their job status is updated, and the task is cleared. Actual
-// processing of API data will be added in a future iteration.
-// processAPITasks handles API environment ingest tasks. It returns the set of
-// job IDs that are API-only (i.e. no graph tasks share the same job). The
-// graphJobIDSet argument contains job IDs that also have graph tasks in the
-// current batch so that mixed jobs are excluded.
+// processAPITasks handles API environment ingest tasks. It parses each
+// uploaded API specification (OpenAPI 3.x / Swagger 2.0), converts it into
+// graph nodes and edges, and writes them to the graph database through the
+// existing OpenGraph batch pipeline.
+//
+// It returns the set of job IDs that are API-only (i.e. no graph tasks share
+// the same job). The graphJobIDSet argument contains job IDs that also have
+// graph tasks in the current batch so that mixed jobs are excluded.
 func (s *GraphifyService) processAPITasks(tasks []model.IngestTask, updateJob UpdateJobFunc, graphJobIDSet map[int64]struct{}) []int64 {
 	slog.InfoContext(s.ctx,
 		"Processing API ingest tasks",
 		slog.Int("task_count", len(tasks)),
 	)
 
-	apiJobIDSet := make(map[int64]struct{})
+	var (
+		apiJobIDSet = make(map[int64]struct{})
+		sourceKind  = graph.StringKind(apiparser.KindAPIBase)
+	)
+
+	// Register the API source kind so dawgs knows about it.
+	if err := s.RegisterSourceKind(s.ctx)(sourceKind); err != nil {
+		slog.ErrorContext(s.ctx,
+			"Failed to register API source kind",
+			attr.Error(err),
+		)
+	}
 
 	for _, task := range tasks {
-		slog.InfoContext(s.ctx,
-			"API ingest task stored (processing not yet implemented)",
-			slog.Int64("task_id", task.ID),
-			slog.String("file", task.OriginalFileName),
-		)
+		fileData, taskErrors := s.processAPISingleTask(task, sourceKind)
 
-		// Report the file as successfully ingested to the job tracker
-		fileData := []IngestFileData{
+		// Report results to the job tracker
+		ingestFileData := []IngestFileData{
 			{
 				Name:   task.OriginalFileName,
 				Path:   task.StoredFileName,
-				Errors: []string{},
+				Errors: taskErrors,
 			},
 		}
 
 		jobID := task.JobId.ValueOrZero()
-		updateJob(jobID, fileData)
+		updateJob(jobID, ingestFileData)
 		s.clearFileTask(task)
+
+		if len(fileData) > 0 {
+			slog.InfoContext(s.ctx,
+				"API ingest task processed",
+				slog.Int64("task_id", task.ID),
+				slog.String("file", task.OriginalFileName),
+				slog.Int("nodes", fileData[0]),
+				slog.Int("edges", fileData[1]),
+			)
+		}
 
 		// Track API-only job IDs (exclude jobs that also have graph tasks)
 		if _, hasGraphTasks := graphJobIDSet[jobID]; !hasGraphTasks {
@@ -358,6 +379,84 @@ func (s *GraphifyService) processAPITasks(tasks []model.IngestTask, updateJob Up
 		apiOnlyJobIDs = append(apiOnlyJobIDs, jobID)
 	}
 	return apiOnlyJobIDs
+}
+
+// processAPISingleTask parses a single API spec file, converts it to graph
+// nodes/edges, and writes them via a dawgs batch operation. It returns a
+// two-element slice [nodeCount, edgeCount] on success, plus any error strings.
+func (s *GraphifyService) processAPISingleTask(task model.IngestTask, sourceKind graph.Kind) ([]int, []string) {
+	// Open the stored file
+	file, err := os.Open(task.StoredFileName)
+	if err != nil {
+		errMsg := fmt.Sprintf("failed to open API file: %v", err)
+		slog.ErrorContext(s.ctx, errMsg, slog.Int64("task_id", task.ID))
+		return nil, []string{errMsg}
+	}
+	defer func() {
+		file.Close()
+		if removeErr := os.Remove(task.StoredFileName); removeErr != nil && !errors.Is(removeErr, fs.ErrNotExist) {
+			slog.WarnContext(s.ctx, fmt.Sprintf("Failed to clean up API file: %v", removeErr))
+		}
+	}()
+
+	// Parse the API specification
+	apiDoc, err := apiparser.Parse(file)
+	if err != nil {
+		errMsg := fmt.Sprintf("failed to parse API spec: %v", err)
+		slog.ErrorContext(s.ctx, errMsg, slog.Int64("task_id", task.ID))
+		return nil, []string{errMsg}
+	}
+
+	// Use the original filename (without extension) as the service identifier
+	// so that re-uploading the same file updates the same nodes.
+	serviceID := strings.TrimSuffix(task.OriginalFileName, ".json")
+	if serviceID == "" {
+		serviceID = fmt.Sprintf("api-task-%d", task.ID)
+	}
+
+	// Convert the parsed doc to graph nodes and edges
+	convertResult := apiparser.Convert(apiDoc, serviceID)
+
+	if len(convertResult.Nodes) == 0 {
+		slog.WarnContext(s.ctx, "API spec produced zero graph nodes",
+			slog.Int64("task_id", task.ID),
+			slog.String("file", task.OriginalFileName),
+		)
+		return []int{0, 0}, nil
+	}
+
+	// Write nodes and edges to the graph database via a batch operation, using
+	// the same OpenGraph pipeline that handles generic ingest payloads.
+	var batchErrors []string
+	batchErr := s.graphdb.BatchOperation(s.ctx, func(batch graph.Batch) error {
+		ingestContext := s.NewIngestContext(s.ctx, time.Now().UTC(), false)
+		ingestContext.BindBatchUpdater(batch)
+
+		// Convert ein.GenericNode → ConvertedData via the existing convertor
+		var convertedData ConvertedData
+		for _, node := range convertResult.Nodes {
+			if err := ConvertGenericNode(node, &convertedData); err != nil {
+				batchErrors = append(batchErrors, err.Error())
+				continue
+			}
+		}
+		for _, edge := range convertResult.Edges {
+			if err := ConvertGenericEdge(edge, &convertedData); err != nil {
+				batchErrors = append(batchErrors, err.Error())
+				continue
+			}
+		}
+
+		return IngestGenericData(ingestContext, sourceKind, convertedData)
+	})
+
+	if batchErr != nil {
+		errMsg := fmt.Sprintf("batch write failed: %v", batchErr)
+		slog.ErrorContext(s.ctx, errMsg, slog.Int64("task_id", task.ID))
+		batchErrors = append(batchErrors, errMsg)
+	}
+
+	return []int{len(convertResult.Nodes), len(convertResult.Edges)}, batchErrors
 }
 
 // processGraphTasks runs the existing AD/Azure graph ingestion pipeline for

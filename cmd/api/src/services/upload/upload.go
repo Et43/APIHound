@@ -44,6 +44,8 @@ func SaveIngestFile(location string, request *http.Request, validator IngestVali
 
 	// When the ingest source is API, skip schema validation entirely and
 	// persist the file as-is using the dedicated API file type.
+	//
+	// THIS NEEDS TO BE REMOVED LATER ON!
 	if ingestSource == model.IngestSourceAPI {
 		if tempFileName, err := WriteAndValidateFile(fileData, location, WriteWithoutValidation); err != nil {
 			return IngestTaskParams{}, err
