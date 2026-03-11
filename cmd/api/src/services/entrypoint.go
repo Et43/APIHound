@@ -38,6 +38,7 @@ import (
 	"github.com/specterops/bloodhound/cmd/api/src/migrations"
 	"github.com/specterops/bloodhound/cmd/api/src/model/appcfg"
 	"github.com/specterops/bloodhound/cmd/api/src/queries"
+	"github.com/specterops/bloodhound/cmd/api/src/services/apiparser"
 	"github.com/specterops/bloodhound/cmd/api/src/services/dogtags"
 	"github.com/specterops/bloodhound/cmd/api/src/services/opengraphschema"
 	"github.com/specterops/bloodhound/cmd/api/src/services/upload"
@@ -98,6 +99,8 @@ func Entrypoint(ctx context.Context, cfg config.Configuration, connections boots
 			return nil, fmt.Errorf("graph migration error: %w", err)
 		} else if err := bootstrap.PopulateExtensionData(ctx, connections.RDMS); err != nil {
 			return nil, fmt.Errorf("extensions data population error: %w", err)
+		} else if err := registerAPIHoundExtension(ctx, connections.RDMS, connections.Graph); err != nil {
+			return nil, fmt.Errorf("apihound extension registration error: %w", err)
 		}
 	} else if err := connections.Graph.SetDefaultGraph(ctx, schema.DefaultGraph()); err != nil {
 		return nil, fmt.Errorf("no default graph found but migrations are disabled per configuration: %w", err)
@@ -163,4 +166,45 @@ func Entrypoint(ctx context.Context, cfg config.Configuration, connections boots
 			datapipeDaemon,
 		}, nil
 	}
+}
+
+// registerAPIHoundExtension registers the APIHound OpenGraph extension on
+// startup so that API documentation node and edge kinds are recognised by the
+// pathfinding engine and graph explorer UI without any manual setup.
+//
+// It performs three steps:
+//  1. Upserts the extension (node kinds + relationship kinds) via the database
+//     layer directly, bypassing the service-layer namespace-prefix validation
+//     because our kinds are built-in to the fork rather than user-managed.
+//  2. Enables the opengraph_extension_management feature flag so the
+//     pathfinding handler includes custom edge kinds in its queries.
+//  3. Refreshes the in-memory graph kind maps so new kinds are immediately
+//     available to the graph database driver.
+func registerAPIHoundExtension(ctx context.Context, bloodhoundDB *database.BloodhoundDB, graphDB *graph.DatabaseSwitch) error {
+	extensionInput := apiparser.BuildExtensionInput()
+
+	// Upsert the extension directly through the database layer.
+	if _, err := bloodhoundDB.UpsertOpenGraphExtension(ctx, extensionInput); err != nil {
+		return fmt.Errorf("failed to upsert APIHound extension: %w", err)
+	}
+
+	// Enable the OpenGraph extension management feature flag so the
+	// pathfinding code path includes registered extension edges.
+	if flag, err := bloodhoundDB.GetFlagByKey(ctx, appcfg.FeatureOpenGraphExtensionManagement); err != nil {
+		return fmt.Errorf("failed to get opengraph feature flag: %w", err)
+	} else if !flag.Enabled {
+		flag.Enabled = true
+		if err := bloodhoundDB.SetFlag(ctx, flag); err != nil {
+			return fmt.Errorf("failed to enable opengraph feature flag: %w", err)
+		}
+	}
+
+	// Refresh the in-memory kind maps so the graph driver recognises the
+	// newly registered kinds immediately.
+	if err := graphDB.RefreshKinds(ctx); err != nil {
+		return fmt.Errorf("failed to refresh graph kinds: %w", err)
+	}
+
+	slog.InfoContext(ctx, "APIHound OpenGraph extension registered successfully")
+	return nil
 }
