@@ -59,6 +59,7 @@ func BuildExtensionInput() model.GraphExtensionInput {
 			{Name: KindAPISchema, DisplayName: "API Schema", Description: "A data schema (request body or response)"},
 			{Name: KindAPISecurityScheme, DisplayName: "API Security Scheme", Description: "An authentication / authorisation mechanism"},
 			{Name: KindAPITag, DisplayName: "API Tag", Description: "A logical grouping tag"},
+			{Name: KindAPIServer, DisplayName: "API Server", Description: "A server / base URL that hosts an API", IsDisplayKind: true},
 		},
 
 		RelationshipKindsInput: model.RelationshipsInput{
@@ -69,6 +70,8 @@ func BuildExtensionInput() model.GraphExtensionInput {
 			{Name: EdgeRequiresSecurity, Description: "Endpoint requires this security scheme", IsTraversable: true},
 			{Name: EdgeTaggedWith, Description: "Endpoint is tagged with this tag", IsTraversable: true},
 			{Name: EdgeReferencesSchema, Description: "Schema references another schema", IsTraversable: true},
+			{Name: EdgeHostedOn, Description: "Service is hosted on this server", IsTraversable: true},
+			{Name: EdgeCallsExternalAPI, Description: "Endpoint calls or consumes an external API server", IsTraversable: true},
 		},
 	}
 }

@@ -55,28 +55,27 @@ type APIServer struct {
 
 // APIEndpoint represents a single API operation (method + path combination).
 type APIEndpoint struct {
-	// Path is the URL path, e.g. "/users/{id}".
+	// endpoint path
 	Path string
 
-	// Method is the HTTP method (GET, POST, etc.), uppercased.
+	// Accepted HTTP methods
 	Method string
 
-	// OperationID is the optional unique identifier for the operation.
+	// OperationID - will be useful later on for relationship matching
 	OperationID string
 
-	// Summary is the short summary of the operation.
+	// DEBUG PARAM remove me
 	Summary string
 
-	// Description is the longer description.
 	Description string
 
-	// Tags are the tag names associated with this operation.
+	// OpenAPI doc tags associated with endpoint
 	Tags []string
 
-	// Parameters are the parameters for this operation (path, query, header, cookie).
+	// request params (headers, cookies etc...)
 	Parameters []APIParameter
 
-	// RequestBodySchemaRef is a reference to the request body schema, if any.
+	// request body schema if POST/PUT/PATCH
 	RequestBodySchemaRef string
 
 	// ResponseSchemaRefs maps status codes to their response schema references.
@@ -87,6 +86,10 @@ type APIEndpoint struct {
 
 	// Deprecated indicates whether this operation is marked as deprecated.
 	Deprecated bool
+
+	// ExternalDocsURL is the URL from the operation's externalDocs object.
+	// When set, it indicates this endpoint consumes or references an external API.
+	ExternalDocsURL string
 }
 
 // APIParameter represents a single parameter for an API endpoint.

@@ -20,3 +20,7 @@ node_modules
 # misc.
 ./tools
 ./cmd/api/src/api/static/assets/*
+
+# go workspace (local dev only)
+go.work
+go.work.sum

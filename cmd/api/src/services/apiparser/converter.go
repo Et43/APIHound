@@ -35,6 +35,7 @@ const (
 	KindAPISchema         = "APISchema"
 	KindAPISecurityScheme = "APISecurityScheme"
 	KindAPITag            = "APITag"
+	KindAPIServer         = "APIServer"
 
 	// Edge kinds
 	EdgeHasEndpoint       = "HasEndpoint"
@@ -44,6 +45,8 @@ const (
 	EdgeRequiresSecurity  = "RequiresSecurity"
 	EdgeTaggedWith        = "TaggedWith"
 	EdgeReferencesSchema  = "ReferencesSchema"
+	EdgeHostedOn          = "HostedOn"
+	EdgeCallsExternalAPI  = "CallsExternalAPI"
 )
 
 // ConvertResult holds the generic nodes and edges produced from an API document,
@@ -75,6 +78,32 @@ func Convert(doc APIDoc, serviceID string) ConvertResult {
 			"spec_version": doc.SpecVersion,
 		},
 	})
+
+	// Servers — objectIDs are based purely on normalised URL so the same
+	// server from different specs converges to a single node in the graph.
+	for _, server := range doc.Servers {
+		normalizedURL := normalizeServerURL(server.URL)
+		serverOID := objectID("server-url", normalizedURL)
+
+		result.Nodes = append(result.Nodes, ein.GenericNode{
+			ID:    serverOID,
+			Kinds: []string{KindAPIServer, KindAPIBase},
+			Properties: map[string]any{
+				"objectid":    serverOID,
+				"name":        server.URL,
+				"url":         server.URL,
+				"description": server.Description,
+			},
+		})
+
+		// Service → Server edge
+		result.Edges = append(result.Edges, ein.GenericEdge{
+			Start:      ein.EdgeEndpoint{Value: serviceObjectID},
+			End:        ein.EdgeEndpoint{Value: serverOID},
+			Kind:       EdgeHostedOn,
+			Properties: map[string]any{},
+		})
+	}
 
 	// Tags
 	tagObjectIDs := make(map[string]string) // tag name → objectID
@@ -294,6 +323,32 @@ func Convert(doc APIDoc, serviceID string) ConvertResult {
 			})
 		}
 
+		// External API reference (cross-service link)
+		if endpoint.ExternalDocsURL != "" {
+			normalizedURL := normalizeServerURL(endpoint.ExternalDocsURL)
+			externalServerOID := objectID("server-url", normalizedURL)
+
+			// Create the server node if it doesn't exist yet — this is
+			// safe because graph upserts by objectid, so a duplicate
+			// create is a no-op.
+			result.Nodes = append(result.Nodes, ein.GenericNode{
+				ID:    externalServerOID,
+				Kinds: []string{KindAPIServer, KindAPIBase},
+				Properties: map[string]any{
+					"objectid": externalServerOID,
+					"name":     endpoint.ExternalDocsURL,
+					"url":      endpoint.ExternalDocsURL,
+				},
+			})
+
+			result.Edges = append(result.Edges, ein.GenericEdge{
+				Start:      ein.EdgeEndpoint{Value: endpointOID},
+				End:        ein.EdgeEndpoint{Value: externalServerOID},
+				Kind:       EdgeCallsExternalAPI,
+				Properties: map[string]any{},
+			})
+		}
+
 		// Security requirements
 		for _, schemeName := range endpoint.SecurityRequirements {
 			schemeOID, ok := secSchemeObjectIDs[schemeName]
@@ -327,4 +382,13 @@ func Convert(doc APIDoc, serviceID string) ConvertResult {
 func objectID(parts ...string) string {
 	hash := sha256.Sum256([]byte(strings.Join(parts, "|")))
 	return strings.ToUpper(fmt.Sprintf("%x", hash[:16]))
+}
+
+// normalizeServerURL strips trailing slashes and lowercases the scheme+host
+// so that "https://api.example.com/" and "https://api.example.com" produce
+// the same objectID.
+func normalizeServerURL(rawURL string) string {
+	normalized := strings.TrimRight(rawURL, "/")
+	normalized = strings.ToLower(normalized)
+	return normalized
 }

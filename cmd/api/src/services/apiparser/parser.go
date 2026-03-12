@@ -429,6 +429,11 @@ func parseOperationV3(path, method string, data json.RawMessage) APIEndpoint {
 		endpoint.SecurityRequirements = parseSecurityRequirements(secRaw)
 	}
 
+	// externalDocs — used to link endpoints that call external APIs
+	if extDocsRaw, ok := op["externalDocs"]; ok {
+		endpoint.ExternalDocsURL = parseExternalDocsURL(extDocsRaw)
+	}
+
 	return endpoint
 }
 
@@ -658,6 +663,11 @@ func parseOperationV2(path, method string, data json.RawMessage) APIEndpoint {
 		endpoint.SecurityRequirements = parseSecurityRequirements(secRaw)
 	}
 
+	// externalDocs — used to link endpoints that call external APIs
+	if extDocsRaw, ok := op["externalDocs"]; ok {
+		endpoint.ExternalDocsURL = parseExternalDocsURL(extDocsRaw)
+	}
+
 	return endpoint
 }
 
@@ -704,4 +714,15 @@ func dedup(items []string) []string {
 		}
 	}
 	return result
+}
+
+// parseExternalDocsURL extracts the URL from an externalDocs object.
+func parseExternalDocsURL(data json.RawMessage) string {
+	var extDocs struct {
+		URL string `json:"url"`
+	}
+	if err := json.Unmarshal(data, &extDocs); err != nil {
+		return ""
+	}
+	return extDocs.URL
 }

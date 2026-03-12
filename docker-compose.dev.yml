@@ -127,6 +127,7 @@ services:
       dockerfile: api.Dockerfile
     command: "-c .air.toml ${AIR_FLAGS:-''}"
     environment:
+      GOWORK: "off"
       bhe_disable_cypher_complexity_limit: ${bhe_disable_cypher_complexity_limit:-false}
       bhe_enable_cypher_mutations: ${bhe_enable_cypher_mutations:-false}
       bhe_enable_text_logger: ${bhe_enable_text_logger:-true}

@@ -1,0 +1,83 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "VulnTrack API",
+    "description": "Fictional API for managing vulnerability reports, assets, remediation workflows, and third-party data ingestion.",
+    "version": "1.1.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.vulntrack.local/v1",
+      "description": "Primary API server"
+    }
+  ],
+  "tags": [
+    { "name": "Auth" },
+    { "name": "Assets" },
+    { "name": "Vulnerabilities" },
+    { "name": "Reports" },
+    { "name": "Users" },
+    { "name": "PetstoreIntegration" }
+  ],
+  "paths": {
+    "/integrations/petstore/pets": {
+      "get": {
+        "tags": ["PetstoreIntegration"],
+        "summary": "Fetch pets from external Petstore API",
+        "description": "This endpoint retrieves pet data from the third-party API at https://api.petstore.example.com/pets and returns it in normalized format.",
+        "externalDocs": {
+          "description": "Petstore API",
+          "url": "https://api.petstore.example.com"
+        },
+        "responses": {
+          "200": {
+            "description": "List of pets retrieved from external API",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Pet"
+                  }
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream Petstore API error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Pet": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "example": "dog"
+          },
+          "age": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["available", "pending", "sold"]
+          },
+          "source": {
+            "type": "string",
+            "example": "petstore"
+          }
+        }
+      }
+    }
+  }
+}
