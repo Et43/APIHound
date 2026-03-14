@@ -33,6 +33,9 @@ integration-config-local.json
 coverage/
 coverage.*
 
+# sample-data
+examples/sample-data/*
+
 # Log files
 logs
 *.log
