@@ -19,6 +19,8 @@ package apiparser
 import (
 	"crypto/sha256"
 	"fmt"
+	"net/url"
+	"regexp"
 	"strings"
 
 	"github.com/specterops/bloodhound/packages/go/ein"
@@ -64,6 +66,12 @@ func Convert(doc APIDoc, serviceID string) ConvertResult {
 
 	serviceObjectID := objectID("service", serviceID)
 
+	// Determine the primary base URL for this API (first server entry).
+	var baseURL string
+	if len(doc.Servers) > 0 {
+		baseURL = doc.Servers[0].URL
+	}
+
 	// Service node — the root of the API document
 	// NOTE: the first kind becomes the primary_kind property in the graph,
 	// which determines the icon the UI renders. Specific kind must come first.
@@ -76,6 +84,7 @@ func Convert(doc APIDoc, serviceID string) ConvertResult {
 			"description":  doc.Description,
 			"api_version":  doc.Version,
 			"spec_version": doc.SpecVersion,
+			"base_url":     baseURL,
 		},
 	})
 
@@ -209,6 +218,10 @@ func Convert(doc APIDoc, serviceID string) ConvertResult {
 			"summary":      endpoint.Summary,
 			"description":  endpoint.Description,
 			"deprecated":   endpoint.Deprecated,
+			"base_url":     baseURL,
+		}
+		if baseURL != "" {
+			endpointProperties["full_url"] = strings.TrimRight(baseURL, "/") + endpoint.Path
 		}
 
 		result.Nodes = append(result.Nodes, ein.GenericNode{
@@ -324,8 +337,23 @@ func Convert(doc APIDoc, serviceID string) ConvertResult {
 		}
 
 		// External API reference (cross-service link)
+		// Collect external URLs from: externalDocs and URLs found in description text.
+		externalURLs := make(map[string]struct{})
+
 		if endpoint.ExternalDocsURL != "" {
-			normalizedURL := normalizeServerURL(endpoint.ExternalDocsURL)
+			externalURLs[endpoint.ExternalDocsURL] = struct{}{}
+		}
+
+		// Scan the endpoint description for http/https URLs that point to
+		// hosts different from this API's own servers.
+		for _, foundURL := range extractURLsFromText(endpoint.Description) {
+			if !isOwnServerURL(foundURL, doc.Servers) {
+				externalURLs[foundURL] = struct{}{}
+			}
+		}
+
+		for externalURL := range externalURLs {
+			normalizedURL := normalizeServerURL(externalURL)
 			externalServerOID := objectID("server-url", normalizedURL)
 
 			// Create the server node if it doesn't exist yet — this is
@@ -336,8 +364,8 @@ func Convert(doc APIDoc, serviceID string) ConvertResult {
 				Kinds: []string{KindAPIServer, KindAPIBase},
 				Properties: map[string]any{
 					"objectid": externalServerOID,
-					"name":     endpoint.ExternalDocsURL,
-					"url":      endpoint.ExternalDocsURL,
+					"name":     externalURL,
+					"url":      externalURL,
 				},
 			})
 
@@ -391,4 +419,54 @@ func normalizeServerURL(rawURL string) string {
 	normalized := strings.TrimRight(rawURL, "/")
 	normalized = strings.ToLower(normalized)
 	return normalized
+}
+
+// urlPattern matches http:// and https:// URLs in free-text.
+var urlPattern = regexp.MustCompile(`https?://[^\s"'<>)\]]+`)
+
+// extractURLsFromText scans arbitrary text for http/https URLs and returns
+// the scheme+host root of each (e.g. "https://api.example.com").
+// Paths, query strings and fragments are stripped so the result matches
+// against APIServer node URLs.
+func extractURLsFromText(text string) []string {
+	if text == "" {
+		return nil
+	}
+
+	matches := urlPattern.FindAllString(text, -1)
+	seen := make(map[string]struct{}, len(matches))
+	var roots []string
+
+	for _, rawMatch := range matches {
+		parsed, err := url.Parse(strings.TrimRight(rawMatch, ".,;:"))
+		if err != nil || parsed.Host == "" {
+			continue
+		}
+		root := strings.ToLower(parsed.Scheme) + "://" + strings.ToLower(parsed.Host)
+		if _, ok := seen[root]; !ok {
+			seen[root] = struct{}{}
+			roots = append(roots, root)
+		}
+	}
+	return roots
+}
+
+// isOwnServerURL checks whether a root URL (scheme+host) matches any of the
+// API's own declared servers. This prevents creating self-referencing
+// CallsExternalAPI edges.
+func isOwnServerURL(rootURL string, servers []APIServer) bool {
+	normRoot := normalizeServerURL(rootURL)
+	for _, server := range servers {
+		// Compare just the scheme+host of the server URL so that path
+		// differences (e.g. "/v1") don't prevent matching.
+		parsed, err := url.Parse(server.URL)
+		if err != nil || parsed.Host == "" {
+			continue
+		}
+		serverRoot := strings.ToLower(parsed.Scheme) + "://" + strings.ToLower(parsed.Host)
+		if normRoot == serverRoot {
+			return true
+		}
+	}
+	return false
 }
