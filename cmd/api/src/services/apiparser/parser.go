@@ -17,10 +17,13 @@
 package apiparser
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
 	"strings"
+
+	"gopkg.in/yaml.v3"
 )
 
 // Parse reads an OpenAPI 3.x or Swagger 2.0 JSON document from the reader
@@ -38,6 +41,23 @@ func Parse(reader io.Reader) (APIDoc, error) {
 		return parseSwagger2(raw)
 	}
 	return APIDoc{}, fmt.Errorf("unrecognised API spec: missing 'openapi' or 'swagger' key")
+}
+
+// ParseYAML reads an OpenAPI 3.x or Swagger 2.0 YAML document from the reader
+// and returns a normalised APIDoc. Internally, the YAML is re-encoded as JSON
+// and forwarded to Parse to keep both code paths in sync.
+func ParseYAML(reader io.Reader) (APIDoc, error) {
+	var rawYAML any
+	if err := yaml.NewDecoder(reader).Decode(&rawYAML); err != nil {
+		return APIDoc{}, fmt.Errorf("failed to decode API spec YAML: %w", err)
+	}
+
+	jsonBytes, err := json.Marshal(rawYAML)
+	if err != nil {
+		return APIDoc{}, fmt.Errorf("failed to re-encode YAML as JSON: %w", err)
+	}
+
+	return Parse(bytes.NewReader(jsonBytes))
 }
 
 // ---------------------------------------------------------------------------

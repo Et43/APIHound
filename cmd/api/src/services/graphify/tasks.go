@@ -399,8 +399,15 @@ func (s *GraphifyService) processAPISingleTask(task model.IngestTask, sourceKind
 		}
 	}()
 
-	// Parse the API specification
-	apiDoc, err := apiparser.Parse(file)
+	// Parse the API specification — route to the YAML parser when the stored file type is YAML.
+	var (
+		apiDoc apiparser.APIDoc
+	)
+	if task.FileType == model.FileTypeAPIYaml {
+		apiDoc, err = apiparser.ParseYAML(file)
+	} else {
+		apiDoc, err = apiparser.Parse(file)
+	}
 	if err != nil {
 		errMsg := fmt.Sprintf("failed to parse API spec: %v", err)
 		slog.ErrorContext(s.ctx, errMsg, slog.Int64("task_id", task.ID))
@@ -409,7 +416,10 @@ func (s *GraphifyService) processAPISingleTask(task model.IngestTask, sourceKind
 
 	// Use the original filename (without extension) as the service identifier
 	// so that re-uploading the same file updates the same nodes.
-	serviceID := strings.TrimSuffix(task.OriginalFileName, ".json")
+	serviceID := task.OriginalFileName
+	for _, ext := range []string{".json", ".yaml", ".yml"} {
+		serviceID = strings.TrimSuffix(serviceID, ext)
+	}
 	if serviceID == "" {
 		serviceID = fmt.Sprintf("api-task-%d", task.ID)
 	}

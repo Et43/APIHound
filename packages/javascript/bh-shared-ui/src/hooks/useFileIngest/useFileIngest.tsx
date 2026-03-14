@@ -31,7 +31,7 @@ export const useStartFileIngestJob = () => {
     });
 };
 
-export type AcceptedIngestType = 'application/json' | 'application/zip';
+export type AcceptedIngestType = 'application/json' | 'application/zip' | 'application/yaml' | 'application/x-yaml' | 'text/yaml';
 
 interface UploadFileIngestJobParams {
     jobId: string;
