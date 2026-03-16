@@ -129,6 +129,7 @@ const QuerySearchFilter = (props: QuerySearchProps) => {
                             onChange={(e) => handlePlatformFilter(e.target.value)}>
                             <MenuItem value=''>All</MenuItem>
                             <MenuItem value='Active Directory'>Active Directory</MenuItem>
+                            <MenuItem value='API'>API</MenuItem>
                             <MenuItem value='Azure'>Azure</MenuItem>
                             <MenuItem value='Saved Queries'>Saved Queries</MenuItem>
                         </Select>
