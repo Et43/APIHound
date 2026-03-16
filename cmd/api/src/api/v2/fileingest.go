@@ -144,7 +144,7 @@ func (s Resources) ProcessIngestTask(response http.ResponseWriter, request *http
 		defer request.Body.Close()
 	}
 
-	if !IsValidContentTypeForUpload(request.Header) {
+	if !IsValidContentTypeForUpload(request.Header) && !(ingestSource == model.IngestSourceAPI && IsValidContentTypeForAPIUpload(request.Header)) {
 		api.WriteErrorResponse(request.Context(), api.BuildErrorResponse(http.StatusBadRequest, "Content type must be application/json or application/zip", request), response)
 	} else if jobID, err := strconv.Atoi(jobIdString); err != nil {
 		api.WriteErrorResponse(request.Context(), api.BuildErrorResponse(http.StatusBadRequest, api.ErrorResponseDetailsIDMalformed, request), response)
@@ -191,6 +191,8 @@ func checkFileName(filename string, fileType model.FileType) string {
 		return filename
 	} else if fileType == model.FileTypeJson {
 		return "UnknownFileName.json"
+	} else if fileType == model.FileTypeAPIYaml {
+		return "UnknownFileName.yaml"
 	} else {
 		return "UnknownFileName.zip"
 	}
@@ -226,6 +228,19 @@ func IsValidContentTypeForUpload(header http.Header) bool {
 		return false
 	} else {
 		return slices.Contains(ingestModel.AllowedFileUploadTypes, parsed)
+	}
+}
+
+// IsValidContentTypeForAPIUpload reports whether the Content-Type header is acceptable
+// for an API-source upload (JSON or YAML).
+func IsValidContentTypeForAPIUpload(header http.Header) bool {
+	rawValue := header.Get(headers.ContentType.String())
+	if rawValue == "" {
+		return false
+	} else if parsed, _, err := mime.ParseMediaType(rawValue); err != nil {
+		return false
+	} else {
+		return slices.Contains(ingestModel.AllowedAPIFileUploadTypes, parsed)
 	}
 }
 

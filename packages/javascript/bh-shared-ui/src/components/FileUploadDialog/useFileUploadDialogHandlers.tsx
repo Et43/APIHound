@@ -255,12 +255,19 @@ export const useFileUploadDialogHandlers = ({
         if (files && files.length > 0) {
             const validatedFiles: FileForIngest[] = [...files].map((file) => {
                 if (ingestSource === IngestSource.API) {
-                    // For API source, accept any .json file
-                    const isJson = file.name.toLowerCase().endsWith('.json') || file.type === 'application/json';
-                    if (isJson) {
+                    // For API source, accept .json and .yaml/.yml files
+                    const lowerName = file.name.toLowerCase();
+                    const isJson = lowerName.endsWith('.json') || file.type === 'application/json';
+                    const isYaml =
+                        lowerName.endsWith('.yaml') ||
+                        lowerName.endsWith('.yml') ||
+                        file.type === 'application/yaml' ||
+                        file.type === 'application/x-yaml' ||
+                        file.type === 'text/yaml';
+                    if (isJson || isYaml) {
                         return { file, status: FileStatus.READY };
                     } else {
-                        return { file, errors: ['API data must be a JSON file'], status: FileStatus.READY };
+                        return { file, errors: ['API data must be a JSON or YAML file'], status: FileStatus.READY };
                     }
                 }
                 if (getFileUploadAcceptedTypes.data?.data.includes(file.type)) {

@@ -38,10 +38,11 @@ const (
 	FileTypeJson FileType = iota
 	FileTypeZip
 	FileTypeAPIJson
+	FileTypeAPIYaml
 )
 
 // IsAPISource returns true when the file type represents API environment data
 // rather than AD/Azure graph data.
 func (s FileType) IsAPISource() bool {
-	return s == FileTypeAPIJson
+	return s == FileTypeAPIJson || s == FileTypeAPIYaml
 }

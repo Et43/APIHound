@@ -67,7 +67,7 @@ const FileUploadDialog: React.FC<{
 
     const acceptedTypes =
         selectedSource === IngestSource.API
-            ? ['application/json']
+            ? ['application/json', 'application/yaml', 'application/x-yaml', 'text/yaml', '.json', '.yaml', '.yml']
             : getFileUploadAcceptedTypes.data?.data ?? [];
 
     const handleSourceTabChange = (_event: React.SyntheticEvent, newValue: number) => {
@@ -112,7 +112,8 @@ const FileUploadDialog: React.FC<{
 
                 {selectedSource === IngestSource.API && (
                     <div className='mb-2 text-sm font-normal text-neutral-60'>
-                        Upload API environment data as JSON files. These files will be stored for later processing.
+                        Upload API environment data as JSON or YAML files. These files will be stored for later
+                        processing.
                     </div>
                 )}
 

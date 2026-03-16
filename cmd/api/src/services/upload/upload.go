@@ -47,12 +47,20 @@ func SaveIngestFile(location string, request *http.Request, validator IngestVali
 	//
 	// THIS NEEDS TO BE REMOVED LATER ON!
 	if ingestSource == model.IngestSourceAPI {
+		var apiFileType model.FileType
+
+		if utils.HeaderMatches(request.Header, headers.ContentType.String(), ingest.AllowedYAMLFileUploadTypes...) {
+			apiFileType = model.FileTypeAPIYaml
+		} else {
+			apiFileType = model.FileTypeAPIJson
+		}
+
 		if tempFileName, err := WriteAndValidateFile(fileData, location, WriteWithoutValidation); err != nil {
 			return IngestTaskParams{}, err
 		} else {
 			return IngestTaskParams{
 				Filename:     tempFileName,
-				FileType:     model.FileTypeAPIJson,
+				FileType:     apiFileType,
 				IngestSource: model.IngestSourceAPI,
 			}, nil
 		}

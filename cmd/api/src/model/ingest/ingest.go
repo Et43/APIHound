@@ -26,10 +26,23 @@ import (
 var AllowedZipFileUploadTypes = []string{
 	mediatypes.ApplicationZip.String(),
 	"application/x-zip-compressed", // Not currently available in mediatypes
-	"application/zip-compressed",   // Not currently available in mediatypes
+	"application/zip-compressed",
+	"application/yaml",
+	"application/x-yaml",
+	"text/yaml",   // Not currently available in mediatypes
+}
+
+// AllowedYAMLFileUploadTypes lists the MIME types accepted for YAML OpenAPI spec uploads.
+var AllowedYAMLFileUploadTypes = []string{
+	"application/yaml",
+	"application/x-yaml",
+	"text/yaml",
 }
 
 var AllowedFileUploadTypes = append([]string{mediatypes.ApplicationJson.String()}, AllowedZipFileUploadTypes...)
+
+// AllowedAPIFileUploadTypes extends the standard types with YAML for API-source uploads.
+var AllowedAPIFileUploadTypes = append([]string{mediatypes.ApplicationJson.String()}, AllowedYAMLFileUploadTypes...)
 
 type OpengraphMetadata struct {
 	SourceKind string `json:"source_kind"`
