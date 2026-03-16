@@ -30,6 +30,7 @@ type IngestTaskParams struct {
 	RequestID        string
 	JobID            int64
 	IngestSource     model.IngestSource
+	Metadata         *model.IngestTaskMetadata
 }
 
 func CreateIngestTask(ctx context.Context, db UploadData, params IngestTaskParams) (model.IngestTask, error) {
@@ -39,6 +40,7 @@ func CreateIngestTask(ctx context.Context, db UploadData, params IngestTaskParam
 		RequestGUID:      params.RequestID,
 		JobId:            null.Int64From(params.JobID),
 		FileType:         params.FileType,
+		Metadata:         params.Metadata,
 	}
 
 	return db.CreateIngestTask(ctx, newIngestTask)

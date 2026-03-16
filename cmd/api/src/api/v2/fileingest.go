@@ -44,6 +44,8 @@ import (
 const FileUploadJobIdPathParameterName = "file_upload_job_id"
 const FileUploadFileNameHeader = "X-File-Upload-Name"
 const IngestSourceHeader = "X-Ingest-Source"
+const OpCoNameHeader = "X-OpCo-Name"
+const OpCoDescriptionHeader = "X-OpCo-Description"
 
 func (s Resources) ListIngestJobs(response http.ResponseWriter, request *http.Request) {
 	var (
@@ -128,12 +130,23 @@ func (s Resources) StartIngestJob(response http.ResponseWriter, request *http.Re
 
 func (s Resources) ProcessIngestTask(response http.ResponseWriter, request *http.Request) {
 	var (
-		requestId    = ctx.FromRequest(request).RequestID
-		jobIdString  = mux.Vars(request)[FileUploadJobIdPathParameterName]
-		validator    = upload.NewIngestValidator(s.IngestSchema)
-		fileName     = request.Header.Get(FileUploadFileNameHeader)
-		ingestSource = model.IngestSource(request.Header.Get(IngestSourceHeader))
+		requestId      = ctx.FromRequest(request).RequestID
+		jobIdString    = mux.Vars(request)[FileUploadJobIdPathParameterName]
+		validator      = upload.NewIngestValidator(s.IngestSchema)
+		fileName       = request.Header.Get(FileUploadFileNameHeader)
+		ingestSource   = model.IngestSource(request.Header.Get(IngestSourceHeader))
+		opCoName       = request.Header.Get(OpCoNameHeader)
+		opCoDescription = request.Header.Get(OpCoDescriptionHeader)
 	)
+
+	// Build metadata from headers when an OpCo is specified.
+	var taskMetadata *model.IngestTaskMetadata
+	if opCoName != "" {
+		taskMetadata = &model.IngestTaskMetadata{
+			OpCoName:        opCoName,
+			OpCoDescription: opCoDescription,
+		}
+	}
 
 	// Default to AD/Azure when no source header is provided
 	if !ingestSource.IsValid() {
@@ -174,7 +187,7 @@ func (s Resources) ProcessIngestTask(response http.ResponseWriter, request *http
 		api.WriteErrorResponse(request.Context(), e, response)
 	} else if err != nil {
 		api.WriteErrorResponse(request.Context(), api.BuildErrorResponse(http.StatusInternalServerError, fmt.Sprintf("Error saving ingest file: %v", err), request), response)
-	} else if _, err = upload.CreateIngestTask(request.Context(), s.DB, upload.IngestTaskParams{Filename: ingestTaskParams.Filename, ProvidedFileName: checkFileName(fileName, ingestTaskParams.FileType), FileType: ingestTaskParams.FileType, RequestID: requestId, JobID: int64(jobID), IngestSource: ingestSource}); err != nil {
+	} else if _, err = upload.CreateIngestTask(request.Context(), s.DB, upload.IngestTaskParams{Filename: ingestTaskParams.Filename, ProvidedFileName: checkFileName(fileName, ingestTaskParams.FileType), FileType: ingestTaskParams.FileType, RequestID: requestId, JobID: int64(jobID), IngestSource: ingestSource, Metadata: taskMetadata}); err != nil {
 		if removeErr := os.Remove(ingestTaskParams.Filename); removeErr != nil {
 			slog.WarnContext(request.Context(), fmt.Sprintf("Failed to clean up file after task creation error: %v", removeErr))
 		}

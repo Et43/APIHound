@@ -38,6 +38,7 @@ const (
 	KindAPISecurityScheme = "APISecurityScheme"
 	KindAPITag            = "APITag"
 	KindAPIServer         = "APIServer"
+	KindAPIOpCo           = "APIOpCo"
 
 	// Edge kinds
 	EdgeHasEndpoint       = "HasEndpoint"
@@ -49,6 +50,7 @@ const (
 	EdgeReferencesSchema  = "ReferencesSchema"
 	EdgeHostedOn          = "HostedOn"
 	EdgeCallsExternalAPI  = "CallsExternalAPI"
+	EdgeBelongsToOpCo     = "BelongsToOpCo"
 )
 
 // ConvertResult holds the generic nodes and edges produced from an API document,
@@ -58,10 +60,23 @@ type ConvertResult struct {
 	Edges []ein.GenericEdge
 }
 
+// ConvertOptions holds optional metadata that enriches the graph conversion
+// beyond what is found in the OpenAPI document itself.
+type ConvertOptions struct {
+	// OpCoName is the name of the operational/business unit that owns this API.
+	// When non-empty, an APIOpCo node is created (or reused) and a
+	// BelongsToOpCo edge links the APIService to it.
+	OpCoName string
+
+	// OpCoDescription is an optional description for the operational/business unit.
+	OpCoDescription string
+}
+
 // Convert transforms a parsed APIDoc into graph nodes and edges.
 // The serviceID is a caller-provided stable identifier for the API
 // (typically derived from the uploaded filename or an explicit label).
-func Convert(doc APIDoc, serviceID string) ConvertResult {
+// opts may be nil; when provided it supplies additional metadata such as OpCo.
+func Convert(doc APIDoc, serviceID string, opts *ConvertOptions) ConvertResult {
 	var result ConvertResult
 
 	serviceObjectID := objectID("service", serviceID)
@@ -75,18 +90,54 @@ func Convert(doc APIDoc, serviceID string) ConvertResult {
 	// Service node — the root of the API document
 	// NOTE: the first kind becomes the primary_kind property in the graph,
 	// which determines the icon the UI renders. Specific kind must come first.
+	serviceProperties := map[string]any{
+		"objectid":     serviceObjectID,
+		"name":         doc.Title,
+		"description":  doc.Description,
+		"api_version":  doc.Version,
+		"spec_version": doc.SpecVersion,
+		"base_url":     baseURL,
+	}
+
+	// When an OpCo is specified, add it as a convenience property on the
+	// service node and create a dedicated OpCo graph node with an edge.
+	if opts != nil && opts.OpCoName != "" {
+		serviceProperties["opco_name"] = opts.OpCoName
+	}
+
 	result.Nodes = append(result.Nodes, ein.GenericNode{
-		ID:    serviceObjectID,
-		Kinds: []string{KindAPIService, KindAPIBase},
-		Properties: map[string]any{
-			"objectid":     serviceObjectID,
-			"name":         doc.Title,
-			"description":  doc.Description,
-			"api_version":  doc.Version,
-			"spec_version": doc.SpecVersion,
-			"base_url":     baseURL,
-		},
+		ID:         serviceObjectID,
+		Kinds:      []string{KindAPIService, KindAPIBase},
+		Properties: serviceProperties,
 	})
+
+	// OpCo node and edge — created when an operational/business unit is provided.
+	// The objectID is derived solely from the OpCo name so the same OpCo from
+	// different specs converges to a single node in the graph.
+	if opts != nil && opts.OpCoName != "" {
+		opCoObjectID := objectID("opco", opts.OpCoName)
+
+		opCoProperties := map[string]any{
+			"objectid": opCoObjectID,
+			"name":     opts.OpCoName,
+		}
+		if opts.OpCoDescription != "" {
+			opCoProperties["description"] = opts.OpCoDescription
+		}
+
+		result.Nodes = append(result.Nodes, ein.GenericNode{
+			ID:         opCoObjectID,
+			Kinds:      []string{KindAPIOpCo, KindAPIBase},
+			Properties: opCoProperties,
+		})
+
+		result.Edges = append(result.Edges, ein.GenericEdge{
+			Start:      ein.EdgeEndpoint{Value: serviceObjectID},
+			End:        ein.EdgeEndpoint{Value: opCoObjectID},
+			Kind:       EdgeBelongsToOpCo,
+			Properties: map[string]any{},
+		})
+	}
 
 	// Servers — objectIDs are based purely on normalised URL so the same
 	// server from different specs converges to a single node in the graph.

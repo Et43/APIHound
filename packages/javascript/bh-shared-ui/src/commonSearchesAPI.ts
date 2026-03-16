@@ -185,6 +185,57 @@ export const CommonSearches: CommonSearchType[] = [
         ],
     },
     {
+        subheader: 'Organization & Ownership',
+        category: categoryAPI,
+        queries: [
+            {
+                name: 'All OpCos (Business Units)',
+                description: 'List every operational/business unit that owns API services',
+                query: `MATCH (o:APIOpCo)\nRETURN o\nLIMIT 1000`,
+            },
+            {
+                name: 'API Services by OpCo',
+                description: 'Shows which API services belong to each operational/business unit',
+                query: `MATCH p = (s:APIService)-[:BelongsToOpCo]->(o:APIOpCo)\nRETURN p\nLIMIT 1000`,
+            },
+            {
+                name: 'All endpoints for a specific OpCo',
+                description: 'Shows all endpoints owned by a specific operational/business unit',
+                query: `MATCH p = (o:APIOpCo)<-[:BelongsToOpCo]-(s:APIService)-[:HasEndpoint]->(e:APIEndpoint)\nWHERE o.name =~ '(?i).*OPCO.*'\nRETURN p\nLIMIT 1000`,
+            },
+            {
+                name: 'OpCo attack surface summary',
+                description: 'Counts services and endpoints per operational/business unit',
+                query: `MATCH (o:APIOpCo)<-[:BelongsToOpCo]-(s:APIService)-[:HasEndpoint]->(e:APIEndpoint)\nRETURN o.name AS opco, COUNT(DISTINCT s) AS services, COUNT(e) AS endpoints\nORDER BY endpoints DESC`,
+            },
+            {
+                name: 'Unauthenticated endpoints by OpCo',
+                description: 'Find endpoints with no security scheme, grouped by operational/business unit',
+                query: `MATCH (o:APIOpCo)<-[:BelongsToOpCo]-(s:APIService)-[:HasEndpoint]->(e:APIEndpoint)\nWHERE NOT (e)-[:RequiresSecurity]->(:APISecurityScheme)\nRETURN o.name AS opco, s.name AS service, e.name AS endpoint, e.method AS method, e.path AS path\nLIMIT 1000`,
+            },
+            {
+                name: 'OpCos with deprecated endpoints',
+                description: 'Find deprecated endpoints grouped by operational/business unit',
+                query: `MATCH (o:APIOpCo)<-[:BelongsToOpCo]-(s:APIService)-[:HasEndpoint]->(e:APIEndpoint)\nWHERE e.deprecated = true\nRETURN o.name AS opco, s.name AS service, e.name AS endpoint\nLIMIT 1000`,
+            },
+            {
+                name: 'Cross-OpCo external dependencies',
+                description: 'Shows which external APIs each OpCo depends on',
+                query: `MATCH (o:APIOpCo)<-[:BelongsToOpCo]-(s:APIService)-[:HasEndpoint]->(e:APIEndpoint)-[:CallsExternalAPI]->(srv:APIServer)\nRETURN o.name AS opco, s.name AS service, e.name AS endpoint, srv.url AS external_url\nLIMIT 1000`,
+            },
+            {
+                name: 'Full OpCo graph',
+                description: 'Shows the complete graph of an OpCo: services, endpoints, security, and servers',
+                query: `MATCH (o:APIOpCo)\nWHERE o.name =~ '(?i).*OPCO.*'\nOPTIONAL MATCH p1 = (o)<-[:BelongsToOpCo]-(s:APIService)\nOPTIONAL MATCH p2 = (s)-[:HasEndpoint]->(e:APIEndpoint)\nOPTIONAL MATCH p3 = (e)-[:RequiresSecurity]->(sec:APISecurityScheme)\nOPTIONAL MATCH p4 = (s)-[:HostedOn]->(srv:APIServer)\nRETURN o, p1, p2, p3, p4\nLIMIT 1000`,
+            },
+            {
+                name: 'Services without OpCo assignment',
+                description: 'Find API services that have not been assigned to any operational/business unit',
+                query: `MATCH (s:APIService)\nWHERE NOT (s)-[:BelongsToOpCo]->(:APIOpCo)\nRETURN s\nLIMIT 1000`,
+            },
+        ],
+    },
+    {
         subheader: 'External Dependencies',
         category: categoryAPI,
         queries: [

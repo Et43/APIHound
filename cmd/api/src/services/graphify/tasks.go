@@ -425,7 +425,14 @@ func (s *GraphifyService) processAPISingleTask(task model.IngestTask, sourceKind
 	}
 
 	// Convert the parsed doc to graph nodes and edges
-	convertResult := apiparser.Convert(apiDoc, serviceID)
+	var convertOpts *apiparser.ConvertOptions
+	if task.Metadata != nil && task.Metadata.OpCoName != "" {
+		convertOpts = &apiparser.ConvertOptions{
+			OpCoName:        task.Metadata.OpCoName,
+			OpCoDescription: task.Metadata.OpCoDescription,
+		}
+	}
+	convertResult := apiparser.Convert(apiDoc, serviceID, convertOpts)
 
 	if len(convertResult.Nodes) == 0 {
 		slog.WarnContext(s.ctx, "API spec produced zero graph nodes",

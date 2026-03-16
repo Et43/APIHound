@@ -17,15 +17,59 @@
 package model
 
 import (
+	"database/sql/driver"
+	"encoding/json"
+	"fmt"
+
 	"github.com/specterops/bloodhound/cmd/api/src/database/types/null"
 )
 
+// IngestTaskMetadata holds optional enrichment metadata that travels with an
+// ingest task from upload-time through to graph conversion. Stored as a JSONB
+// column so new fields can be added without schema migrations.
+type IngestTaskMetadata struct {
+	// OpCoName is the operational/business unit that owns this API collection.
+	OpCoName string `json:"opco_name,omitempty"`
+
+	// OpCoDescription is an optional human-readable description of the OpCo.
+	OpCoDescription string `json:"opco_description,omitempty"`
+}
+
+// Scan implements the sql.Scanner interface for reading JSONB from the database.
+func (s *IngestTaskMetadata) Scan(value any) error {
+	if value == nil {
+		return nil
+	}
+
+	var bytes []byte
+	switch v := value.(type) {
+	case string:
+		bytes = []byte(v)
+	case []byte:
+		bytes = v
+	default:
+		return fmt.Errorf("IngestTaskMetadata.Scan: unsupported type %T", value)
+	}
+
+	return json.Unmarshal(bytes, s)
+}
+
+// Value implements the driver.Valuer interface for writing JSONB to the database.
+func (s IngestTaskMetadata) Value() (driver.Value, error) {
+	data, err := json.Marshal(s)
+	if err != nil {
+		return nil, err
+	}
+	return string(data), nil
+}
+
 type IngestTask struct {
-	StoredFileName   string     `json:"file_name"`
-	OriginalFileName string     `json:"original_file_name"`
-	RequestGUID      string     `json:"request_guid"`
-	JobId            null.Int64 `json:"task_id" gorm:"column:task_id"`
-	FileType         FileType   `json:"file_type"`
+	StoredFileName   string              `json:"file_name"`
+	OriginalFileName string              `json:"original_file_name"`
+	RequestGUID      string              `json:"request_guid"`
+	JobId            null.Int64          `json:"task_id" gorm:"column:task_id"`
+	FileType         FileType            `json:"file_type"`
+	Metadata         *IngestTaskMetadata `json:"metadata,omitempty" gorm:"type:jsonb;default:null"`
 
 	BigSerial
 }
