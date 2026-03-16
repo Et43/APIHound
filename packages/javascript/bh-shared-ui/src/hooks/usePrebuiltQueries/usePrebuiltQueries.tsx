@@ -17,6 +17,7 @@ import { QueryScope, SavedQuery } from 'js-client-library';
 import { useMemo } from 'react';
 import { CommonSearches as prebuiltSearchListAGI } from '../../commonSearchesAGI';
 import { CommonSearches as prebuiltSearchListAGT } from '../../commonSearchesAGT';
+import { CommonSearches as prebuiltSearchListAPI } from '../../commonSearchesAPI';
 import { useFeatureFlag } from '../../hooks/useFeatureFlags';
 import { useSavedQueries } from '../../hooks/useSavedQueries';
 import { QueryLineItem } from '../../types';
@@ -51,8 +52,8 @@ export const usePrebuiltQueries = () => {
     };
 
     const queryList = tierFlag?.enabled
-        ? [...prebuiltSearchListAGT, savedQueries]
-        : [...prebuiltSearchListAGI, savedQueries];
+        ? [...prebuiltSearchListAGT, ...prebuiltSearchListAPI, savedQueries]
+        : [...prebuiltSearchListAGI, ...prebuiltSearchListAPI, savedQueries];
 
     return queryList;
 };
